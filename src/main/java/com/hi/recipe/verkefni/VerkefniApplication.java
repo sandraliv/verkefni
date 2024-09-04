@@ -8,6 +8,7 @@ public class VerkefniApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(VerkefniApplication.class, args);
+		System.out.println("Sturla skrifaði streng");
 	}
 
 }
