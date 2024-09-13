@@ -2,6 +2,7 @@ package com.hi.recipe.verkefni.klasar;
 
 import jakarta.persistence.*;
 
+
 @Entity
 @Table(name="users")
 public class Users {
@@ -13,9 +14,9 @@ public class Users {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    public Users(String name, String food) {
+    public Users(String name, String email) {
         this.name = name;
-        this.email = food;
+        this.email = email;
     }
 
     public Users(){
