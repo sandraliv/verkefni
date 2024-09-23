@@ -1,7 +1,10 @@
 package com.hi.recipe.verkefni.controllers;
 
 import com.hi.recipe.verkefni.repository.UserRepository;
+import com.hi.recipe.verkefni.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,26 +12,20 @@ import com.hi.recipe.verkefni.klasar.Users;
 
 import java.util.*;
 
+//Ef við erum að fara nota ThymeLeaf þá verður þetta @Controller en ekki @RestController og skilum ekki ResponseEntity
 @RestController
-@RequestMapping("/users")
 public class UserController {
-    //UserRepository connects to the recipe table because it is tied to the User entity, which is mapped to that table.
-    //UserRepository in your controller interacts with the User table through the repository methods provided by JpaRepository.
-    private final UserRepository userrepo;
+    private final UserService userService;
 
-    //Here we are injecting the UserRepo dependency into the controller, which allows the controller to interact with the database through the repository.
-    public UserController(UserRepository userrepo) {
-        this.userrepo = userrepo;
+    @Autowired
+    public UserController(UserService userService){
+        this.userService = userService;
     }
 
-    //Get method for
-    @GetMapping
+    //localhost:8000 sækir user með id 1, ef hann finnst ekki þá fæst 404 villa
+    @GetMapping("/")
     public ResponseEntity<Users> getUserById() {
-        Optional<Users> user = userrepo.findById(1);  // findById returns Optional<User>
-
-        // Check if the user is present
-        // Return 200 OK with the user object
-        // Return 404 if the user is not found
+        Optional<Users> user = userService.findById(1);
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
