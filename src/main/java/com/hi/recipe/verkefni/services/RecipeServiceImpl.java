@@ -32,4 +32,11 @@ public class RecipeServiceImpl implements RecipeService {
         recipeRepository.delete(recipe);
     }
 
+    @Override
+    public List<Recipe> findByTitleContainingIgnoreCase(String keyword) {
+        System.out.println(keyword);
+        System.out.println(recipeRepository.findByTitleContaining(keyword));
+        return recipeRepository.findByTitleContaining(keyword);
+    }
+
 }

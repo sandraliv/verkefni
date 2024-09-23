@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name="recipes")
 public class Recipe {
-
+    //Þessi klasi er ekki rétt uppsettur, tímabundin uppsetning
     @Id
     private String title;
 

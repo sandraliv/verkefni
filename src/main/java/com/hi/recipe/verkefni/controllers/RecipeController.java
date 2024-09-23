@@ -16,11 +16,26 @@ public class RecipeController {
     public RecipeController(RecipeService recipeService){
         this.recipeService = recipeService;
     }
-    //GetMethod for returning all recipes
+
+    @GetMapping("/recipes")
+    public ResponseEntity<List<Recipe>> getFoo(@RequestParam(value="query", required = false) String query){
+        // localhost:8000/recipes skilar öllum uppskriftum
+        if (query == null || query.isEmpty()) {
+            return ResponseEntity.ok(recipeService.findAll()); // Fetch and return all recipes
+        }
+        //localhost:8000/recipes?query=eggjahræra dæmi um query sem hægt er að gera líka
+        return ResponseEntity.ok(recipeService.findByTitleContainingIgnoreCase(query));
+    }
+
+
+    /*
     @GetMapping("/recipes")
     public ResponseEntity<List<Recipe>> getAllRecipes() {
         return ResponseEntity.ok(recipeService.findAll());
     }
+
+     */
+
 
     /*
     //Post method for creating a new reicpe
