@@ -1,6 +1,6 @@
 package com.hi.recipe.verkefni.services;
 
-import com.hi.recipe.verkefni.klasar.Users;
+import com.hi.recipe.verkefni.klasar.User;
 import com.hi.recipe.verkefni.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,22 +18,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Users> findAll() {
+    public List<User> findAll() {
         return userRepository.findAll();
     }
 
     @Override
-    public Users save(Users users) {
-        return userRepository.save(users);
+    public User save(User user) {
+        return userRepository.save(user);
     }
 
     @Override
-    public void delete(Users users) {
-        userRepository.delete(users);
+    public void delete(User user) {
+        userRepository.delete(user);
     }
 
     @Override
-    public Optional<Users> findById(int id) {
+    public Optional<User> findById(int id) {
         return userRepository.findById(id);
     }
 }
