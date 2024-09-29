@@ -9,6 +9,8 @@ import java.util.List;
 public interface RecipeService {
     List<Recipe> findAll();
     Recipe save(Recipe recipe);
+    Recipe findRecipeById(Long id);
     void delete(Recipe recipe);
+    void resetAndReaddRecipes();
     List<Recipe> findByTitleContainingIgnoreCase(String keyword);
 }

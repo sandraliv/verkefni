@@ -12,4 +12,10 @@ import java.util.List;
 public interface RecipeRepository extends JpaRepository<Recipe, String> {
     @Query("SELECT r FROM Recipe r WHERE LOWER(r.title) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     List<Recipe> findByTitleContaining(String keyword);
+
+    @Query("Select r FROM Recipe r")
+    List<Recipe> findAll();
+
+    @Query("SELECT r FROM Recipe r WHERE r.id = id")
+    Recipe getRecipeById(Long id);
 }
