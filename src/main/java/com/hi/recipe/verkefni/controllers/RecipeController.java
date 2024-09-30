@@ -40,7 +40,7 @@ public class RecipeController {
         recipeService.save(r);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("recipes/{id}")
     public ResponseEntity<Optional<Recipe>> getRecipeById(@PathVariable int id){
         System.out.println("/{id} = "+id);
         Optional<Recipe> recipe = recipeService.findById(id);

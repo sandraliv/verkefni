@@ -52,6 +52,11 @@
             <artifactId>spring-boot-starter</artifactId>
             <version>3.3.3</version>
         </dependency>
+        <!-- Spring Boot Starter Thymeleaf (this includes Thymeleaf and necessary Spring integration) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>

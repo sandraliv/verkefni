@@ -4,6 +4,8 @@ import com.hi.recipe.verkefni.klasar.User;
 import com.hi.recipe.verkefni.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,7 +21,15 @@ public class UserController {
         this.userService = userService;
     }
 
+    /* Notum þetta og breytum úr RestController í Controller þegar við viljum byrja nota Thymeleaf
     @GetMapping("/")
+    public String getUsers(Model model){
+        model.addAttribute("name", "Jóhanna");
+        return "User";
+    }
+
+     */
+
     public ResponseEntity<List<User>> getUserById() {
         List<User> users = userService.findAll();
 
@@ -29,6 +39,8 @@ public class UserController {
 
         return ResponseEntity.ok(users);
     }
+
+
 
     //Slóðin localhost:8000/users/addUSer addaði mér inní gagnagrunninn með þessari aðferð hér
 
