@@ -2,8 +2,7 @@ package com.hi.recipe.verkefni.klasar;
 
 import jakarta.persistence.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Entity
 @Table(name="recipes")
@@ -18,21 +17,38 @@ public class Recipe {
     @CollectionTable(name = "recipe_ingredients", joinColumns = @JoinColumn(name = "recipe_id"))
     private Map<String, String> ingredients = new HashMap<>();
 
+    /*Tells hibernate that the tags field is a collection of values that will be stored in a separate table and we are using the RecipeTag enum*/
+    //The CollectionTable defines the table(recipe_tags) and column(recipe_id) that will store the relationship between recipes and their tags.
+    //The set ensures that there are no duplicates for a recipe
+    @ElementCollection(targetClass = RecipeTag.class)  // To store multiple tags
+    @Enumerated(EnumType.STRING)  // Store enums as strings in the database
+    @CollectionTable(name = "recipe_tags", joinColumns = @JoinColumn(name = "recipe_id"))
+    @Column(name = "tag")  // Define the column name for tags
+    private Collection<RecipeTag> tags = new HashSet<>();  // Multiple tags
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    public Recipe(String title, String description, Map<String, String> ingredients) {
+    public Recipe(String title, String description, Map<String, String> ingredients, Collection<RecipeTag> tags) {
         this.title = title;
         this.description = description;
         this.ingredients = ingredients;
+        this.tags = tags;
     }
 
     public Recipe(){}
 
     public String getTitle() {
         return title;
+    }
+
+    public Collection<RecipeTag> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<RecipeTag> tags) {
+        this.tags = tags;
     }
 
     public String getDescription() {
