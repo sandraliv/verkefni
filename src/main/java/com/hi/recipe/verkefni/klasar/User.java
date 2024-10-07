@@ -10,8 +10,9 @@ public class User {
     private String email;
     private String password;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column(unique = true)
     private String username;
 
     public User(){
