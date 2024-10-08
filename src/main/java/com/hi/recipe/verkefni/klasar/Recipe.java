@@ -2,6 +2,7 @@ package com.hi.recipe.verkefni.klasar;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
@@ -30,6 +31,8 @@ public class Recipe {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
+     private LocalDateTime dateAdded;
+
     public Recipe(String title, String description, Map<String, String> ingredients, Collection<RecipeTag> tags) {
         this.title = title;
         this.description = description;
@@ -38,6 +41,10 @@ public class Recipe {
     }
 
     public Recipe(){}
+
+    protected void onCreate() {
+        this.dateAdded = LocalDateTime.now();
+    }
 
     public String getTitle() {
         return title;
@@ -69,6 +76,10 @@ public class Recipe {
 
     public void setIngredients(Map<String, String> ingredients) {
         this.ingredients = ingredients;
+    }
+
+    public LocalDateTime getDateAdded() {
+        return dateAdded;
     }
 }
 

@@ -11,10 +11,12 @@ import java.util.Set;
 //Hvaða fleiri CRUD aðferðir viljum við gera á recipes?
 public interface RecipeService {
     List<Recipe> findAll();
+    List<Recipe> findAllPaginated();
     Recipe save(Recipe recipe);
     Optional<Recipe> findById(int id);
     void delete(Recipe recipe);
     List<Recipe> findByTagsIn(Collection<RecipeTag> tags);
     List<Recipe> findByTitleContainingIgnoreCase(String keyword);
     List<Recipe> findByTitleAndTags(String title, Collection<RecipeTag> tags);
+    List<Recipe> findByDate();
 }
