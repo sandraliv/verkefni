@@ -3,9 +3,13 @@ package com.hi.recipe.verkefni.controllers;
 import com.hi.recipe.verkefni.klasar.Recipe;
 import com.hi.recipe.verkefni.klasar.RecipeTag;
 import com.hi.recipe.verkefni.services.RecipeService;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -45,6 +49,13 @@ public class RecipeController {
         tags.add(RecipeTag.GLUTEN_FREE);
         Recipe r = new Recipe("Oatmeal", "Breakfast oatmeal",  oatmeal, tags);
         recipeService.save(r);
+    }
+
+    @PostMapping("/newRecipe")
+    public ResponseEntity<String> addANewRecipe(@RequestBody Recipe recipe) {
+        // Assuming that the recipe entity has appropriate constructors or setters.
+        recipeService.save(recipe);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Recipe added successfully!");
     }
 
     @GetMapping("recipes/byDate")

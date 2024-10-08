@@ -31,7 +31,7 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     public List<Recipe> findAllPaginated() {
         int page = 0;  
-        int size = 2; 
+        int size = 10; 
 
         Pageable pageable = PageRequest.of(page, size);
         Page<Recipe> recipes = recipeRepository.findAllPaginated(pageable);
