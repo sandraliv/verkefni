@@ -24,6 +24,11 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
+    public List<Recipe> findAll() {
+        return recipeRepository.findAll();
+    }
+
+    @Override
     public List<Recipe> findAllPaginated() {
         int page = 0;  
         int size = 2; 

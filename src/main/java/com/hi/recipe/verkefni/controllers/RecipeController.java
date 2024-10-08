@@ -71,7 +71,7 @@ public class RecipeController {
         
         if ((query == null || query.isEmpty()) && tags == null ) {
             System.out.println("er að prenta allar");
-            return ResponseEntity.ok(recipeService.findAll()); // Fetch and return all recipes
+            return ResponseEntity.ok(recipeService.findAllPaginated()); // Fetch and return all recipes
         } else if (tags == null || tags.isEmpty()) {
             return ResponseEntity.ok(recipeService.findByTitleContainingIgnoreCase(query));
 
