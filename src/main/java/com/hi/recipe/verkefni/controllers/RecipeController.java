@@ -29,7 +29,8 @@ public class RecipeController {
         tags.add(RecipeTag.VEGAN);
         tags.add(RecipeTag.GLUTEN_FREE);
         Recipe r = new Recipe("Samloka", "Samloka með osta og skinku",  pancakeIngredients, tags);
-        recipeService.save(r);
+        Recipe b = recipeService.save(r);
+        System.out.println(b.getDescription());
     }
 
     @GetMapping("/newRecipe")
@@ -58,16 +59,19 @@ public class RecipeController {
         }
     }
 
+    //ÞETTA HÉR ER Í RUGLINU
     //HVERNIG GET ÉG BÚIÐ TIL ÖLL CASE-IN FJÖGUR, QUERY+TAGS/TAGS/QUERY/NONE
     @GetMapping("/recipes")
     public ResponseEntity<List<Recipe>> getFoo(@RequestParam(value="query", required = false) String query, @RequestParam(value="tags", required = false) Collection<RecipeTag> tags){
         // localhost:8000/recipes skilar öllum uppskriftum
         if ((query == null || query.isEmpty()) && tags != null && tags.isEmpty()) {
+            System.out.println("er að prenta allar");
             return ResponseEntity.ok(recipeService.findAll()); // Fetch and return all recipes
         } else if (query == null || query.isEmpty()) {
-            return  ResponseEntity.ok(recipeService.findByTagsIn(tags));
-        }
-        return ResponseEntity.ok(recipeService.findByTitleContainingIgnoreCase(query));
+            return ResponseEntity.ok(recipeService.findAll());
+            //return  ResponseEntity.ok(recipeService.findByTagsIn(tags));
+        }//return ResponseEntity.ok(recipeService.findByTitleContainingIgnoreCase(query));
+        return ResponseEntity.ok(recipeService.findAll());
     }
 
 }
