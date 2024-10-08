@@ -2,11 +2,12 @@ package com.hi.recipe.verkefni.controllers;
 
 import com.hi.recipe.verkefni.klasar.Recipe;
 import com.hi.recipe.verkefni.klasar.RecipeTag;
-import com.hi.recipe.verkefni.repository.RecipeRepository;
 import com.hi.recipe.verkefni.services.RecipeService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
 
@@ -41,8 +42,7 @@ public class RecipeController {
         oatmeal.put("Cinnmon", "2 tbsp");
         oatmeal.put("Sugar", "50g");
         Collection<RecipeTag> tags = new HashSet<>();
-        tags.add(RecipeTag.VEGAN);
-        tags.add(RecipeTag.GLUTEN_FREE);
+        tags.add(RecipeTag.KETO);
         Recipe r = new Recipe("Oatmeal", "Breakfast oatmeal",  oatmeal, tags);
         recipeService.save(r);
     }
@@ -64,14 +64,16 @@ public class RecipeController {
     @GetMapping("/recipes")
     public ResponseEntity<List<Recipe>> getFoo(@RequestParam(value="query", required = false) String query, @RequestParam(value="tags", required = false) Collection<RecipeTag> tags){
         // localhost:8000/recipes skilar öllum uppskriftum
-        if ((query == null || query.isEmpty()) && tags != null && tags.isEmpty()) {
+        if ((query == null || query.isEmpty()) && tags == null ) {
             System.out.println("er að prenta allar");
             return ResponseEntity.ok(recipeService.findAll()); // Fetch and return all recipes
+        } else if (tags == null || tags.isEmpty()) {
+            return ResponseEntity.ok(recipeService.findByTitleContainingIgnoreCase(query));
+
         } else if (query == null || query.isEmpty()) {
-            return ResponseEntity.ok(recipeService.findAll());
-            //return  ResponseEntity.ok(recipeService.findByTagsIn(tags));
-        }//return ResponseEntity.ok(recipeService.findByTitleContainingIgnoreCase(query));
-        return ResponseEntity.ok(recipeService.findAll());
+            return  ResponseEntity.ok(recipeService.findByTagsIn(tags));
+        }
+        return ResponseEntity.ok(recipeService.findByTitleAndTags(query, tags));
     }
 
 }
