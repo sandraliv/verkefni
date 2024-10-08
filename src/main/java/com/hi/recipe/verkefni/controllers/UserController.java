@@ -2,28 +2,34 @@ package com.hi.recipe.verkefni.controllers;
 
 import com.hi.recipe.verkefni.klasar.Recipe;
 import com.hi.recipe.verkefni.klasar.User;
+import com.hi.recipe.verkefni.services.RecipeService;
 import com.hi.recipe.verkefni.services.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
 
 //Ef við erum að fara nota ThymeLeaf þá verður þetta @Controller en ekki @RestController og skilum ekki ResponseEntity
 @RestController
 public class UserController {
+    private final RecipeService recipeService;
     private final UserService userService;
 
     @Autowired
-    public UserController(UserService userService){
+    public UserController(UserService userService, RecipeService recipeService){
         this.userService = userService;
+        this.recipeService = recipeService;
     }
+
 
     /* Notum þetta og breytum úr RestController í Controller þegar við viljum byrja nota Thymeleaf
     @GetMapping("/")
@@ -53,6 +59,26 @@ public class UserController {
     public ResponseEntity<String> addUser(){
         User user = new User("admin", "Ásdís Stefáns", "disa@skvisa.is", "kisi111", "disaskvisa");
         userService.save(user);
+
+        return ResponseEntity.ok("User added successfully");
+    }
+    @GetMapping("/addFavourite")
+    public ResponseEntity<String> addFavourite(){
+        Optional<Recipe> recipe = recipeService.findById(52);
+        Optional<User> user = userService.findById(1);
+        Recipe recipe2 = null;
+        if (recipe.isPresent()) {
+            recipe2 = recipe.get();
+            System.out.println("hihi");
+
+        }
+
+        if (user.isPresent()){
+            User users = user.get();
+            users.setFavourites(recipe2);
+            System.out.println("Hellooo");
+        }
+
         return ResponseEntity.ok("User added successfully");
     }
 

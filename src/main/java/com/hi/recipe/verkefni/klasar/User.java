@@ -2,6 +2,8 @@ package com.hi.recipe.verkefni.klasar;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name="users")
 public class User {
@@ -14,6 +16,13 @@ public class User {
     private int id;
     @Column(unique = true)
     private String username;
+   /* @ManyToMany
+    @JoinTable(
+            name = "user_favourites",  // Join table name
+            joinColumns = @JoinColumn(name = "user_id"),  // Foreign key to User
+            inverseJoinColumns = @JoinColumn(name = "recipe_id")  // Foreign key to Recipe
+    )*/
+    private List<Recipe> favourites;
 
     public User(){
     }
@@ -43,6 +52,14 @@ public class User {
     public String getPassword(){return password;}
 
     public String getUsername(){return username;}
+
+    public List<Recipe> getFavourites(){
+        return favourites;
+    }
+
+    public void setFavourites(Recipe recipe ){
+        favourites.add(recipe);
+    }
 
     public void setId(int id) {
         this.id = id;
