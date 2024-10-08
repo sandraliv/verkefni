@@ -62,6 +62,7 @@ public class UserController {
 
         return ResponseEntity.ok("User added successfully");
     }
+    /*
     @GetMapping("/addFavourite")
     public ResponseEntity<String> addFavourite(){
         Optional<Recipe> recipe = recipeService.findById(52);
@@ -82,6 +83,8 @@ public class UserController {
         return ResponseEntity.ok("User added successfully");
     }
 
+
+     */
     @PostMapping("/Register")
     public ResponseEntity<String> newUser(@RequestBody User user) {
         // Assuming that the recipe entity has appropriate constructors or setters.

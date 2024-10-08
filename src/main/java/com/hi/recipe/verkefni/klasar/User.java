@@ -22,7 +22,9 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),  // Foreign key to User
             inverseJoinColumns = @JoinColumn(name = "recipe_id")  // Foreign key to Recipe
     )*/
+    /*
     private List<Recipe> favourites;
+     */
 
     public User(){
     }
@@ -53,6 +55,7 @@ public class User {
 
     public String getUsername(){return username;}
 
+    /*
     public List<Recipe> getFavourites(){
         return favourites;
     }
@@ -60,6 +63,8 @@ public class User {
     public void setFavourites(Recipe recipe ){
         favourites.add(recipe);
     }
+
+     */
 
     public void setId(int id) {
         this.id = id;
