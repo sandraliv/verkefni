@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
 
-//Ef við erum að fara nota ThymeLeaf þá verður þetta @Controller en ekki @RestController og skilum ekki ResponseEntity
 @RestController
 public class UserController {
     private final UserService userService;
@@ -20,15 +19,6 @@ public class UserController {
     public UserController(UserService userService){
         this.userService = userService;
     }
-
-    /* Notum þetta og breytum úr RestController í Controller þegar við viljum byrja nota Thymeleaf
-    @GetMapping("/")
-    public String getUsers(Model model){
-        model.addAttribute("name", "Jóhanna");
-        return "User";
-    }
-
-     */
 
     @GetMapping("/")
     public ResponseEntity<List<User>> getUserById() {
@@ -40,10 +30,6 @@ public class UserController {
 
         return ResponseEntity.ok(users);
     }
-
-
-
-    //Slóðin localhost:8000/users/addUSer addaði mér inní gagnagrunninn með þessari aðferð hér
 
     @GetMapping("/addUser")
     public ResponseEntity<String> addUser(){
