@@ -30,31 +30,17 @@ public class UserController {
         this.recipeService = recipeService;
     }
 
-
-    /* Notum þetta og breytum úr RestController í Controller þegar við viljum byrja nota Thymeleaf
-    @GetMapping("/")
-    public String getUsers(Model model){
-        model.addAttribute("name", "Jóhanna");
-        return "User";
-    }
-
-     */
-
+    //Get Users - http://localhost:8000/
     @GetMapping("/")
     public ResponseEntity<List<User>> getUserById() {
         List<User> users = userService.findAll();
-
         if (users.isEmpty()) {
             return ResponseEntity.ok(Collections.emptyList());
         }
-
         return ResponseEntity.ok(users);
     }
 
-
-
-    //Slóðin localhost:8000/users/addUSer addaði mér inní gagnagrunninn með þessari aðferð hér
-
+    //This needs fixing - should be Post method
     @GetMapping("/addUser")
     public ResponseEntity<String> addUser(){
         User user = new User("admin", "Ásdís Stefáns", "disa@skvisa.is", "kisi111", "disaskvisa");
@@ -62,6 +48,7 @@ public class UserController {
         return ResponseEntity.ok("User added successfully");
     }
 
+    //This needs fixing - should be Patch method
     @GetMapping("/addFavourite")
     public ResponseEntity<String> addFavourite(){
         Optional<Recipe> recipe = recipeService.findById(52);
@@ -78,10 +65,10 @@ public class UserController {
             userService.save(users);
             System.out.println("Hellooo");
         }
-
         return ResponseEntity.ok("User added successfully");
     }
 
+    //Need handler for bad request
     @PostMapping("/Register")
     public ResponseEntity<String> newUser(@RequestBody User user) {
         // Assuming that the recipe entity has appropriate constructors or setters.
@@ -89,4 +76,11 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body("User added successfully!");
     }
 
+    /* Notum þetta og breytum úr RestController í Controller þegar við viljum byrja nota Thymeleaf
+    @GetMapping("/")
+    public String getUsers(Model model){
+        model.addAttribute("name", "Jóhanna");
+        return "User";
+    }
+     */
 }

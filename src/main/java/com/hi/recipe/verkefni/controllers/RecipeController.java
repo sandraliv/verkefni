@@ -19,10 +19,9 @@ public class RecipeController {
         this.recipeService = recipeService;
     }
 
-    //Post new item [2]
+    //Post new item [2] - need error handler for bad request
     @PostMapping("/newRecipe")
     public ResponseEntity<String> addANewRecipe(@RequestBody Recipe recipe) {
-        // Assuming that the recipe entity has appropriate constructors or setters.
         recipeService.save(recipe);
         return ResponseEntity.status(HttpStatus.CREATED).body("Recipe added successfully!");
     }
@@ -32,7 +31,7 @@ public class RecipeController {
         return ResponseEntity.ok(recipeService.findByDate());
     }
 
-    //Get item based on unique identifier[3]
+    //Get item based on unique identifier[3] - http://localhost:8000/recipes/52
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Recipe>> getRecipeById(@PathVariable int id){
         System.out.println("/{id} = "+id);
@@ -45,7 +44,7 @@ public class RecipeController {
         }
     }
 
-    //Get item[1]
+    //Get item[1] - http://localhost:8000/recipes
     @GetMapping
     public ResponseEntity<List<Recipe>> getFoo(@RequestParam(value="query", required = false) String query, @RequestParam(value="tags", required = false) Set<RecipeTag> tags){
         if ((query == null || query.isEmpty()) && tags == null ) {
@@ -59,10 +58,10 @@ public class RecipeController {
         return ResponseEntity.ok(recipeService.findByTitleAndTags(query, tags));
     }
 
+    //PATCH add tag to recipe[1] - http://localhost:8000/recipes/52/addTag?tag=LOW_CARB
     @PatchMapping("/{id}/addTag")
     public ResponseEntity<String> addTagToRecipe(@PathVariable int id, @RequestParam RecipeTag tag) {
         Optional<Recipe> optionalRecipe = recipeService.findById(id);
-
         if (optionalRecipe.isPresent()) {
             Recipe recipe = optionalRecipe.get();
             recipe.getTags().add(tag);
