@@ -5,6 +5,9 @@ import com.hi.recipe.verkefni.klasar.RecipeTag;
 import com.hi.recipe.verkefni.repository.RecipeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.Collection;
 import java.util.List;
@@ -23,6 +26,19 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     public List<Recipe> findAll() {
         return recipeRepository.findAll();
+    }
+
+    @Override
+    public List<Recipe> findAllPaginated() {
+        int page = 0;  
+        int size = 10; 
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Recipe> recipes = recipeRepository.findAllPaginated(pageable);
+        System.out.println("Total elements: " + recipes.getTotalElements());  // Total number of records
+        System.out.println("Total pages: " + recipes.getTotalPages());
+        List<Recipe> recipeList = recipes.getContent();
+        return recipeList;
     }
 
     @Override
@@ -60,5 +76,18 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     public List<Recipe> findByTitleAndTags(String title, Collection<RecipeTag> tags) {
         return recipeRepository.findByTitleContainingIgnoreCaseAndTagsIn(title, tags);
+    }
+
+    @Override
+    public List<Recipe> findByDate(){
+
+        int page = 0;  
+        int size = 2; 
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Recipe> recipes = recipeRepository.findByDate(pageable);
+
+        List<Recipe> recipeList = recipes.getContent();
+        return recipeList;
     }
 }

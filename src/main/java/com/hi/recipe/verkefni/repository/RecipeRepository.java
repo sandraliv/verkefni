@@ -7,6 +7,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -19,4 +23,10 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
     List<Recipe> findByTagsIn(Collection<RecipeTag> tags);
 
     List<Recipe> findByTitleContainingIgnoreCaseAndTagsIn(String title, Collection<RecipeTag> tags);
+
+    @Query("SELECT r FROM Recipe r ORDER BY dateAdded ASC" )
+    Page<Recipe> findByDate(Pageable pageable);
+
+    @Query("SELECT r FROM Recipe r")
+    Page<Recipe> findAllPaginated(Pageable pageable);
 }
