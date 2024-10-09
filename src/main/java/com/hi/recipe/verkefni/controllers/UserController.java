@@ -59,10 +59,9 @@ public class UserController {
     public ResponseEntity<String> addUser(){
         User user = new User("admin", "Ásdís Stefáns", "disa@skvisa.is", "kisi111", "disaskvisa");
         userService.save(user);
-
         return ResponseEntity.ok("User added successfully");
     }
-    /*
+
     @GetMapping("/addFavourite")
     public ResponseEntity<String> addFavourite(){
         Optional<Recipe> recipe = recipeService.findById(52);
@@ -70,21 +69,19 @@ public class UserController {
         Recipe recipe2 = null;
         if (recipe.isPresent()) {
             recipe2 = recipe.get();
-            System.out.println("hihi");
+            System.out.println(recipe2.getTags());
 
         }
-
         if (user.isPresent()){
             User users = user.get();
             users.setFavourites(recipe2);
+            userService.save(users);
             System.out.println("Hellooo");
         }
 
         return ResponseEntity.ok("User added successfully");
     }
 
-
-     */
     @PostMapping("/Register")
     public ResponseEntity<String> newUser(@RequestBody User user) {
         // Assuming that the recipe entity has appropriate constructors or setters.

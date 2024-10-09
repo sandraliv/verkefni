@@ -31,7 +31,10 @@ public class Recipe {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-     private LocalDateTime dateAdded;
+    private LocalDateTime dateAdded;
+
+    @ManyToMany(mappedBy = "favourites")
+    private List<User> userList;
 
     public Recipe(String title, String description, Map<String, String> ingredients, Collection<RecipeTag> tags) {
         this.title = title;
