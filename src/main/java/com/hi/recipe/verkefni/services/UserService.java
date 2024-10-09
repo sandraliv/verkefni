@@ -10,4 +10,6 @@ public interface UserService {
     User save(User user);
     void delete(User user);
     Optional<User> findById(int id);
+    Optional<User> findByUsername(String username);
+    
 }

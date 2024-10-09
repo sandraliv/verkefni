@@ -76,6 +76,22 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body("User added successfully!");
     }
 
+    @PostMapping("Login")
+    public ResponseEntity<String> login(@RequestBody User user){
+
+        Optional<User> ou = userService.findByUsername(user.getUsername());
+        if(ou.isPresent()){
+            User u = ou.get();
+            if(u.getPassword().equals(user.getPassword())) {
+                return ResponseEntity.status(HttpStatus.FOUND).body("Login successful");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad credentials");
+            }
+        }else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+    }
+
     /* Notum þetta og breytum úr RestController í Controller þegar við viljum byrja nota Thymeleaf
     @GetMapping("/")
     public String getUsers(Model model){
