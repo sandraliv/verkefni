@@ -17,7 +17,7 @@ public class User {
     @Column(unique = true)
     private String username;
 
-   @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+   @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
    @JoinTable(name = "user_recipes",
    joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")}, inverseJoinColumns = {@JoinColumn(name = "recipe_id", referencedColumnName = "id")})
    private List<Recipe> favourites;

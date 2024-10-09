@@ -12,7 +12,7 @@ public class Recipe {
 
     private String description;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name = "ingredient_name")
     @Column(name = "ingredient_quantity")
     @CollectionTable(name = "recipe_ingredients", joinColumns = @JoinColumn(name = "recipe_id"))
@@ -21,7 +21,7 @@ public class Recipe {
     /*Tells hibernate that the tags field is a collection of values that will be stored in a separate table and we are using the RecipeTag enum*/
     //The CollectionTable defines the table(recipe_tags) and column(recipe_id) that will store the relationship between recipes and their tags.
     //The set ensures that there are no duplicates for a recipe
-    @ElementCollection(targetClass = RecipeTag.class)  // To store multiple tags
+    @ElementCollection(targetClass = RecipeTag.class, fetch = FetchType.EAGER)  // To store multiple tags
     @Enumerated(EnumType.STRING)  // Store enums as strings in the database
     @CollectionTable(name = "recipe_tags", joinColumns = @JoinColumn(name = "recipe_id"), uniqueConstraints =  @UniqueConstraint(columnNames = {"recipe_id", "tags"}))
     @Column(name = "tag")  // Define the column name for tags

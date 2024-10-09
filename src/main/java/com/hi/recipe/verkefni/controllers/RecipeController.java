@@ -34,9 +34,7 @@ public class RecipeController {
     //Get item based on unique identifier[3] - http://localhost:8000/recipes/52
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Recipe>> getRecipeById(@PathVariable int id){
-        System.out.println("/{id} = "+id);
         Optional<Recipe> recipe = recipeService.findById(id);
-        System.out.println("Recipe = "+recipe);
         if (recipe.isPresent()) {
             return ResponseEntity.ok(recipe);
         } else {
@@ -46,9 +44,8 @@ public class RecipeController {
 
     //Get item[1] - http://localhost:8000/recipes
     @GetMapping
-    public ResponseEntity<List<Recipe>> getFoo(@RequestParam(value="query", required = false) String query, @RequestParam(value="tags", required = false) Set<RecipeTag> tags){
+    public ResponseEntity<List<Recipe>> getAllRecipes(@RequestParam(value="query", required = false) String query, @RequestParam(value="tags", required = false) Set<RecipeTag> tags){
         if ((query == null || query.isEmpty()) && tags == null ) {
-            System.out.println("er að prenta allar");
             return ResponseEntity.ok(recipeService.findAllPaginated()); // Fetch and return all recipes
         } else if (tags == null || tags.isEmpty()) {
             return ResponseEntity.ok(recipeService.findByTitleContainingIgnoreCase(query));
@@ -71,20 +68,4 @@ public class RecipeController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Recipe not found.");
         }
     }
-    /* Úrelt sjá PostMapping aðferð fyrir neðan.
-    @GetMapping("/newRecipe")
-    public void addANewRecipe(@RequestParam(value="query", required = false) String query){
-        Map<String, String> oatmeal = new HashMap<>();
-        oatmeal.put("Oats", "200g");
-        oatmeal.put("Oatmilk", "300ml");
-        oatmeal.put("Cinnmon", "2 tbsp");
-        oatmeal.put("Sugar", "50g");
-        Collection<RecipeTag> tags = new HashSet<>();
-        tags.add(RecipeTag.VEGAN);
-        tags.add(RecipeTag.GLUTEN_FREE);
-        Recipe r = new Recipe("Oatmeal", "Breakfast oatmeal",  oatmeal, tags);
-        recipeService.save(r);
-    }
-     */
-
 }
