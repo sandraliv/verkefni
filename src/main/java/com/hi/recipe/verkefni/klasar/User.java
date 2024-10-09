@@ -2,10 +2,7 @@ package com.hi.recipe.verkefni.klasar;
 
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name="users")
@@ -19,12 +16,7 @@ public class User {
     private int id;
     @Column(unique = true)
     private String username;
-   /* @ManyToMany (
-    @JoinTable(
-            name = "user_favourites",  // Join table name
-            joinColumns = @JoinColumn(name = "user_id"),  // Foreign key to User
-            inverseJoinColumns = @JoinColumn(name = "recipe_id")  // Foreign key to Recipe
-    )*/
+
    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
    @JoinTable(name = "user_recipes",
    joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")}, inverseJoinColumns = {@JoinColumn(name = "recipe_id", referencedColumnName = "id")})
@@ -58,7 +50,6 @@ public class User {
     public String getPassword(){return password;}
 
     public String getUsername(){return username;}
-
 
     public List<Recipe> getFavourites(){
         return favourites;

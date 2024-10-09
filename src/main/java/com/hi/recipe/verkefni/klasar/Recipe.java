@@ -23,9 +23,9 @@ public class Recipe {
     //The set ensures that there are no duplicates for a recipe
     @ElementCollection(targetClass = RecipeTag.class)  // To store multiple tags
     @Enumerated(EnumType.STRING)  // Store enums as strings in the database
-    @CollectionTable(name = "recipe_tags", joinColumns = @JoinColumn(name = "recipe_id"))
+    @CollectionTable(name = "recipe_tags", joinColumns = @JoinColumn(name = "recipe_id"), uniqueConstraints =  @UniqueConstraint(columnNames = {"recipe_id", "tags"}))
     @Column(name = "tag")  // Define the column name for tags
-    private Collection<RecipeTag> tags = new HashSet<>();  // Multiple tags
+    private Set<RecipeTag> tags = new HashSet<>();  // Multiple tags
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -36,7 +36,7 @@ public class Recipe {
     @ManyToMany(mappedBy = "favourites")
     private List<User> userList;
 
-    public Recipe(String title, String description, Map<String, String> ingredients, Collection<RecipeTag> tags) {
+    public Recipe(String title, String description, Map<String, String> ingredients, Set<RecipeTag> tags) {
         this.title = title;
         this.description = description;
         this.ingredients = ingredients;

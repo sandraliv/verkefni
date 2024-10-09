@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class RecipeServiceImpl implements RecipeService {
@@ -57,7 +58,7 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public List<Recipe> findByTagsIn(Collection<RecipeTag> tags) {
+    public List<Recipe> findByTagsIn(Set<RecipeTag> tags) {
         return recipeRepository.findByTagsIn(tags);
     }
 
@@ -74,7 +75,7 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public List<Recipe> findByTitleAndTags(String title, Collection<RecipeTag> tags) {
+    public List<Recipe> findByTitleAndTags(String title, Set<RecipeTag> tags) {
         return recipeRepository.findByTitleContainingIgnoreCaseAndTagsIn(title, tags);
     }
 
