@@ -186,6 +186,25 @@
 			"response": []
 		},
 		{
+			"name": "add new Fav",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/recipes/253/addAsFav",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"recipes",
+						"253",
+						"addAsFav"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "get favs",
 			"request": {
 				"method": "GET",

@@ -4,6 +4,11 @@ import com.hi.recipe.verkefni.klasar.Recipe;
 import com.hi.recipe.verkefni.klasar.RecipeTag;
 import com.hi.recipe.verkefni.services.RecipeService;
 
+import com.hi.recipe.verkefni.klasar.User;
+import com.hi.recipe.verkefni.services.UserService;
+
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +19,11 @@ import java.util.*;
 @RequestMapping("/recipes")
 public class RecipeController {
     private final RecipeService recipeService;
+    private final UserService userService;
 
-    public RecipeController(RecipeService recipeService){
+    public RecipeController(RecipeService recipeService, UserService userService){
         this.recipeService = recipeService;
+        this.userService = userService;
     }
 
     //Post new item [2] - need error handler for bad request
@@ -42,6 +49,24 @@ public class RecipeController {
         }
     }
 
+    @PostMapping("/{id}/addAsFav")
+    public ResponseEntity<String> addRecipeToFav(@PathVariable int id, HttpSession session){
+        Optional<Recipe> or = recipeService.findById(id);
+        Recipe recipe;
+        if(or.isPresent()){
+            recipe = or.get();
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Problem adding facvourite");
+        }
+        User user = (User)session.getAttribute("user");
+        if(user != null){
+            user.setFavourites(recipe);
+            userService.save(user);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Favourite added to logged in user");
+        }else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Could not update user");
+        }
+    }
     //Get item[1] - http://localhost:8000/recipes
     @GetMapping
     public ResponseEntity<List<Recipe>> getAllRecipes(@RequestParam(value="query", required = false) String query, @RequestParam(value="tags", required = false) Set<RecipeTag> tags){
