@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -110,6 +111,20 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);  // If no user is found, return an error
         }
     }
+
+    // http://localhost:8000/users/2
+    // Get user profile by ID - http://localhost:8000/users/2
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<User>> getUserProfileById(@PathVariable int id) {
+        Optional<User> userProfile = userService.findById(id);
+        
+        if (userProfile.isPresent()) {
+            return ResponseEntity.ok(userProfile);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+        }
+    
 
     /* Notum þetta og breytum úr RestController í Controller þegar við viljum byrja nota Thymeleaf
     @GetMapping("/")
