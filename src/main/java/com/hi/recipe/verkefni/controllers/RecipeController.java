@@ -33,6 +33,18 @@ public class RecipeController {
         return ResponseEntity.status(HttpStatus.CREATED).body("Recipe added successfully!");
     }
 
+    @PatchMapping("{id}")
+    public ResponseEntity<String> updateRecipe(@PathVariable int id, @RequestBody Recipe recipe){
+        Optional<Recipe> or = recipeService.findById(id);
+        if(or.isPresent()) {
+            Recipe r = or.get();
+            r = recipe;
+            recipeService.save(r);
+            return ResponseEntity.status(200).body("Recipe updated!");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body("Could not update recipe");
+    }
+
     @GetMapping("/byDate")
     public ResponseEntity<List<Recipe>> getRecipesByDate(){
         return ResponseEntity.ok(recipeService.findByDate());
@@ -48,7 +60,12 @@ public class RecipeController {
             return ResponseEntity.notFound().build();
         }
     }
-
+    @DeleteMapping("{id}")
+    public ResponseEntity<String> deleteRecipe(@PathVariable int id){
+        recipeService.deleteById(id);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Problem deleting recipe");
+    }
+    
     @PostMapping("/{id}/addAsFav")
     public ResponseEntity<String> addRecipeToFav(@PathVariable int id, HttpSession session){
         Optional<Recipe> or = recipeService.findById(id);

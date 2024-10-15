@@ -30,6 +30,10 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
+    public void deleteById(int id){
+        recipeRepository.deleteById(id);
+    }
+    @Override
     public List<Recipe> findAllPaginated() {
         int page = 0;  
         int size = 10; 

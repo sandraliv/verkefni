@@ -13,6 +13,7 @@ public interface RecipeService {
     Recipe save(Recipe recipe);
     Optional<Recipe> findById(int id);
     void delete(Recipe recipe);
+    void deleteById(int id);
     List<Recipe> findByTagsIn(Set<RecipeTag> tags);
     List<Recipe> findByTitleContainingIgnoreCase(String keyword);
     List<Recipe> findByTitleAndTags(String title, Set<RecipeTag> tags);
