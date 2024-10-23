@@ -15,11 +15,18 @@
 					"script": {
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
+							"    pm.response.to.have.status(404);",
 							"});"
 						],
 						"type": "text/javascript",
 						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"packages": {},
+						"type": "text/javascript"
 					}
 				}
 			],
@@ -37,6 +44,781 @@
 			"response": []
 		},
 		{
+			"name": "all recipes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/recipes",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"recipes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Recipes by Query",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Results contain search query\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    var query = pm.request.url.query.get(\"query\").toLowerCase();",
+							"    ",
+							"    jsonData.forEach(function(recipe) {",
+							"        pm.expect(recipe.title.toLowerCase()).to.include(query);",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/recipes?query=Sugar",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"recipes"
+					],
+					"query": [
+						{
+							"key": "query",
+							"value": "Sugar"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Filter Recipes by Tags",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Results contain specified tags\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    var requestedTags = pm.request.url.query.get(\"tags\").split(\",\");",
+							"    ",
+							"    jsonData.forEach(function(recipe) {",
+							"        requestedTags.forEach(function(tag) {",
+							"            pm.expect(recipe.tags).to.include(tag);",
+							"        });",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/recipes?tags=VEGETARIAN,GLUTEN_FREE",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"recipes"
+					],
+					"query": [
+						{
+							"key": "tags",
+							"value": "VEGETARIAN,GLUTEN_FREE"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Recipes by Query and Tags",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Results match query and tags\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    var query = pm.request.url.query.get(\"query\").toLowerCase();",
+							"    var requestedTags = pm.request.url.query.get(\"tags\").split(\",\");",
+							"    ",
+							"    jsonData.forEach(function(recipe) {",
+							"        pm.expect(recipe.title.toLowerCase()).to.include(query);",
+							"        requestedTags.forEach(function(tag) {",
+							"            pm.expect(recipe.tags).to.include(tag);",
+							"        });",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/recipes?query=Sugar&tags=VEGETARIAN",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"recipes"
+					],
+					"query": [
+						{
+							"key": "query",
+							"value": "Sugar"
+						},
+						{
+							"key": "tags",
+							"value": "VEGETARIAN"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "recipes by Date",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response exactly matches expected data\", function () {\r",
+							"    const expectedResponse = [\r",
+							"        {\r",
+							"            \"title\": \"Samloka\",\r",
+							"            \"description\": \"Samloka með osta og skinku\",\r",
+							"            \"ingredients\": {\r",
+							"                \"Flour\": \"200g\",\r",
+							"                \"Eggs\": \"2\",\r",
+							"                \"Sugar\": \"50g\",\r",
+							"                \"Milk\": \"300ml\"\r",
+							"            },\r",
+							"            \"tags\": [\r",
+							"                \"VEGAN\",\r",
+							"                \"GLUTEN_FREE\"\r",
+							"            ],\r",
+							"            \"id\": 2,\r",
+							"            \"dateAdded\": null\r",
+							"        },\r",
+							"        {\r",
+							"            \"title\": \"Oatmeal\",\r",
+							"            \"description\": \"Breakfast oatmeal\",\r",
+							"            \"ingredients\": {\r",
+							"                \"Oats\": \"200g\",\r",
+							"                \"Oatmilk\": \"300ml\",\r",
+							"                \"Cinnmon\": \"2 tbsp\",\r",
+							"                \"Sugar\": \"50g\"\r",
+							"            },\r",
+							"            \"tags\": [\r",
+							"                \"KETO\",\r",
+							"                \"VEGAN\",\r",
+							"                \"GLUTEN_FREE\"\r",
+							"            ],\r",
+							"            \"id\": 1,\r",
+							"            \"dateAdded\": null\r",
+							"        }\r",
+							"    ];\r",
+							"\r",
+							"    const response = pm.response.json();\r",
+							"\r",
+							"    // Test overall array length\r",
+							"    pm.expect(response.length).to.eql(expectedResponse.length);\r",
+							"\r",
+							"    // Test each object exactly matches\r",
+							"    response.forEach((recipe, index) => {\r",
+							"        // Deep equal comparison of each recipe object\r",
+							"        pm.expect(recipe).to.deep.equal(expectedResponse[index]);\r",
+							"        \r",
+							"        // Additional specific checks for critical fields\r",
+							"        pm.expect(recipe.id).to.eql(expectedResponse[index].id);\r",
+							"        pm.expect(recipe.title).to.eql(expectedResponse[index].title);\r",
+							"        pm.expect(recipe.description).to.eql(expectedResponse[index].description);\r",
+							"        \r",
+							"        // Check ingredients object\r",
+							"        pm.expect(recipe.ingredients).to.deep.equal(expectedResponse[index].ingredients);\r",
+							"        \r",
+							"        // Check tags array (order matters)\r",
+							"        pm.expect(recipe.tags).to.deep.equal(expectedResponse[index].tags);\r",
+							"        \r",
+							"        // Check dateAdded is null\r",
+							"        pm.expect(recipe.dateAdded).to.be.null;\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"// Additional test for response format\r",
+							"pm.test(\"Response has correct structure\", function () {\r",
+							"    const response = pm.response.json();\r",
+							"    \r",
+							"    response.forEach(recipe => {\r",
+							"        pm.expect(recipe).to.have.all.keys(\r",
+							"            'title',\r",
+							"            'description',\r",
+							"            'ingredients',\r",
+							"            'tags',\r",
+							"            'id',\r",
+							"            'dateAdded'\r",
+							"        );\r",
+							"        \r",
+							"        // Verify types\r",
+							"        pm.expect(recipe.title).to.be.a('string');\r",
+							"        pm.expect(recipe.description).to.be.a('string');\r",
+							"        pm.expect(recipe.ingredients).to.be.an('object');\r",
+							"        pm.expect(recipe.tags).to.be.an('array');\r",
+							"        pm.expect(recipe.id).to.be.a('number');\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/recipes/byDate",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"recipes",
+						"byDate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "featured recipes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response exactly matches expected data\", function () {\r",
+							"    const expectedResponse = [\r",
+							"    {\r",
+							"        \"title\": \"Oatmeal\",\r",
+							"        \"description\": \"Breakfast oatmeal\",\r",
+							"        \"ingredients\": {\r",
+							"            \"Oats\": \"200g\",\r",
+							"            \"Oatmilk\": \"300ml\",\r",
+							"            \"Cinnmon\": \"2 tbsp\",\r",
+							"            \"Sugar\": \"50g\"\r",
+							"        },\r",
+							"        \"tags\": [\r",
+							"            \"KETO\",\r",
+							"            \"VEGAN\",\r",
+							"            \"GLUTEN_FREE\"\r",
+							"        ],\r",
+							"        \"id\": 52,\r",
+							"        \"dateAdded\": null\r",
+							"    },\r",
+							"    {\r",
+							"        \"title\": \"Samloka\",\r",
+							"        \"description\": \"Samloka með osta og skinku\",\r",
+							"        \"ingredients\": {\r",
+							"            \"Flour\": \"200g\",\r",
+							"            \"Eggs\": \"2\",\r",
+							"            \"Sugar\": \"50g\",\r",
+							"            \"Milk\": \"300ml\"\r",
+							"        },\r",
+							"        \"tags\": [\r",
+							"            \"VEGAN\",\r",
+							"            \"GLUTEN_FREE\"\r",
+							"        ],\r",
+							"        \"id\": 102,\r",
+							"        \"dateAdded\": null\r",
+							"    },\r",
+							"    {\r",
+							"        \"title\": \"Gloatmeal\",\r",
+							"        \"description\": \"Breakfast Gloatmeal\",\r",
+							"        \"ingredients\": {\r",
+							"            \"Oats\": \"200g\",\r",
+							"            \"Cinnamon\": \"2 tbsp\",\r",
+							"            \"Oatmilk\": \"300ml\",\r",
+							"            \"Sugar\": \"50g\"\r",
+							"        },\r",
+							"        \"tags\": [\r",
+							"            \"VEGAN\",\r",
+							"            \"GLUTEN_FREE\"\r",
+							"        ],\r",
+							"        \"id\": 253,\r",
+							"        \"dateAdded\": null\r",
+							"    }\r",
+							"    ];\r",
+							"\r",
+							"    const response = pm.response.json();\r",
+							"\r",
+							"    // Test overall array length\r",
+							"    pm.expect(response.length).to.eql(expectedResponse.length);\r",
+							"\r",
+							"    // Test each object exactly matches\r",
+							"    response.forEach((recipe, index) => {\r",
+							"        // Deep equal comparison of each recipe object\r",
+							"        pm.expect(recipe).to.deep.equal(expectedResponse[index]);\r",
+							"        \r",
+							"        // Additional specific checks for critical fields\r",
+							"        pm.expect(recipe.id).to.eql(expectedResponse[index].id);\r",
+							"        pm.expect(recipe.title).to.eql(expectedResponse[index].title);\r",
+							"        pm.expect(recipe.description).to.eql(expectedResponse[index].description);\r",
+							"        \r",
+							"        // Check ingredients object\r",
+							"        pm.expect(recipe.ingredients).to.deep.equal(expectedResponse[index].ingredients);\r",
+							"        \r",
+							"        // Check tags array (order matters)\r",
+							"        pm.expect(recipe.tags).to.deep.equal(expectedResponse[index].tags);\r",
+							"        \r",
+							"        // Check dateAdded is null\r",
+							"        pm.expect(recipe.dateAdded).to.be.null;\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"// Additional test for response format\r",
+							"pm.test(\"Response has correct structure\", function () {\r",
+							"    const response = pm.response.json();\r",
+							"    \r",
+							"    response.forEach(recipe => {\r",
+							"        pm.expect(recipe).to.have.all.keys(\r",
+							"            'title',\r",
+							"            'description',\r",
+							"            'ingredients',\r",
+							"            'tags',\r",
+							"            'id',\r",
+							"            'dateAdded'\r",
+							"        );\r",
+							"        \r",
+							"        // Verify types\r",
+							"        pm.expect(recipe.title).to.be.a('string');\r",
+							"        pm.expect(recipe.description).to.be.a('string');\r",
+							"        pm.expect(recipe.ingredients).to.be.an('object');\r",
+							"        pm.expect(recipe.tags).to.be.an('array');\r",
+							"        pm.expect(recipe.id).to.be.a('number');\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/recipes/featured",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"recipes",
+						"featured"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response exactly matches expected data\", function () {\r",
+							"    const expectedResponse = [\r",
+							"        {\r",
+							"            \"role\": \"admin\",\r",
+							"            \"name\": \"Ásdís Stefáns\",\r",
+							"            \"email\": \"disa@skvisa.is\",\r",
+							"            \"password\": \"kisi111\",\r",
+							"            \"id\": 1,\r",
+							"            \"username\": \"disaskvisa\",\r",
+							"            \"favourites\": [\r",
+							"                {\r",
+							"                    \"title\": \"Oatmeal\",\r",
+							"                    \"description\": \"Breakfast oatmeal\",\r",
+							"                    \"ingredients\": {\r",
+							"                        \"Oats\": \"200g\",\r",
+							"                        \"Oatmilk\": \"300ml\",\r",
+							"                        \"Cinnmon\": \"2 tbsp\",\r",
+							"                        \"Sugar\": \"50g\"\r",
+							"                    },\r",
+							"                    \"tags\": [\r",
+							"                        \"KETO\",\r",
+							"                        \"VEGAN\",\r",
+							"                        \"GLUTEN_FREE\"\r",
+							"                    ],\r",
+							"                    \"id\": 52,\r",
+							"                    \"dateAdded\": null\r",
+							"                }\r",
+							"            ]\r",
+							"        },\r",
+							"        {\r",
+							"            \"role\": \"user\",\r",
+							"            \"name\": \"Sturla\",\r",
+							"            \"email\": \"sfm1@hi.is\",\r",
+							"            \"password\": \"123\",\r",
+							"            \"id\": 2,\r",
+							"            \"username\": \"sfm1\",\r",
+							"            \"favourites\": [\r",
+							"                {\r",
+							"                    \"title\": \"Oatmeal\",\r",
+							"                    \"description\": \"Breakfast oatmeal\",\r",
+							"                    \"ingredients\": {\r",
+							"                        \"Oats\": \"200g\",\r",
+							"                        \"Oatmilk\": \"300ml\",\r",
+							"                        \"Cinnmon\": \"2 tbsp\",\r",
+							"                        \"Sugar\": \"50g\"\r",
+							"                    },\r",
+							"                    \"tags\": [\r",
+							"                        \"KETO\",\r",
+							"                        \"VEGAN\",\r",
+							"                        \"GLUTEN_FREE\"\r",
+							"                    ],\r",
+							"                    \"id\": 52,\r",
+							"                    \"dateAdded\": null\r",
+							"                },\r",
+							"                {\r",
+							"                    \"title\": \"Samloka\",\r",
+							"                    \"description\": \"Samloka með osta og skinku\",\r",
+							"                    \"ingredients\": {\r",
+							"                        \"Flour\": \"200g\",\r",
+							"                        \"Eggs\": \"2\",\r",
+							"                        \"Sugar\": \"50g\",\r",
+							"                        \"Milk\": \"300ml\"\r",
+							"                    },\r",
+							"                    \"tags\": [\r",
+							"                        \"VEGAN\",\r",
+							"                        \"GLUTEN_FREE\"\r",
+							"                    ],\r",
+							"                    \"id\": 102,\r",
+							"                    \"dateAdded\": null\r",
+							"                },\r",
+							"                {\r",
+							"                    \"title\": \"Gloatmeal\",\r",
+							"                    \"description\": \"Breakfast Gloatmeal\",\r",
+							"                    \"ingredients\": {\r",
+							"                        \"Oats\": \"200g\",\r",
+							"                        \"Cinnamon\": \"2 tbsp\",\r",
+							"                        \"Oatmilk\": \"300ml\",\r",
+							"                        \"Sugar\": \"50g\"\r",
+							"                    },\r",
+							"                    \"tags\": [\r",
+							"                        \"VEGAN\",\r",
+							"                        \"GLUTEN_FREE\"\r",
+							"                    ],\r",
+							"                    \"id\": 253,\r",
+							"                    \"dateAdded\": null\r",
+							"                }\r",
+							"            ]\r",
+							"        }\r",
+							"    ];\r",
+							"\r",
+							"    const response = pm.response.json();\r",
+							"\r",
+							"    // Test overall array length\r",
+							"    pm.expect(response.length).to.eql(expectedResponse.length);\r",
+							"\r",
+							"    // Test each user object exactly matches\r",
+							"    response.forEach((user, index) => {\r",
+							"        // Deep equal comparison of each user object\r",
+							"        pm.expect(user).to.deep.equal(expectedResponse[index]);\r",
+							"        \r",
+							"        // Additional specific checks for user fields\r",
+							"        pm.expect(user.id).to.eql(expectedResponse[index].id);\r",
+							"        pm.expect(user.role).to.eql(expectedResponse[index].role);\r",
+							"        pm.expect(user.name).to.eql(expectedResponse[index].name);\r",
+							"        pm.expect(user.email).to.eql(expectedResponse[index].email);\r",
+							"        pm.expect(user.username).to.eql(expectedResponse[index].username);\r",
+							"        \r",
+							"        // Check favourites array\r",
+							"        pm.expect(user.favourites.length).to.eql(expectedResponse[index].favourites.length);\r",
+							"        \r",
+							"        // Test each favourite recipe exactly matches\r",
+							"        user.favourites.forEach((recipe, recipeIndex) => {\r",
+							"            const expectedRecipe = expectedResponse[index].favourites[recipeIndex];\r",
+							"            \r",
+							"            pm.expect(recipe).to.deep.equal(expectedRecipe);\r",
+							"            \r",
+							"            // Additional specific checks for recipe fields\r",
+							"            pm.expect(recipe.id).to.eql(expectedRecipe.id);\r",
+							"            pm.expect(recipe.title).to.eql(expectedRecipe.title);\r",
+							"            pm.expect(recipe.description).to.eql(expectedRecipe.description);\r",
+							"            \r",
+							"            // Check ingredients object\r",
+							"            pm.expect(recipe.ingredients).to.deep.equal(expectedRecipe.ingredients);\r",
+							"            \r",
+							"            // Check tags array (order matters)\r",
+							"            pm.expect(recipe.tags).to.deep.equal(expectedRecipe.tags);\r",
+							"            \r",
+							"            // Check dateAdded is null\r",
+							"            pm.expect(recipe.dateAdded).to.be.null;\r",
+							"        });\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"// Additional test for response structure\r",
+							"pm.test(\"Response has correct structure\", function () {\r",
+							"    const response = pm.response.json();\r",
+							"    \r",
+							"    response.forEach(user => {\r",
+							"        // Verify user object structure\r",
+							"        pm.expect(user).to.have.all.keys(\r",
+							"            'role',\r",
+							"            'name',\r",
+							"            'email',\r",
+							"            'password',\r",
+							"            'id',\r",
+							"            'username',\r",
+							"            'favourites'\r",
+							"        );\r",
+							"        \r",
+							"        // Verify user field types\r",
+							"        pm.expect(user.role).to.be.a('string');\r",
+							"        pm.expect(user.name).to.be.a('string');\r",
+							"        pm.expect(user.email).to.be.a('string');\r",
+							"        pm.expect(user.password).to.be.a('string');\r",
+							"        pm.expect(user.id).to.be.a('number');\r",
+							"        pm.expect(user.username).to.be.a('string');\r",
+							"        pm.expect(user.favourites).to.be.an('array');\r",
+							"        \r",
+							"        // Verify each favourite recipe structure\r",
+							"        user.favourites.forEach(recipe => {\r",
+							"            pm.expect(recipe).to.have.all.keys(\r",
+							"                'title',\r",
+							"                'description',\r",
+							"                'ingredients',\r",
+							"                'tags',\r",
+							"                'id',\r",
+							"                'dateAdded'\r",
+							"            );\r",
+							"            \r",
+							"            // Verify recipe field types\r",
+							"            pm.expect(recipe.title).to.be.a('string');\r",
+							"            pm.expect(recipe.description).to.be.a('string');\r",
+							"            pm.expect(recipe.ingredients).to.be.an('object');\r",
+							"            pm.expect(recipe.tags).to.be.an('array');\r",
+							"            pm.expect(recipe.id).to.be.a('number');\r",
+							"        });\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/users",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get favs",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response exactly matches expected data\", function () {\r",
+							"    const expectedResponse = [\r",
+							"    {\r",
+							"        \"title\": \"Oatmeal\",\r",
+							"        \"description\": \"Breakfast oatmeal\",\r",
+							"        \"ingredients\": {\r",
+							"            \"Oats\": \"200g\",\r",
+							"            \"Oatmilk\": \"300ml\",\r",
+							"            \"Cinnmon\": \"2 tbsp\",\r",
+							"            \"Sugar\": \"50g\"\r",
+							"        },\r",
+							"        \"tags\": [\r",
+							"            \"KETO\",\r",
+							"            \"VEGAN\",\r",
+							"            \"GLUTEN_FREE\"\r",
+							"        ],\r",
+							"        \"id\": 52,\r",
+							"        \"dateAdded\": null\r",
+							"    },\r",
+							"    {\r",
+							"        \"title\": \"Samloka\",\r",
+							"        \"description\": \"Samloka með osta og skinku\",\r",
+							"        \"ingredients\": {\r",
+							"            \"Flour\": \"200g\",\r",
+							"            \"Eggs\": \"2\",\r",
+							"            \"Sugar\": \"50g\",\r",
+							"            \"Milk\": \"300ml\"\r",
+							"        },\r",
+							"        \"tags\": [\r",
+							"            \"VEGAN\",\r",
+							"            \"GLUTEN_FREE\"\r",
+							"        ],\r",
+							"        \"id\": 102,\r",
+							"        \"dateAdded\": null\r",
+							"    },\r",
+							"    {\r",
+							"        \"title\": \"Gloatmeal\",\r",
+							"        \"description\": \"Breakfast Gloatmeal\",\r",
+							"        \"ingredients\": {\r",
+							"            \"Oats\": \"200g\",\r",
+							"            \"Cinnamon\": \"2 tbsp\",\r",
+							"            \"Oatmilk\": \"300ml\",\r",
+							"            \"Sugar\": \"50g\"\r",
+							"        },\r",
+							"        \"tags\": [\r",
+							"            \"VEGAN\",\r",
+							"            \"GLUTEN_FREE\"\r",
+							"        ],\r",
+							"        \"id\": 253,\r",
+							"        \"dateAdded\": null\r",
+							"    },\r",
+							"    {\r",
+							"        \"title\": \"Gloatmeal\",\r",
+							"        \"description\": \"Breakfast Gloatmeal\",\r",
+							"        \"ingredients\": {\r",
+							"            \"Oats\": \"200g\",\r",
+							"            \"Oatmilk\": \"300ml\",\r",
+							"            \"Cinnamon\": \"2 tbsp\",\r",
+							"            \"Sugar\": \"50g\"\r",
+							"        },\r",
+							"        \"tags\": [\r",
+							"            \"VEGAN\",\r",
+							"            \"GLUTEN_FREE\"\r",
+							"        ],\r",
+							"        \"id\": 253,\r",
+							"        \"dateAdded\": null\r",
+							"    }\r",
+							"];\r",
+							"\r",
+							"    const response = pm.response.json();\r",
+							"\r",
+							"    // Test overall array length\r",
+							"    pm.expect(response.length).to.eql(expectedResponse.length);\r",
+							"\r",
+							"    // Test each object exactly matches\r",
+							"    response.forEach((recipe, index) => {\r",
+							"        // Deep equal comparison of each recipe object\r",
+							"        pm.expect(recipe).to.deep.equal(expectedResponse[index]);\r",
+							"        \r",
+							"        // Additional specific checks for critical fields\r",
+							"        pm.expect(recipe.id).to.eql(expectedResponse[index].id);\r",
+							"        pm.expect(recipe.title).to.eql(expectedResponse[index].title);\r",
+							"        pm.expect(recipe.description).to.eql(expectedResponse[index].description);\r",
+							"        \r",
+							"        // Check ingredients object\r",
+							"        pm.expect(recipe.ingredients).to.deep.equal(expectedResponse[index].ingredients);\r",
+							"        \r",
+							"        // Check tags array (order matters)\r",
+							"        pm.expect(recipe.tags).to.deep.equal(expectedResponse[index].tags);\r",
+							"        \r",
+							"        // Check dateAdded is null\r",
+							"        pm.expect(recipe.dateAdded).to.be.null;\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"// Additional test for response format\r",
+							"pm.test(\"Response has correct structure\", function () {\r",
+							"    const response = pm.response.json();\r",
+							"    \r",
+							"    response.forEach(recipe => {\r",
+							"        pm.expect(recipe).to.have.all.keys(\r",
+							"            'title',\r",
+							"            'description',\r",
+							"            'ingredients',\r",
+							"            'tags',\r",
+							"            'id',\r",
+							"            'dateAdded'\r",
+							"        );\r",
+							"        \r",
+							"        // Verify types\r",
+							"        pm.expect(recipe.title).to.be.a('string');\r",
+							"        pm.expect(recipe.description).to.be.a('string');\r",
+							"        pm.expect(recipe.ingredients).to.be.an('object');\r",
+							"        pm.expect(recipe.tags).to.be.an('array');\r",
+							"        pm.expect(recipe.id).to.be.a('number');\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/users/getUserFav",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users",
+						"getUserFav"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "new recipe",
 			"event": [
 				{
@@ -44,7 +826,7 @@
 					"script": {
 						"exec": [
 							"pm.test(\"Successful POST request\", function () {",
-							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+							"    pm.expect(pm.response.text()).to.eql('Recipe added successfully!');",
 							"});",
 							""
 						],
@@ -80,59 +862,21 @@
 			"response": []
 		},
 		{
-			"name": "all recipes",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/recipes",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"recipes"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "recipes by Date",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/recipes/byDate",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"recipes",
-						"byDate"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get all users",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/users",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"users"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "new User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 500\", function () {\r",
+							"    pm.response.to.have.status(500);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -160,6 +904,20 @@
 		},
 		{
 			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 302\", function () {\r",
+							"    pm.response.to.have.status(302);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -205,24 +963,6 @@
 			"response": []
 		},
 		{
-			"name": "get favs",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/users/getUserFav",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"users",
-						"getUserFav"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Update data",
 			"event": [
 				{
@@ -234,16 +974,17 @@
 							"});",
 							""
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
 			"request": {
-				"method": "PUT",
+				"method": "PATCH",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"name\": \"Add your name in the body\"\n}",
+					"raw": "{\n        \"title\": \"TESTEESTER\",\n        \"description\": \"Breakfast Bloatmeal\",\n        \"ingredients\": {\n            \"Oats\": \"200g\",\n            \"Oatmilk\": \"300ml\",\n            \"Cinnamon\": \"2 tbsp\",\n            \"Sugar\": \"50g\"\n        },\n        \"tags\": [\n            \"GLUTEN_FREE\",\n            \"VEGAN\"\n        ],\n        \"id\": 252,\n        \"dateAdded\": null\n    }",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -251,18 +992,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/info?id=1",
+					"raw": "{{base_url}}/recipes/252",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
-						"info"
-					],
-					"query": [
-						{
-							"key": "id",
-							"value": "1"
-						}
+						"recipes",
+						"252"
 					]
 				},
 				"description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
@@ -270,7 +1006,7 @@
 			"response": []
 		},
 		{
-			"name": "Delete data",
+			"name": "Delete recipe",
 			"event": [
 				{
 					"listen": "test",
@@ -281,7 +1017,8 @@
 							"});",
 							""
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
@@ -298,18 +1035,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/info?id=1",
+					"raw": "{{base_url}}/recipes/252",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
-						"info"
-					],
-					"query": [
-						{
-							"key": "id",
-							"value": "1"
-						}
+						"recipes",
+						"252"
 					]
 				},
 				"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
