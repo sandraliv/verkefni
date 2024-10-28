@@ -75,13 +75,21 @@ public class UserController {
     /**
      * Registers a new user in the system
      * @param user The user object containing registration details
-     * @return Success message if user created, error if registration fails
+     * @return Success message if user created, error if user already exists
      */
     @PostMapping("/Register")
     public ResponseEntity<String> newUser(@RequestBody User user) {
+        // Check if user already exists by email or username
+        Optional<User> existingUser = userService.findByEmail(user.getEmail());
+        if (existingUser.isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("User already registered with this email.");
+        }
+
+        // Save the new user if not already registered
         userService.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body("User added successfully!");
     }
+
 
     /**
      * Authenticates a user and creates a session

@@ -2,6 +2,7 @@ package com.hi.recipe.verkefni.services;
 
 import com.hi.recipe.verkefni.klasar.Recipe;
 import com.hi.recipe.verkefni.klasar.RecipeTag;
+import com.hi.recipe.verkefni.klasar.User;
 
 import java.util.List;
 import java.util.Optional;
