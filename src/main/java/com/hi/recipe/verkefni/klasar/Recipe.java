@@ -69,6 +69,10 @@ public class Recipe {
         return id;
     }
 
+    public void setDescription(String description) {
+        this.description = this.description;
+    }
+
     public Map<String, String> getIngredients() {
         return ingredients;
     }

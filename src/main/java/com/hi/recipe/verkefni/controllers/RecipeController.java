@@ -129,10 +129,11 @@ public class RecipeController {
     public ResponseEntity<String> updateRecipe(@PathVariable int id, @RequestBody Recipe recipe){
         Optional<Recipe> or = recipeService.findById(id);
         if(or.isPresent()) {
-            Recipe r = or.get();
-            r = recipe;
-            recipeService.save(r);
-            return ResponseEntity.status(200).body("Recipe updated!");
+            Recipe excistingRecipe = or.get();
+            excistingRecipe.setTitle(recipe.getTitle());
+            excistingRecipe.setDescription(recipe.getDescription());
+            recipeService.save(recipe);
+            return ResponseEntity.ok("Recipe updated!");
         }
         return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body("Could not update recipe");
     }

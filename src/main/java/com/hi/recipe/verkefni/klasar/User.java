@@ -9,6 +9,7 @@ import java.util.List;
 public class User {
     private String role;
     private String name;
+    @Column(unique = true)
     private String email;
     private String password;
     @Id
