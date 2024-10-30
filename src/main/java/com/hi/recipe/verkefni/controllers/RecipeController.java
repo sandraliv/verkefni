@@ -1,11 +1,13 @@
 package com.hi.recipe.verkefni.controllers;
 
+import com.hi.recipe.verkefni.klasar.ContactForm;
 import com.hi.recipe.verkefni.klasar.Recipe;
 import com.hi.recipe.verkefni.klasar.RecipeTag;
 import com.hi.recipe.verkefni.services.RecipeService;
 import com.hi.recipe.verkefni.klasar.User;
 import com.hi.recipe.verkefni.services.UserService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -115,6 +117,13 @@ public class RecipeController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Could not update user");
     }
 
+    @PostMapping("/auli/contact_us")
+    public ResponseEntity<String> submitContactForm(@Valid @RequestBody ContactForm contactForm) {
+        // Process form data here, e.g., save to database or send an email
+        // For this example, we'll just return a confirmation message
+
+        return ResponseEntity.status(200).body("Contact form submitted successfully!");
+    }
     //================================================================================
     // PATCH Methods
     //================================================================================
@@ -137,6 +146,7 @@ public class RecipeController {
         }
         return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body("Could not update recipe");
     }
+
 
     /**
      * Adds a new tag to an existing recipe
