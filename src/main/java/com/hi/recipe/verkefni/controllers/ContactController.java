@@ -11,10 +11,10 @@ import com.hi.recipe.verkefni.services.RecipeService;
 
 
 @Controller
-public class ViewController {
+public class ContactController {
     private final RecipeService recipeService;
 
-    public ViewController(RecipeService recipeService){
+    public ContactController(RecipeService recipeService){
         this.recipeService = recipeService;
     }
     @GetMapping("/")
