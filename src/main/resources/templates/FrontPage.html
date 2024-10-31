@@ -12,7 +12,7 @@
         <li th:each="recipe : ${recipes}">
             <h3 th:text="${recipe.title}">Recipe Name</h3>
             <p th:text="${recipe.description}">Recipe Description</p>
-            
+            <img th:src="${recipe.image_url}" alt="Recipe Image">
         </li>
     </ul>
 </body>
