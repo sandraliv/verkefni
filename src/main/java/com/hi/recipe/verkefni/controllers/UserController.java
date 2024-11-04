@@ -168,17 +168,17 @@ public ResponseEntity<String> updateUserProfile(@PathVariable int id, @RequestBo
     if (userOptional.isPresent()) {
         User user = userOptional.get();
 
-        // Uppfærir nafn 
+        // updates neme
         if (updates.containsKey("name")) {
             user.setName((String) updates.get("name"));
         }
 
-        // Uppfærir netfang 
+        // updates email
         if (updates.containsKey("email")) {
             user.setEmail((String) updates.get("email"));
         }
 
-        //uppfært email og nafn vistað
+        //updated name and email saved
         userService.save(user);
         return ResponseEntity.ok("Nafn og email uppfært");
     } else {
