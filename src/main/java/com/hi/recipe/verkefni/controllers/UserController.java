@@ -154,6 +154,34 @@ public class UserController {
     
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Recipe not found in favorites.");
     }
+  /**
+ * Updates certain details in a user's profile  
+ * @param id The ID of the user to update
+ * @param updates A Map containing the fields to update and their new values
+ * @return Success message if updated, 404 if user not found
+ */
+@RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
+public ResponseEntity<String> updateUserProfile(@PathVariable int id, @RequestBody Map<String, Object> updates) {
+    Optional<User> userOptional = userService.findById(id);
+    if (userOptional.isPresent()) {
+        User user = userOptional.get();
 
+        // Uppfærir nafn 
+        if (updates.containsKey("name")) {
+            user.setName((String) updates.get("name"));
+        }
+
+        // Uppfærir netfang 
+        if (updates.containsKey("email")) {
+            user.setEmail((String) updates.get("email"));
+        }
+
+        //uppfært email og nafn vistað
+        userService.save(user);
+        return ResponseEntity.ok("Nafn og email uppfært");
+    } else {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Notandi fannst ekki");
+    }
+}
 
 }
