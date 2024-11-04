@@ -25,7 +25,7 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
 
     List<Recipe> findByTitleContainingIgnoreCaseAndTagsIn(String title, Collection<RecipeTag> tags);
 
-    @Query("SELECT r FROM Recipe r ORDER BY dateAdded ASC" )
+    @Query("SELECT r FROM Recipe r ORDER BY dateAdded DESC")
     Page<Recipe> findByDate(Pageable pageable);
 
     @Query("SELECT r FROM Recipe r")

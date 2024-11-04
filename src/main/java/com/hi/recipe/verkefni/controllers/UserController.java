@@ -168,7 +168,7 @@ public ResponseEntity<String> updateUserProfile(@PathVariable int id, @RequestBo
     if (userOptional.isPresent()) {
         User user = userOptional.get();
 
-        // updates neme
+        // updates name
         if (updates.containsKey("name")) {
             user.setName((String) updates.get("name"));
         }
