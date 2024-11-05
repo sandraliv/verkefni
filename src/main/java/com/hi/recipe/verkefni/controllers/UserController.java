@@ -162,28 +162,28 @@ public class UserController {
  * @param updates A Map containing the fields to update and their new values
  * @return Success message if updated, 404 if user not found
  */
-@RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
-public ResponseEntity<String> updateUserProfile(@PathVariable int id, @RequestBody Map<String, Object> updates) {
-    Optional<User> userOptional = userService.findById(id);
-    if (userOptional.isPresent()) {
-        User user = userOptional.get();
-
-        // updates name
-        if (updates.containsKey("name")) {
-            user.setName((String) updates.get("name"));
-        }
-
-        // updates email
-        if (updates.containsKey("email")) {
-            user.setEmail((String) updates.get("email"));
-        }
-
-        //updated name and email saved
-        userService.save(user);
-        return ResponseEntity.ok("Nafn og email uppfært");
-    } else {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Notandi fannst ekki");
+@PatchMapping("/updateProfile")
+public ResponseEntity<String> updateUserProfile(HttpSession session, @RequestBody Map<String, Object> updates) {
+    // Fáum innskráðan notanda úr session
+    User user = (User) session.getAttribute("user");
+    if (user == null) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in.");
     }
+
+    // updates name
+    if (updates.containsKey("name")) {
+        user.setName((String) updates.get("name"));
+    }
+
+    // Uppdates email
+    if (updates.containsKey("email")) {
+        user.setEmail((String) updates.get("email"));
+    }
+
+    // saves user in system
+    userService.save(user);
+    return ResponseEntity.ok("Nafn og email uppfært");
 }
+
 
 }

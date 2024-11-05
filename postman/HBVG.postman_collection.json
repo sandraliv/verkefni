@@ -298,16 +298,16 @@
               "raw": "{\n    \"name\": \"Nýtt nafn\",\n    \"email\": \"nyttnetfang@gmail.com\"\n}"
            },
            "url": {
-              "raw": "{{base_url}}/users/1",
+              "raw": "{{base_url}}/users/updateProfile",
               "host": [
                  "{{base_url}}"
               ],
               "path": [
                  "users",
-                 "1"
+                 "updateProfile"
               ]
            },
-           "description": "uppfærir email og netfang user id 1"
+           "description": "uppfærir nafn og netfang innskráðs notanda."
         },
         "response": []
 	
