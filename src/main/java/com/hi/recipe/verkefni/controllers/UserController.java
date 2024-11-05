@@ -166,23 +166,23 @@ public class UserController {
     */
     @PatchMapping("/updateProfile")
     public ResponseEntity<String> updateUserProfile(HttpSession session, @RequestBody Map<String, Object> updates)  {
-        // Retrieve the logged-in user from the session
+        // user has to be logged in
         User user = (User) session.getAttribute("user");
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in.");
         }
     
-        // Update the name if provided
+        // Updates name
         if (updates.containsKey("name")) {
             user.setName((String) updates.get("name"));
         }
     
-        // Update the email if provided
+        // Updates email
         if (updates.containsKey("email")) {
             user.setEmail((String) updates.get("email"));
         }
     
-        // Save the updated user information in the database
+        // Save the updated user in database
         userService.save(user);
         return ResponseEntity.ok("Name and email updated");
     }
