@@ -1,0 +1,7 @@
+img {
+    width: 400px;            /* Fixed width */
+    height: 300px;           /* Fixed height to maintain 4:3 aspect ratio */
+    border-radius: 8px;      /* Rounded corners */
+    object-fit: cover;       /* Ensures the image covers the area without stretching */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional shadow for depth */
+}
