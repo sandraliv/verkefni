@@ -156,34 +156,40 @@ public class UserController {
     
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Recipe not found in favorites.");
     }
-  /**
- * Updates certain details in a user's profile  
- * @param id The ID of the user to update
- * @param updates A Map containing the fields to update and their new values
- * @return Success message if updated, 404 if user not found
- */
-@PatchMapping("/updateProfile")
-public ResponseEntity<String> updateUserProfile(HttpSession session, @RequestBody Map<String, Object> updates) {
-    // Fáum innskráðan notanda úr session
-    User user = (User) session.getAttribute("user");
-    if (user == null) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in.");
+    /**
+    * Updates the logged-in user's profile details, such as name and email.
+    * 
+    * @param session The current HTTP session containing user information
+    * @param updates A Map with the fields to update ("name" and "email") and their new values
+    * @return A success message if the profile was updated successfully, 
+    *         401 message if the user is not logged in
+    */
+    @PatchMapping("/updateProfile")
+    public ResponseEntity<String> updateUserProfile(HttpSession session, @RequestBody Map<String, Object> updates)  {
+        // Retrieve the logged-in user from the session
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in.");
+        }
+    
+        // Update the name if provided
+        if (updates.containsKey("name")) {
+            user.setName((String) updates.get("name"));
+        }
+    
+        // Update the email if provided
+        if (updates.containsKey("email")) {
+            user.setEmail((String) updates.get("email"));
+        }
+    
+        // Save the updated user information in the database
+        userService.save(user);
+        return ResponseEntity.ok("Name and email updated");
     }
+    
+    
 
-    // updates name
-    if (updates.containsKey("name")) {
-        user.setName((String) updates.get("name"));
-    }
-
-    // Uppdates email
-    if (updates.containsKey("email")) {
-        user.setEmail((String) updates.get("email"));
-    }
-
-    // saves user in system
-    userService.save(user);
-    return ResponseEntity.ok("Nafn og email uppfært");
 }
 
 
-}
+
