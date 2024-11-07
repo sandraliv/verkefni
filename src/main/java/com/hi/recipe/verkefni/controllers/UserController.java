@@ -156,34 +156,40 @@ public class UserController {
     
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Recipe not found in favorites.");
     }
-  /**
- * Updates certain details in a user's profile  
- * @param id The ID of the user to update
- * @param updates A Map containing the fields to update and their new values
- * @return Success message if updated, 404 if user not found
- */
-@RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
-public ResponseEntity<String> updateUserProfile(@PathVariable int id, @RequestBody Map<String, Object> updates) {
-    Optional<User> userOptional = userService.findById(id);
-    if (userOptional.isPresent()) {
-        User user = userOptional.get();
-
-        // updates name
+    /**
+    * Updates the logged-in user's profile details, such as name and email.
+    * 
+    * @param session The current HTTP session containing user information
+    * @param updates A Map with the fields to update ("name" and "email") and their new values
+    * @return A success message if the profile was updated successfully, 
+    *         401 message if the user is not logged in
+    */
+    @PatchMapping("/updateProfile")
+    public ResponseEntity<String> updateUserProfile(HttpSession session, @RequestBody Map<String, Object> updates)  {
+        // user has to be logged in
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in.");
+        }
+    
+        // Updates name
         if (updates.containsKey("name")) {
             user.setName((String) updates.get("name"));
         }
-
-        // updates email
+    
+        // Updates email
         if (updates.containsKey("email")) {
             user.setEmail((String) updates.get("email"));
         }
-
-        //updated name and email saved
+    
+        // Save the updated user in database
         userService.save(user);
-        return ResponseEntity.ok("Nafn og email uppfært");
-    } else {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Notandi fannst ekki");
+        return ResponseEntity.ok("Name and email updated");
     }
-}
+    
+    
 
 }
+
+
+
