@@ -1,11 +1,27 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<link rel="stylesheet" href="/css/styles.css">
-
 <head>
-    <title>Welcome</title>
+    <title>User Profile</title>
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-<h1 th:text="'Hello, ' + ${name}">Hello, User</h1>
+    <header>
+        <h1 th:text="'Hello, ' + ${user.name} + '!'">Hello, User!</h1>
+    </header>
+
+    <section>
+        <h3>Profile Details</h3>
+        <p><strong>Username:</strong> <span th:text="${user.username}">Username</span></p>
+        <p><strong>Email:</strong> <span th:text="${user.email}">Email</span></p>
+
+        <h3>Actions:</h3>
+        <ul>
+            <li><a th:href="@{/users/updateProfile}">Edit Profile</a></li>
+            <li><a th:href="@{/users/favorites}">View Favorites</a></li>
+            <li><a th:href="@{/logout}">Logout</a></li>
+        </ul>
+    </section>
+
+
 </body>
 </html>

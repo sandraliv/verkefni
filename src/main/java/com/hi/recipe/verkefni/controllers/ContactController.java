@@ -14,6 +14,7 @@ import com.hi.recipe.verkefni.services.RecipeService;
 
 
 @RestController
+@RequestMapping("/api")
 public class ContactController {
     @PostMapping("/contact_us")
     public ResponseEntity<String> submitContactForm(@Valid @RequestBody ContactForm contactForm) {

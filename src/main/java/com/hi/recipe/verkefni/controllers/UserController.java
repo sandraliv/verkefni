@@ -159,7 +159,7 @@ public class UserController {
     /**
     * Updates the logged-in user's profile details, such as name and email.
     * 
-    * @param session The current HTTP session containing user information
+    * @param session The HTTP session containing user information
     * @param updates A Map with the fields to update ("name" and "email") and their new values
     * @return A success message if the profile was updated successfully, 
     *         401 message if the user is not logged in
