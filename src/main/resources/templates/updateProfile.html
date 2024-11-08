@@ -6,8 +6,11 @@
 <body>
     <h1>Edit Profile</h1>
 
-    <!-- Profile Update Form -->
-    <form th:action="@{/usersui/profile/update}" method="post" th:object="${user}">
+  
+    
+    <form th:action="@{/usersui/profile}" method="post" th:object="${user}">
+        <input type="hidden" name="_method" value="patch" /> 
+
         <label for="name">Name:</label>
         <input type="text" id="name" th:field="*{name}" required />
         <br>
@@ -19,7 +22,10 @@
         <button type="submit">Save Changes</button>
     </form>
 
-    <!-- back to profile -->
+  
     <a th:href="@{/usersui/{id}(id=${user.id})}">Back to Profile</a>
 </body>
 </html>
+
+
+
