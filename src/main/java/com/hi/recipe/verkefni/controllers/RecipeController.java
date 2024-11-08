@@ -1,13 +1,10 @@
 package com.hi.recipe.verkefni.controllers;
-
-import com.hi.recipe.verkefni.klasar.ContactForm;
 import com.hi.recipe.verkefni.klasar.Recipe;
 import com.hi.recipe.verkefni.klasar.RecipeTag;
 import com.hi.recipe.verkefni.services.RecipeService;
 import com.hi.recipe.verkefni.klasar.User;
 import com.hi.recipe.verkefni.services.UserService;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +23,6 @@ public class RecipeController {
     //================================================================================
     // GET Methods
     //================================================================================
-
 
     /**
      * Retrieves recipes with optional search and tag filtering

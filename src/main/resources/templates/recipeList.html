@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="is">
+<head>
+    <title>Recipes</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<h1 th:text="'Hello, ' + ${name}">Hello, User</h1>
+
+<h2>Recipes:</h2>
+<ul>
+    <!-- Iterate over each recipe -->
+    <li th:each="recipe : ${recipes}">
+        <h3 th:text="${recipe.title}">Recipe Title</h3>
+        <p th:text="${recipe.description}">Recipe Description</p>
+
+        <!-- Ingredients Table -->
+        <table>
+            <tr>
+                <th>Ingredient</th>
+                <th>Quantity</th>
+            </tr>
+            <!-- Iterate over each ingredient in the recipe.ingredients map -->
+            <tr th:each="ingredient : ${recipe.ingredients}">
+                <td th:text="${ingredient.key}">Ingredient Quantity</td>
+                <td th:text="${ingredient.value}">Ingredient Quantity</td>
+            </tr>
+        </table>
+
+        <img th:src="${recipe.image_url}" alt="Recipe Image">
+    </li>
+</ul>
+</body>
+</html>

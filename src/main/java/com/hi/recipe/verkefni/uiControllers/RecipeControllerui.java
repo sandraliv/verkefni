@@ -1,6 +1,6 @@
 package com.hi.recipe.verkefni.uiControllers;
 
-import com.hi.recipe.verkefni.klasar.ContactForm;
+import java.util.HashMap;
 import com.hi.recipe.verkefni.klasar.Recipe;
 import com.hi.recipe.verkefni.klasar.RecipeTag;
 import com.hi.recipe.verkefni.klasar.User;
@@ -52,7 +52,7 @@ public class RecipeControllerui {
         } else {
             recipes = recipeService.findByTitleAndTags(query, tags);
         }
-        
+
         model.addAttribute("recipes", recipes);
         return "recipeList"; //recipeList.html 
     }
