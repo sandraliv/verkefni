@@ -62,10 +62,10 @@ public class uiContactController {
                 session.setAttribute("user", u);
                 return "redirect:/usersui/" + u.getId();
             }
-            model.addAttribute("errorMessage", "Bad credentials.");
+            model.addAttribute("errorMessage", "Notandi finnst ekki.");
             return "login";
         }
-        model.addAttribute("errorMessage", "User not found.");
+        model.addAttribute("errorMessage", "Notandi finnst ekki.");
         return "login";
     }
 }

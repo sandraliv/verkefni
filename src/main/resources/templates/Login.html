@@ -11,13 +11,14 @@
     </h1>
 
 
-    <form th:action="@{/usersui/login}" method="post">
+    <form th:action="@{/login}" method="post">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required />
         <br>
 
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required />
+        <p class="contact_error" th:if="${errorMessage}" th:text="${errorMessage}"></p>
         <br>
 
         <button type="submit">Login</button>
