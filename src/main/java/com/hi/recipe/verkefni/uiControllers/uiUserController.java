@@ -167,33 +167,33 @@ public class uiUserController {
      */
    // Show the profile update form
 
-@GetMapping("/profile/edit")
-public String showUpdateProfileForm(HttpSession session, Model model) {
-    User user = (User) session.getAttribute("user");
-    if (user == null) {
-        model.addAttribute("errorMessage", "User not logged in.");
-        return "error";
-    }
-    model.addAttribute("user", user);
-    return "updateProfile"; // updateProfile.html
-}
-
-
-@PostMapping("/profile/update")
-public String updateUserProfile(HttpSession session, @ModelAttribute("user") User userUpdates, Model model) {
-    User user = (User) session.getAttribute("user");
-    if (user == null) {
-        model.addAttribute("errorMessage", "User not logged in.");
-        return "error";
+    @GetMapping("/profile/edit")
+    public String showUpdateProfileForm(HttpSession session, Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            model.addAttribute("errorMessage", "User not logged in.");
+            return "error";
+        }
+        model.addAttribute("user", user);
+        return "updateProfile"; // updateProfile.html
     }
 
-    user.setName(userUpdates.getName());
-    user.setEmail(userUpdates.getEmail());
-    userService.save(user);
 
-    model.addAttribute("message", "Profile updated successfully.");
-    return "redirect:/usersui/" + user.getId(); // Redirects to user's profile page
-}
+    @PostMapping("/profile/update")
+    public String updateUserProfile(HttpSession session, @ModelAttribute("user") User userUpdates, Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            model.addAttribute("errorMessage", "User not logged in.");
+            return "error";
+        }
+
+        user.setName(userUpdates.getName());
+        user.setEmail(userUpdates.getEmail());
+        userService.save(user);
+
+        model.addAttribute("message", "Profile updated successfully.");
+        return "redirect:/usersui/" + user.getId(); // Redirects to user's profile page
+    }
 
 }
 

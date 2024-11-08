@@ -194,7 +194,7 @@ public class RecipeControllerui {
      * @param id The ID of the recipe to delete
      * @return Redirects to the recipe list with a success message
      */
-    @PostMapping("{id}/delete")
+    @DeleteMapping("{id}/delete")
     public String deleteRecipe(@PathVariable int id, Model model) {
         recipeService.deleteById(id);
         model.addAttribute("message", "Deleted recipe");
