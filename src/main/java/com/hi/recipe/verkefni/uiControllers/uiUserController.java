@@ -167,7 +167,7 @@ public class uiUserController {
      *         401 message if the user is not logged in
      */
   
-   @GetMapping("/usersui/{id}/changepassword")
+   @GetMapping("/{id}/changepassword")
    public String showChangePasswordForm(@PathVariable int id, HttpSession session, Model model) {
        User user = (User) session.getAttribute("user");
        if (user == null || user.getId() != id) {
@@ -175,10 +175,10 @@ public class uiUserController {
            return "error";
        }
        model.addAttribute("user", user);
-       return "changepassword"; // changepassword.html
+       return "changePassword";
    }
    
-   @PostMapping("/usersui/{id}/changepassword")
+   @PostMapping("/{id}/changepassword")
     public String changePassword(@PathVariable int id, 
                              HttpSession session, 
                              @RequestParam("currentPassword") String currentPassword,
