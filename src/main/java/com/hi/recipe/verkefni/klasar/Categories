@@ -1,0 +1,10 @@
+package com.hi.recipe.verkefni.klasar;
+
+public enum Categories {
+    PASTA,
+    PIZZA,
+    BAKING,
+    DESERT,
+    SEAFOOD,
+    MEAT
+}
