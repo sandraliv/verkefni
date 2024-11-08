@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favorite Recipes</title>
+</head>
+<body>
+
+    <h1>Favorite Recipes</h1>
+
+    <!-- check if list is empty-->
+    <div th:if="${#lists.isEmpty(favoriteRecipes)}">
+        <p>You have no favorite recipes yet.</p>
+    </div>
+
+    <!-- Display the list of favorite recipes if available -->
+    <ul th:if="${!#lists.isEmpty(favoriteRecipes)}">
+        <li th:each="recipe : ${favoriteRecipes}">
+            <h2 th:text="${recipe.name}">Recipe Name</h2>
+            <p th:text="${recipe.description}">Recipe Description</p>
+            <!-- this is to view recipe details -->
+            <a th:href="@{/recipes/{id}(id=${recipe.id})}">View Recipe</a>
+        </li>
+    </ul>
+
+</body>
+</html>

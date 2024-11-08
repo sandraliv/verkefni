@@ -86,7 +86,7 @@ public class uiUserController {
             return "register";
         }
         userService.save(user);
-        return "redirect:/users"; // Redirects to users list after registration
+        return "redirect:/usersui"; // Redirects to users list after registration
     }
 
     /**
@@ -102,7 +102,7 @@ public class uiUserController {
             User u = ou.get();
             if (u.getPassword().equals(user.getPassword())) {
                 session.setAttribute("user", u);
-                return "redirect:/users/profile"; // Redirect to profile page if login is successful
+                return "redirect:/usersui/profile"; // Redirect to profile page if login is successful
             }
             model.addAttribute("errorMessage", "Bad credentials.");
             return "login";
@@ -123,7 +123,7 @@ public class uiUserController {
     public String deleteUser(@PathVariable int id, Model model) {
         userService.deleteById(id);
         model.addAttribute("message", "User deleted successfully");
-        return "redirect:/users"; // Redirects to users list page
+        return "redirect:/usersui"; // Redirects to users list page
     }
 
     /**
@@ -147,7 +147,7 @@ public class uiUserController {
         if (recipeToRemove.isPresent()) {
             user.getFavourites().remove(recipeToRemove.get());
             userService.save(user);
-            return "redirect:/users/favorites"; // Redirects to favorites page
+            return "redirect:/usersui/favorites"; // Redirects to favorites page
         }
         model.addAttribute("errorMessage", "Recipe not found in favorites.");
         return "error";
@@ -178,6 +178,6 @@ public class uiUserController {
 
         userService.save(user);
         model.addAttribute("message", "Profile updated successfully.");
-        return "redirect:/users/profile"; // Redirects to profile page
+        return "redirect:/usersui/profile"; // Redirects to profile page
     }
 }
