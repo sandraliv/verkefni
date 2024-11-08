@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Bæta við uppskrift</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script>
+        function addIngredientRow() {
+            const ingredientContainer = document.getElementById("ingredients-container");
+
+            // Create a new row div for ingredient name and quantity
+            const rowDiv = document.createElement("div");
+
+            // Create input for ingredient name
+            const nameInput = document.createElement("input");
+            nameInput.setAttribute("type", "text");
+            nameInput.setAttribute("name", "ingredients[NEW_NAME]");
+            nameInput.setAttribute("placeholder", "Ingredient Name");
+
+            // Create input for ingredient quantity
+            const quantityInput = document.createElement("input");
+            quantityInput.setAttribute("type", "text");
+            quantityInput.setAttribute("name", "ingredients[NEW_QUANTITY]");
+            quantityInput.setAttribute("placeholder", "Quantity");
+
+            // Append inputs to the row div
+            rowDiv.appendChild(nameInput);
+            rowDiv.appendChild(quantityInput);
+
+            // Append the row div to the container
+            ingredientContainer.appendChild(rowDiv);
+        }
+    </script>
+</head>
+<body>
+<h1>Bæta við uppskrift</h1>
+
+<!-- Display success message -->
+<div th:if="${message}">
+    <p th:text="${message}"></p>
+</div>
+
+<form th:action="@{/allrecipes/newRecipe}" method="post" th:object="${newRecipe}">
+    <!-- Title Field -->
+    <div>
+        <label for="title">Nafn á uppskrift:</label>
+        <input type="text" id="title" name="title" th:field="*{title}" />
+        <p class="contact_error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></p>
+    </div>
+
+    <!-- Description Field -->
+    <div>
+        <label for="description">Lýsing:</label>
+        <textarea id="description" name="description" th:field="*{description}"></textarea>
+        <p class="contact_error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></p>
+    </div>
+
+    <!-- Dynamic Ingredients Field -->
+    <div>
+        <label>Innihaldsefni:</label>
+        <div id="ingredients-container">
+            <!-- Ingredient rows will be added here dynamically -->
+        </div>
+        <button type="button" onclick="addIngredientRow()">Add Ingredient</button>
+    </div>
+
+    <!-- Tags Field with Checkboxes -->
+    <div>
+        <label>Merki:</label>
+        <div th:each="tag : ${allTags}">
+            <input type="checkbox" th:field="*{tags}" th:value="${tag}" th:attr="id='tag_' + ${tag}" />
+            <label th:attr="for='tag_' + ${tag}" th:text="${tag}"></label>
+        </div>
+        <p class="contact_error" th:if="${#fields.hasErrors('tags')}" th:errors="*{tags}"></p>
+    </div>
+
+
+
+    <button type="submit">Submit</button>
+</form>
+</body>
+</html>

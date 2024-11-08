@@ -1,5 +1,6 @@
 package com.hi.recipe.verkefni.uiControllers;
 
+import com.hi.recipe.verkefni.klasar.ContactForm;
 import com.hi.recipe.verkefni.klasar.Recipe;
 import com.hi.recipe.verkefni.klasar.RecipeTag;
 import com.hi.recipe.verkefni.klasar.User;
@@ -70,6 +71,13 @@ public class RecipeControllerui {
         }
         model.addAttribute("errorMessage", "Recipe not found.");
         return "error";
+    }
+
+    @GetMapping("/addRecipe")
+    public String addNewRecipe(@ModelAttribute("recipe") Recipe recipe, Model model) {
+        model.addAttribute("newRecipe", new Recipe());
+        model.addAttribute("allTags", RecipeTag.values()); // Pass all enum values
+        return "addRecipe";
     }
 
     /**
