@@ -95,21 +95,46 @@ public class uiUserController {
      * @param user The user credentials for authentication
      * @return Success message if login successful, error if credentials invalid or user not found
      */
-    @PostMapping("/login")
-    public String login(HttpSession session, @ModelAttribute("user") User user, Model model) {
-        Optional<User> ou = userService.findByUsername(user.getUsername());
-        if (ou.isPresent()) {
-            User u = ou.get();
-            if (u.getPassword().equals(user.getPassword())) {
-                session.setAttribute("user", u);
-                return "redirect:/usersui/profile"; // Redirect to profile page if login is successful
-            }
-            model.addAttribute("errorMessage", "Bad credentials.");
-            return "login";
+
+     @GetMapping("/login")
+     public String showLoginForm(Model model) {
+         model.addAttribute("user", new User());
+         return "login";
+     }
+     
+     @PostMapping("/login")
+     public String login(HttpSession session, @ModelAttribute("user") User user, Model model) {
+         Optional<User> ou = userService.findByUsername(user.getUsername());
+         if (ou.isPresent()) {
+             User u = ou.get();
+             if (u.getPassword().equals(user.getPassword())) {
+                 session.setAttribute("user", u);
+                 return "redirect:/usersui/" + u.getId();
+             }
+             model.addAttribute("errorMessage", "Bad credentials.");
+             return "login";
+         }
+         model.addAttribute("errorMessage", "User not found.");
+         return "login";
+     }
+     
+ 
+
+    // GET mapping for the user profile page
+    @GetMapping("/profile")
+    public String showUserProfile(HttpSession session, Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            model.addAttribute("errorMessage", "User not logged in.");
+            return "error";
         }
-        model.addAttribute("errorMessage", "User not found.");
-        return "login";
+        model.addAttribute("user", user);
+        return "userProfile";
     }
+
+    
+
+
 
     //================================================================================
     // DELETE Methods
