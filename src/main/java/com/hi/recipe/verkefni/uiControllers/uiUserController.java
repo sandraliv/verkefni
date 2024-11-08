@@ -165,19 +165,36 @@ public class uiUserController {
      * @return A success message if the profile was updated successfully, 
      *         401 message if the user is not logged in
      */
-    @PostMapping("/updateProfile")
-    public String updateUserProfile(HttpSession session, @ModelAttribute("user") User userUpdates, Model model) {
-        User user = (User) session.getAttribute("user");
-        if (user == null) {
-            model.addAttribute("errorMessage", "User not logged in.");
-            return "error";
-        }
+   // Show the profile update form
 
-        user.setName(userUpdates.getName());
-        user.setEmail(userUpdates.getEmail());
-
-        userService.save(user);
-        model.addAttribute("message", "Profile updated successfully.");
-        return "redirect:/usersui/profile"; // Redirects to profile page
+@GetMapping("/profile/edit")
+public String showUpdateProfileForm(HttpSession session, Model model) {
+    User user = (User) session.getAttribute("user");
+    if (user == null) {
+        model.addAttribute("errorMessage", "User not logged in.");
+        return "error";
     }
+    model.addAttribute("user", user);
+    return "updateProfile"; // updateProfile.html
 }
+
+
+@PostMapping("/profile/update")
+public String updateUserProfile(HttpSession session, @ModelAttribute("user") User userUpdates, Model model) {
+    User user = (User) session.getAttribute("user");
+    if (user == null) {
+        model.addAttribute("errorMessage", "User not logged in.");
+        return "error";
+    }
+
+    user.setName(userUpdates.getName());
+    user.setEmail(userUpdates.getEmail());
+    userService.save(user);
+
+    model.addAttribute("message", "Profile updated successfully.");
+    return "redirect:/usersui/" + user.getId(); // Redirects to user's profile page
+}
+
+}
+
+   

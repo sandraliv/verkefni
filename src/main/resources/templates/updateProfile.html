@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Profile</title>
+</head>
+<body>
+    <h1>Edit Profile</h1>
+
+    <!-- Profile Update Form -->
+    <form th:action="@{/usersui/profile/update}" method="post" th:object="${user}">
+        <label for="name">Name:</label>
+        <input type="text" id="name" th:field="*{name}" required />
+        <br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" th:field="*{email}" required />
+        <br>
+
+        <button type="submit">Save Changes</button>
+    </form>
+
+    <!-- back to profile -->
+    <a th:href="@{/usersui/{id}(id=${user.id})}">Back to Profile</a>
+</body>
+</html>
