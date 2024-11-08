@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -116,10 +118,12 @@ public class RecipeControllerui {
      * @return Redirects to recipe list with a success message
      */
     @PostMapping("/newRecipe")
-    public String addANewRecipe(@ModelAttribute("recipe") Recipe recipe, Model model) {
-        recipeService.save(recipe);
+    public String addANewRecipe(@ModelAttribute("recipe") Recipe recipe, RedirectAttributes redirectAttributes, Model model) {
+        Recipe savedRecipe = recipeService.save(recipe);
         model.addAttribute("message", "Recipe added successfully!");
-        return "redirect:/recipes";
+        redirectAttributes.addAttribute("id", savedRecipe.getId()); // Pass the recipe ID
+        redirectAttributes.addFlashAttribute("message", "Recipe created successfully!");
+        return "redirect:/allrecipes";
     }
 
     /**

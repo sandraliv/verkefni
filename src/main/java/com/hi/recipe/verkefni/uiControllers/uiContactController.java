@@ -55,17 +55,26 @@ public class uiContactController {
 
     @PostMapping("/login")
     public String login(HttpSession session, @ModelAttribute("user") User user, Model model) {
-        Optional<User> ou = userService.findByUsername(user.getUsername());
-        if (ou.isPresent()) {
-            User u = ou.get();
-            if (u.getPassword().equals(user.getPassword())) {
-                session.setAttribute("user", u);
-                return "redirect:/usersui/" + u.getId();
-            }
-            model.addAttribute("errorMessage", "Notandi finnst ekki.");
+        if (user.getUsername() == null || user.getUsername().isEmpty()) {
+            model.addAttribute("errorMessage", "Please provide a username.");
             return "login";
         }
-        model.addAttribute("errorMessage", "Notandi finnst ekki.");
-        return "login";
+
+        Optional<User> optionalUser = userService.findByUsername(user.getUsername());
+
+        if (optionalUser.isEmpty()) {
+            model.addAttribute("errorMessage", "User not found.");
+            return "login";
+        }
+        User foundUser = optionalUser.get();
+        if (!foundUser.getPassword().equals(user.getPassword())) {
+            model.addAttribute("errorMessage", "Incorrect password.");
+            return "login";
+        }
+
+        // Successful login
+        session.setAttribute("user", foundUser);
+        return "redirect:/usersui/" + foundUser.getId();
+
     }
 }
