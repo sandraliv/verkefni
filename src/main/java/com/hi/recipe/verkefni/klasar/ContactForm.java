@@ -16,11 +16,12 @@ public class ContactForm {
     private int id;
 
     @Column(name = "name")
-    @NotNull(message = "Setja þarf inn nafn")
+    @NotBlank(message = "Vinsamlegt settu nafn") // Changed from @NotNull to @NotBlank
     private String name;
 
     @Column(name = "email")
     @Email(message = "Setja þarf inn netfang svo við getum haft samband")
+    @NotBlank(message = "Netfang er nauðsynlegt") // Add @NotBlank to enforce non-empty
     private String email;
 
     @Column(name = "subject")
@@ -29,6 +30,7 @@ public class ContactForm {
 
     @Column(name = "message")
     @Size(min = 10, message = "Skilaboðið má ekki vera færri en 10 stafir")
+    @NotBlank(message = "Skilaboð eru nauðsynleg") // Ensure the message isn't blank
     private String message;
 
     public ContactForm (){

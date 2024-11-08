@@ -1,33 +1,37 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="/css/styles.css">
 <head>
-    <title>Contact Us</title>
+    <title>Hafa samband</title>
 </head>
 <body>
-    <h1>Contact Us</h1>
-    <form th:action="@{/ui/contact_us}" method="post" th:object="${contactForm}">
+    <h1>Hafa samband</h1>
+    <div th:if="${message}">
+        <p th:text="${message}"></p>
+    </div>
+    <form th:action="@{/contact}" method="post" th:object="${contactForm}">
         <div>
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" th:field="*{name}" required />
-            <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
+            <label for="name">Nafn:</label>
+            <input type="text" id="name" name="name" th:field="*{name}"/>
+            <p class="contact_error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
         </div>
 
         <div>
-            <label for="email">Email:</label>
-            <input type="email" id="email" th:field="*{email}" />
-            <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" required></p>
+            <label for="email">Netfang:</label>
+            <input type="email" id="email" th:field="*{email}"/>
+            <p class="contact_error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}" ></p>
         </div>
 
         <div>
-            <label for="subject">Subject:</label>
-            <input type="text" id="subject" th:field="*{subject}" required />
-            <p th:if="${#fields.hasErrors('subject')}" th:errors="*{subject}"></p>
+            <label for="subject">Erindi:</label>
+            <input type="text" id="subject" th:field="*{subject}"/>
+            <p class="contact_error" th:if="${#fields.hasErrors('subject')}" th:errors="*{subject}"></p>
         </div>
 
         <div>
-            <label for="message">Message:</label>
-            <textarea id="message" th:field="*{message}" required></textarea>
-            <p th:if="${#fields.hasErrors('message')}" th:errors="*{message}"></p>
+            <label for="message">Skilaboð:</label>
+            <textarea id="message" th:field="*{message}"></textarea>
+            <p class="contact_error" th:if="${#fields.hasErrors('message')}" th:errors="*{message}"></p>
         </div>
         <button type="submit">Submit</button>
     </form>

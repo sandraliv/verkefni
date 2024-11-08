@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Controller
-@RequestMapping("recipesui")
+@RequestMapping("allrecipes")
 public class RecipeControllerui {
     private final RecipeService recipeService;
     private final UserService userService;
