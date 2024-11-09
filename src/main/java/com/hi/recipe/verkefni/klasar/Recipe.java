@@ -1,5 +1,6 @@
 package com.hi.recipe.verkefni.klasar;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -35,6 +36,7 @@ public class Recipe {
 
 
     @ManyToMany
+    @JsonBackReference  // This side is not serialized (avoids recursion)
     @JoinTable(
             name = "recipe_categories",
             joinColumns = @JoinColumn(name = "recipe_id"),
@@ -43,6 +45,7 @@ public class Recipe {
     private Set<Category> categories = new HashSet<>();  // A recipe can belong to multiple categories
 
     @ManyToMany
+    @JsonBackReference  // Prevent recursion by marking this side of the relationship
     @JoinTable(
             name = "recipe_subcategories",
             joinColumns = @JoinColumn(name = "recipe_id"),
@@ -68,9 +71,6 @@ public class Recipe {
 
     @Column(name = "rating_count")
     private Integer ratingCount = 0;  // The count of ratings
-
-    /*@OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
-    private List<Rating> ratings;*/
 
     @ManyToMany(mappedBy = "favourites")
     private List<User> userList;
@@ -198,25 +198,7 @@ public class Recipe {
         this.instructions = instructions;
     }
 
-    /* public List<Rating> getRatings() {
-        return ratings;
-    }
 
-    public void setRatings(List<Rating> ratings) {
-        this.ratings = ratings;
-    }
-
-    public void addRating(Rating rating) {
-        this.ratings.add(rating);
-        recalculateAverageRating();
-    }
-
-   /* public double getAverageRating() {
-        return ratings.stream()
-                .mapToInt(Rating::getScore)
-                .average()
-                .orElse(0.0);
-    }*/
 
     public BigDecimal getAverageRating() {
         return averageRating;
@@ -234,34 +216,6 @@ public class Recipe {
         return names;
     }
 
-   /* public void recalculateAverageRating() {
-        if (ratings.isEmpty()) {
-            this.averageRating = BigDecimal.ZERO; // Set to zero if there are no ratings
-        } else {
-            BigDecimal sum = BigDecimal.ZERO;
-
-            // Sum all the ratings
-            for (Rating rating : ratings) {
-                sum = sum.add(BigDecimal.valueOf(rating.getScore())); // Assuming getRating returns an int
-            }
-
-            // Calculate the average
-            this.averageRating = sum.divide(BigDecimal.valueOf(ratings.size()), 2, RoundingMode.HALF_UP);
-        }
-    }*/
-  /* public void recalculateAverageRating() {
-       if (ratings.isEmpty()) {
-           this.averageRating = BigDecimal.ZERO;
-       } else {
-           double avg = ratings.stream()
-                   .mapToInt(Rating::getScore)
-                   .average()
-                   .orElse(0.0);
-
-           // Convert the double result to BigDecimal and set the scale
-           this.averageRating = BigDecimal.valueOf(avg).setScale(2, BigDecimal.ROUND_HALF_UP);
-       }
-   }*/
    // Recalculate the average rating from the temporary ratings
    public void recalculateAverageRating() {
        if (!tempRatings.isEmpty()) {

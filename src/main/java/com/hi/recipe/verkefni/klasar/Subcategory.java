@@ -1,6 +1,7 @@
 package com.hi.recipe.verkefni.klasar;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -19,6 +20,7 @@ public class Subcategory {
     private Category category;
 
     @ManyToMany(mappedBy = "subcategories")
+    @JsonManagedReference  // This side is serialized (avoids recursion)
     private Set<Recipe> recipes = new HashSet<>(); // Recipes that belong to this subcategory
 
 

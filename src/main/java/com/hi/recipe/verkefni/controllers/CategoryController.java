@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -37,11 +38,13 @@ public class CategoryController {
     //================================================================================
 
 
-    // Endpoint to fetch all categories
-    public ResponseEntity<List<Category>> getAllCategories() {
-        List<Category> categories = categoryService.getAllCategories();
+    @GetMapping("/allCategories")
+    public ResponseEntity<Set<Category>> getAllCategories() {
+        Set<Category> categories = categoryService.getAllCategories();
 
-        // Return 200 OK if categories exist, or return 404 if no categories exist
+        // Log for debugging
+        System.out.println("Fetched categories: " + categories);
+
         if (categories.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND); // No categories found
         } else {

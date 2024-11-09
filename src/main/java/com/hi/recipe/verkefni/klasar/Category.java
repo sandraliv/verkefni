@@ -1,5 +1,6 @@
 package com.hi.recipe.verkefni.klasar;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
@@ -14,6 +15,7 @@ public class Category {
     private String name;  // e.g. BAKING, DESSERT
 
     @ManyToMany(mappedBy = "categories")
+    @JsonBackReference
     private Set<Recipe> recipes = new HashSet<>();  // Many recipes can belong to a category
 
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)

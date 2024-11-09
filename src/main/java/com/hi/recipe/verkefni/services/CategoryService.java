@@ -46,7 +46,7 @@ public interface CategoryService {
     String getSubcategoryName(Recipe recipe);
 
     // Method to fetch all categories
-    List<Category> getAllCategories();
+    Set<Category> getAllCategories();
 
     // Find categories by their names
     Set<Category> findCategoriesByNames(Set<String> categoryNames);

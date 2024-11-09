@@ -6,13 +6,15 @@ import com.hi.recipe.verkefni.klasar.Subcategory;
 import com.hi.recipe.verkefni.repository.CategoryRepository;
 import com.hi.recipe.verkefni.repository.RecipeRepository;
 import com.hi.recipe.verkefni.repository.SubcategoryRepository;
-import com.hi.recipe.verkefni.utils.CategoryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
+import static com.hi.recipe.verkefni.utils.CategoryUtils.normalizeCategoryName;
 
 @Service
 public class SubcategoryServiceImpl implements SubcategoryService {
@@ -48,16 +50,43 @@ public class SubcategoryServiceImpl implements SubcategoryService {
     public List<Recipe> getRecipesBySubcategoryName(String subcategoryName) {
         return subcategoryRepository.findRecipesBySubcategoryName(subcategoryName);
     }
-
-    // Get Subcategories by Category name
     @Override
     public List<Subcategory> getSubcategoriesByCategoryName(String categoryName) {
-        return subcategoryRepository.findByCategoryName(categoryName);
+        // Normalize the category name first (e.g., "baking" -> "Baking")
+        String normalizedCategoryName = normalizeCategoryName(categoryName);
+
+        // Find the category by the normalized name
+        Optional<Category> categoryOptional = categoryRepository.findByName(normalizedCategoryName);
+
+        // If the category is found by the normalized name
+        if (categoryOptional.isPresent()) {
+            Category category = categoryOptional.get();
+            // Return subcategories by categoryId
+            return subcategoryRepository.findByCategoryId(category.getId());
+        } else {
+            // If the category wasn't found by the normalized name, search by the original (unnormalized) name
+            return findSubcategoriesByOriginalCategoryName(categoryName);
+        }
     }
+    @Override
+    public List<Subcategory> findSubcategoriesByOriginalCategoryName(String categoryName) {
+        // Find the category by the unnormalized (exact) name
+        Optional<Category> categoryOptional = categoryRepository.findByName(categoryName);
+
+        // If the category is found, return the associated subcategories by categoryId
+        if (categoryOptional.isPresent()) {
+            Category category = categoryOptional.get();
+            return subcategoryRepository.findByCategoryId(category.getId());  // Use categoryId directly
+        } else {
+            // If not found, return an empty list
+            return Collections.emptyList();
+        }
+    }
+
+
 
     @Override
     public Optional<Subcategory> getSubcategoryByNameAndCategoryId(String subcategoryName, Long categoryId) {
-
         return subcategoryRepository.findByNameAndCategoryId(subcategoryName, categoryId);
     }
     @Override
@@ -160,8 +189,8 @@ public class SubcategoryServiceImpl implements SubcategoryService {
     @Override
     public boolean doesSubcategoryExistInCategory(String subcategoryName, String categoryName) {
         // Normalize both subcategory and category names
-        subcategoryName = CategoryUtils.normalizeCategoryName(subcategoryName);
-        categoryName = CategoryUtils.normalizeCategoryName(categoryName);
+        subcategoryName = normalizeCategoryName(subcategoryName);
+        categoryName = normalizeCategoryName(categoryName);
 
         // Retrieve the category by name
         Optional<Category> categoryOptional = categoryRepository.findByName(categoryName);

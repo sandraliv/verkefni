@@ -22,6 +22,8 @@ public interface SubcategoryService {
     // Get Subcategories by Category name
     List<Subcategory> getSubcategoriesByCategoryName(String categoryName);
 
+    List<Subcategory> findSubcategoriesByOriginalCategoryName(String categoryName);
+
     Optional<Subcategory> getSubcategoryByNameAndCategoryId(String subcategoryName, Long categoryId);
 
 

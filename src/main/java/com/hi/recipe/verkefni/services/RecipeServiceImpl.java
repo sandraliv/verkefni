@@ -37,14 +37,6 @@ public class RecipeServiceImpl implements RecipeService {
 
 
     }
-
-   /* @Override
-    public void updateAverageRating(Recipe recipe) {
-        Set<Integer> ratings = recipe.getTempRatings();
-        double average = ratings.stream().mapToInt(Rating::getScore).average().orElse(0);
-        recipe.setAverageRating(BigDecimal.valueOf(average));
-        recipeRepository.save(recipe);
-    }*/
     // Fetch all recipes
     @Override
     public List<Recipe> findAll() {
@@ -108,10 +100,6 @@ public class RecipeServiceImpl implements RecipeService {
         return recipeRepository.save(recipe);
     }
 
-
-
-
-
     @Override
     public Optional<Recipe> findById(int id) {
         return recipeRepository.findById(id);
@@ -126,7 +114,6 @@ public class RecipeServiceImpl implements RecipeService {
     public List<Recipe> findByTagsIn(Set<RecipeTag> tags) {
         return recipeRepository.findByTagsIn(tags);
     }
-
 
     public Optional<Recipe> findRecipeById(int id) {
         System.out.println("id = " + id);
@@ -204,33 +191,6 @@ public class RecipeServiceImpl implements RecipeService {
                 .orElse("No Date");
     }
 
-
-    /*@Transactional
-    public void addRatingToRecipe(int recipeId, int score) {
-        // Find the recipe by ID
-        Recipe recipe = recipeRepository.findById(recipeId)
-                .orElseThrow(() -> new NoSuchElementException("Recipe not found"));
-
-        // Create the Rating and associate it with the recipe
-        Rating rating = new Rating();
-        rating.setScore(score);
-        rating.setRecipe(recipe);
-        recipe.setDateAdded(LocalDateTime.now());
-
-        // Set the rating's ID to be the same as the recipe's ID
-        rating.setId((int) recipeId);  // Set the Rating ID to match the Recipe ID
-
-        // Save the rating (this will insert a row in the ratings table)
-        ratingRepository.save(rating);
-
-        // Add the rating to the recipe
-        recipe.addRating(rating);
-
-
-
-        // Save the updated recipe (this will persist both the recipe and the rating)
-        recipeRepository.save(recipe);
-    }*/
     @Transactional
     public void addTempRatingToRecipe(int recipeId, int score) {
         // Find the recipe by ID

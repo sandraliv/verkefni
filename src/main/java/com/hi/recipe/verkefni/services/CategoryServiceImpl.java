@@ -123,8 +123,8 @@ public class CategoryServiceImpl implements CategoryService {
         return "No subcategory";  // Default value if no subcategory exists
     }
     @Override
-    public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+    public Set<Category> getAllCategories() {
+        return new HashSet<>(categoryRepository.findAll());  // Ensure it returns categories, not recipes
     }
 
     @Override

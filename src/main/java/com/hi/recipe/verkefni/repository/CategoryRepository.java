@@ -19,7 +19,9 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     // Query to find categories by a set of category names
     List<Category> findByNameIn(Set<String> names);
 
-
+    // Query to find all categories, ensuring uniqueness
+    @Query("SELECT DISTINCT c FROM Category c")
+    Set<Category> findAllDistinct();
 
 
     // Find all categories associated with a recipe
