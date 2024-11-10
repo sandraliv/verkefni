@@ -1,7 +1,7 @@
 package com.hi.recipe.verkefni.klasar;
 
 public enum RecipeTag {
-    VEGETERIAN,
+    VEGETARIAN,
     VEGAN,
     GLUTEN_FREE,
     KETO,
