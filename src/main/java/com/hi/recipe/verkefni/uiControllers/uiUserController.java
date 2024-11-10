@@ -158,14 +158,15 @@ public class uiUserController {
     // PATCH Methods
     //================================================================================
 
-    /**
-     * Updates the logged-in user's profile details, such as name and email.
-     * 
-     * @param session The HTTP session containing user information
-     * @param updates A Map with the fields to update ("name" and "email") and their new values
-     * @return A success message if the profile was updated successfully, 
-     *         401 message if the user is not logged in
-     */
+ /**
+ * Shows the password change form for the logged-in user.
+ * 
+ * @param id The user's ID.
+ * @param session The session to check if the user is logged in.
+ * @param model The model
+ * @return Displays the password change page if the user is logged in
+ */
+
   
    @GetMapping("/{id}/changepassword")
    public String showChangePasswordForm(@PathVariable int id, HttpSession session, Model model) {
@@ -177,8 +178,19 @@ public class uiUserController {
        model.addAttribute("user", user);
        return "changePassword";
    }
-   
-   @PostMapping("/{id}/changepassword")
+/**
+ * Handles password change for the logged-in user.
+ * 
+ * @param id The user's ID.
+ * @param session The session to get the logged-in user info.
+ * @param currentPassword The user's current password. 
+ * @param newPassword The new password to be set.
+ * @param confirmNewPassword The new password retyped for confirmation.
+ * @param model The model to display messages.
+ * @return Redirects to profile if successful, or shows errors on the same page.
+ */
+
+    @PostMapping("/{id}/changepassword")
     public String changePassword(@PathVariable int id, 
                              HttpSession session, 
                              @RequestParam("currentPassword") String currentPassword,
