@@ -2,17 +2,17 @@ package com.hi.recipe.verkefni.controllers;
 
 import com.hi.recipe.verkefni.klasar.Recipe;
 import com.hi.recipe.verkefni.klasar.User;
-import com.hi.recipe.verkefni.services.RecipeService;
 import com.hi.recipe.verkefni.services.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.Map;
+import java.util.Optional;
 
 
 @RestController
@@ -50,7 +50,7 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<Optional<User>> getUserProfileById(@PathVariable int id) {
         Optional<User> userProfile = userService.findById(id);
-        return userProfile.isPresent() 
+        return userProfile.isPresent()
             ? ResponseEntity.ok(userProfile)
             : ResponseEntity.notFound().build();
     }
@@ -141,27 +141,27 @@ public class UserController {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in.");
         }
-    
+
         // Find the recipe to remove
         Optional<Recipe> recipeToRemove = user.getFavourites().stream()
                 .filter(recipe -> recipe.getId() == recipeId)
                 .findFirst();
-        
+
         // Check if recipe exists in user's favorites
         if (recipeToRemove.isPresent()) {
             user.getFavourites().remove(recipeToRemove.get());
             userService.save(user);  // Persist changes to the database
             return ResponseEntity.ok("Recipe removed from favorites.");
         }
-    
+
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Recipe not found in favorites.");
     }
     /**
     * Updates the logged-in user's profile details, such as name and email.
-    * 
+    *
     * @param session The HTTP session containing user information
     * @param updates A Map with the fields to update ("name" and "email") and their new values
-    * @return A success message if the profile was updated successfully, 
+    * @return A success message if the profile was updated successfully,
     *         401 message if the user is not logged in
     */
     @PatchMapping("/updateProfile")
@@ -171,25 +171,20 @@ public class UserController {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in.");
         }
-    
+
         // Updates name
         if (updates.containsKey("name")) {
             user.setName((String) updates.get("name"));
         }
-    
+
         // Updates email
         if (updates.containsKey("email")) {
             user.setEmail((String) updates.get("email"));
         }
-    
+
         // Save the updated user in database
         userService.save(user);
         return ResponseEntity.ok("Name and email updated");
     }
-    
-    
-
 }
-
-
 

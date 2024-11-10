@@ -23,6 +23,7 @@ public class User {
    joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")}, inverseJoinColumns = {@JoinColumn(name = "recipe_id", referencedColumnName = "id")})
    private List<Recipe> favourites;
 
+
     public User(){
     }
 
@@ -83,4 +84,6 @@ public class User {
     public void setRole(String role) {
         this.role = role;
     }
+
+
 }
