@@ -4,6 +4,7 @@ import com.hi.recipe.verkefni.klasar.Recipe;
 import com.hi.recipe.verkefni.repository.RecipeRepository;
 import com.hi.recipe.verkefni.services.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,12 +25,32 @@ public class uiImageController {
         this.recipeRepository = recipeRepository;
     }
 
+    //================================================================================
+    // GET Methods
+    //================================================================================
+
+    /**
+     *
+     * @param recipeId Id á uppskrift sem vantar mynd
+     * @param model Modelið
+     * @return uploadImage.html
+     */
     @GetMapping("/{recipeId}/upload")
     public String showUploadForm(@PathVariable int recipeId, Model model) {
         model.addAttribute("recipeId", recipeId);
         return "uploadImage"; // uploadImage.html 
     }
 
+    //================================================================================
+    // POST Methods
+    //================================================================================
+
+    /**
+     * @param recipeId Id á uppskrift sem á að breyta
+     * @param file Myndin sem á að setja á uppskrift jpeg/jpg
+     * @param model Modelið
+     * @return uploadImage.html
+     */
     @PostMapping("/{recipeId}/upload")
     public String uploadImageToRecipe(@PathVariable int recipeId, @RequestParam("file") MultipartFile file, Model model) {
         try {
@@ -45,13 +66,41 @@ public class uiImageController {
 
             // Step 4: Save the updated Recipe
             recipeRepository.save(recipe);
-
             model.addAttribute("message", "Image uploaded and added to recipe successfully");
             model.addAttribute("imageUrl", imageUrl);
             return "uploadImage"; 
         } catch (IOException e) {
             model.addAttribute("errorMessage", "Error uploading image: " + e.getMessage());
             return "uploadImage"; 
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "uploadImage";
+        }
+    }
+
+    //================================================================================
+    // PATCH Methods
+    //================================================================================
+
+    /**
+     * @param recipeId Id á uppskrift sem á að breyta
+     * @param file Myndin sem á að setja á uppskrift jpeg/jpg
+     * @param model Modelið
+     * @return uploadImage.html
+     */
+    @PatchMapping("/{recipeId}/replaceImg")
+    public String replaceRecipeImage(@PathVariable int recipeId, @RequestParam("file") MultipartFile file, Model model) {
+        try {
+            Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(() -> new IllegalArgumentException("Recipe not found"));
+            String imageUrl = imageService.uploadImage(file);
+            recipe.setImage_url(imageUrl);
+            recipeRepository.save(recipe);
+            model.addAttribute("message", "Image changed, uploaded and added to recipe successfully");
+            model.addAttribute("imageUrl", imageUrl);
+            return "uploadImage";
+        } catch (IOException e) {
+            model.addAttribute("errorMessage", "Error uploading image: " + e.getMessage());
+            return "uploadImage";
         } catch (IllegalArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());
             return "uploadImage";

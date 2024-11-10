@@ -85,8 +85,16 @@ public class RecipeController {
      */
     @PostMapping("/newRecipe")
     public ResponseEntity<String> addANewRecipe(@RequestBody Recipe recipe) {
-        recipeService.save(recipe);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Recipe added successfully!");
+        try {
+            for (RecipeTag tag : recipe.getTags()) {
+                // Throws IllegalArgumentException if the tag is invalid
+                RecipeTag.valueOf(tag.name());
+            }
+            recipeService.save(recipe);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Recipe added successfully!");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid RecipeTag value provided.");
+        }
     }
 
     /**

@@ -75,6 +75,11 @@ public class RecipeControllerui {
         return "error";
     }
 
+    /**
+     * @param recipe nýtt recipe object
+     * @param model Módelið
+     * @return addRecipe.html
+     */
     @GetMapping("/addRecipe")
     public String addNewRecipe(@ModelAttribute("recipe") Recipe recipe, Model model) {
         model.addAttribute("newRecipe", new Recipe());

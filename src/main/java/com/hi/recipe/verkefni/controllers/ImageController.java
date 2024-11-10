@@ -24,25 +24,49 @@ public class ImageController {
         this.recipeRepository = recipeRepository;
     }
 
+    /**
+     * @param recipeId Id á uppskrift sem á að breyta
+     * @param file Myndin sem á að setja á uppskrift jpeg/jpg
+     * @return skilaboð að allt hafi gengið eftir eða villu
+     */
     @PostMapping("/{recipeId}/upload")
     public ResponseEntity<String> uploadImageToRecipe(@PathVariable int recipeId, @RequestParam("file") MultipartFile file) {
         try {
-            // Step 1: Find the Recipe by ID
+            // Finna uppskrift með id
             Recipe recipe = recipeRepository.findById(recipeId)
                     .orElseThrow(() -> new IllegalArgumentException("Recipe not found"));
 
-            // Step 2: Upload the image to Cloudinary and get the URL
+            // Hlaða upp mynd inná cloudinary og fá urlið til baka
             String imageUrl = imageService.uploadImage(file);
 
-            // Step 3: Update the Recipe's imageUrl field
+            // Geyma url með uppskrift
             recipe.setImage_url(imageUrl);
 
-            // Step 4: Save the updated Recipe
+            // Savea í gagnagrunni
             recipeRepository.save(recipe);
-
             return ResponseEntity.ok("Image uploaded and added to recipe successfully. Image URL: " + imageUrl);
         } catch (IOException e) {
             return ResponseEntity.status(500).body("Error uploading image: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
+
+    /**
+     * @param recipeId Id á uppskrift sem á að breyta
+     * @param file Myndin sem á að setja á uppskrift jpeg/jpg
+     * @return skilaboð að allt hafi gengið eftir eða villu
+     */
+    @PatchMapping("/{recipeId}/replaceImg")
+    public ResponseEntity<String> replaceRecipeImage(@PathVariable int recipeId, @RequestParam("file") MultipartFile file) {
+        try {
+            Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(() -> new IllegalArgumentException("Recipe not found"));
+            String imageUrl = imageService.uploadImage(file);
+            recipe.setImage_url(imageUrl);
+            recipeRepository.save(recipe);
+            return ResponseEntity.ok("Image changed and added to recipe successfully. Image URL: " + imageUrl);
+        } catch (IOException e) {
+            return  ResponseEntity.status(500).body("Error uploading image: " + e.getMessage());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(404).body(e.getMessage());
         }

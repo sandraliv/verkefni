@@ -9,7 +9,6 @@ import java.util.*;
 @Table(name="recipes")
 public class Recipe {
     private String title;
-
     private String image_url;
     private String description;
 
