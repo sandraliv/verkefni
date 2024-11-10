@@ -12,6 +12,7 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
+
     @Autowired
     public UserServiceImpl(UserRepository userRepository){
         this.userRepository = userRepository;
@@ -40,7 +41,7 @@ public class UserServiceImpl implements UserService {
     public Optional<User> findById(int id) {
         return userRepository.findById(id);
     }
-    
+
     @Override
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
@@ -50,6 +51,9 @@ public class UserServiceImpl implements UserService {
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
+
+
+
 
 
 }
