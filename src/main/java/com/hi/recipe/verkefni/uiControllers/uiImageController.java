@@ -46,9 +46,9 @@ public class uiImageController {
     //================================================================================
 
     /**
-     * @param recipeId Id á uppskrift sem á að breyta
-     * @param file Myndin sem á að setja á uppskrift jpeg/jpg
-     * @param model Modelið
+     * @param recipeId Id of the recipe to which the image should be added
+     * @param file the image to upload to the recipe (jpeg/jpg)
+     * @param model the model
      * @return uploadImage.html
      */
     @PostMapping("/{recipeId}/upload")
@@ -83,9 +83,9 @@ public class uiImageController {
     //================================================================================
 
     /**
-     * @param recipeId Id á uppskrift sem á að breyta
-     * @param file Myndin sem á að setja á uppskrift jpeg/jpg
-     * @param model Modelið
+     * @param recipeId Id of the recipe to be modified
+     * @param file the image to be set on the recipe jpeg/jpg
+     * @param model the model
      * @return uploadImage.html
      */
     @PatchMapping("/{recipeId}/replaceImg")
