@@ -158,16 +158,13 @@ public class uiUserController {
     // PATCH Methods
     //================================================================================
 
- /**
- * Shows the password change form for the logged-in user.
- * 
- * @param id The user's ID.
- * @param session The session to check if the user is logged in.
- * @param model The model
- * @return Displays the password change page if the user is logged in
- */
-
-  
+    /**
+     * Shows the password change form for the logged-in user.
+     * @param id The user's ID.
+     * @param session The session to check if the user is logged in.
+     * @param model The model
+     * @return Displays the password change page if the user is logged in
+     */
    @GetMapping("/{id}/changepassword")
    public String showChangePasswordForm(@PathVariable int id, HttpSession session, Model model) {
        User user = (User) session.getAttribute("user");
@@ -178,18 +175,16 @@ public class uiUserController {
        model.addAttribute("user", user);
        return "changePassword";
    }
-/**
- * Handles password change for the logged-in user.
- * 
- * @param id The user's ID.
- * @param session The session to get the logged-in user info.
- * @param currentPassword The user's current password. 
- * @param newPassword The new password to be set.
- * @param confirmNewPassword The new password retyped for confirmation.
- * @param model The model to display messages.
- * @return Redirects to profile if successful, or shows errors on the same page.
- */
-
+    /**
+     * Handles password change for the logged-in user.
+     * @param id The user's ID.
+     * @param session The session to get the logged-in user info.
+     * @param currentPassword The user's current password. 
+     * @param newPassword The new password to be set.
+     * @param confirmNewPassword The new password retyped for confirmation.
+     * @param model The model to display messages.
+     * @return Redirects to profile if successful, or shows errors on the same page.
+     */
     @PostMapping("/{id}/changepassword")
     public String changePassword(@PathVariable int id, 
                              HttpSession session, 
