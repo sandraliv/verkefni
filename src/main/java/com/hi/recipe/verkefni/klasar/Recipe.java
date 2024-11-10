@@ -1,6 +1,5 @@
 package com.hi.recipe.verkefni.klasar;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -35,23 +34,12 @@ public class Recipe {
     private Set<RecipeTag> tags = new HashSet<>();  // Multiple tags
 
 
-    @ManyToMany
-    @JsonBackReference  // This side is not serialized (avoids recursion)
-    @JoinTable(
-            name = "recipe_categories",
-            joinColumns = @JoinColumn(name = "recipe_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id")
-    )
-    private Set<Category> categories = new HashSet<>();  // A recipe can belong to multiple categories
+    @ElementCollection(targetClass = Category.class, fetch = FetchType.EAGER)  // To store multiple categories
+    @Enumerated(EnumType.STRING)  // Store enums as strings in the database
+    @CollectionTable(name = "recipe_newCategories", joinColumns = @JoinColumn(name = "recipe_id"), uniqueConstraints = @UniqueConstraint(columnNames = {"recipe_id", "newCategory"}))
+    @Column(name = "newCategory")  // Define the column name for categories
+    private Set<Category> categories = new HashSet<>();  // Multiple categories
 
-    @ManyToMany
-    @JsonBackReference  // Prevent recursion by marking this side of the relationship
-    @JoinTable(
-            name = "recipe_subcategories",
-            joinColumns = @JoinColumn(name = "recipe_id"),
-            inverseJoinColumns = @JoinColumn(name = "subcategory_id")
-    )
-    private Set<Subcategory> subcategories = new HashSet<>(); // Subcategories that this recipe belongs to
 
     // Use ElementCollection to store ratings temporarily
     @ElementCollection
@@ -80,14 +68,13 @@ public class Recipe {
 
 
 
-    public Recipe(String title, String description, Map<String, String> ingredients, Set<RecipeTag> tags, Set<Subcategory> subcategories,Set<Category> categories, String instructions) {
+    public Recipe(String title, String description, Map<String, String> ingredients, Set<RecipeTag> tags,Set<Category> categories ,String instructions) {
         this.title = title;
         this.description = description;
         this.ingredients = ingredients;
         this.tags = tags;
-        this.subcategories = subcategories;
-        this.categories = categories;
         this.instructions = instructions;
+        this.categories = categories;
 
     }
 
@@ -142,22 +129,6 @@ public class Recipe {
         this.tags = tags;
     }
 
-    public Set<Subcategory> getSubcategories() {
-        return subcategories;
-    }
-
-    public void setSubcategories(Set<Subcategory> subcategories) {
-        this.subcategories = subcategories;
-    }
-
-    public Set<Category> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(Set<Category> categories) {
-        this.categories = categories;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -198,7 +169,13 @@ public class Recipe {
         this.instructions = instructions;
     }
 
+    public Set<Category> getCategories() {
+        return categories;
+    }
 
+    public void setCategories(Set<Category> categories) {
+        this.categories = categories;
+    }
 
     public BigDecimal getAverageRating() {
         return averageRating;
@@ -206,14 +183,6 @@ public class Recipe {
 
     public void setAverageRating(BigDecimal averageRating) {
         this.averageRating = averageRating;
-    }
-
-    public Set<String> getCategoryNames() {
-        Set<String> names = new HashSet<>();
-        for (Category category : categories) {
-            names.add(category.getName());
-        }
-        return names;
     }
 
    // Recalculate the average rating from the temporary ratings
