@@ -157,34 +157,37 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Recipe not found in favorites.");
     }
     /**
-    * Updates the logged-in user's profile details, such as name and email.
-    *
-    * @param session The HTTP session containing user information
-    * @param updates A Map with the fields to update ("name" and "email") and their new values
-    * @return A success message if the profile was updated successfully,
-    *         401 message if the user is not logged in
-    */
-    @PatchMapping("/updateProfile")
-    public ResponseEntity<String> updateUserProfile(HttpSession session, @RequestBody Map<String, Object> updates)  {
-        // user has to be logged in
-        User user = (User) session.getAttribute("user");
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in.");
-        }
-
-        // Updates name
-        if (updates.containsKey("name")) {
-            user.setName((String) updates.get("name"));
-        }
-
-        // Updates email
-        if (updates.containsKey("email")) {
-            user.setEmail((String) updates.get("email"));
-        }
-
-        // Save the updated user in database
-        userService.save(user);
-        return ResponseEntity.ok("Name and email updated");
+ * Updates the password of a logged in user
+ * 
+ * @param session Checks if the user is logged in.
+ * @param updates A Map containing "currentPassword", "newPassword", and "confirmNewPassword" keys.
+ * @return A success message if the password is changed, or an error messages.
+ */
+@PatchMapping("/updatePassword")
+public ResponseEntity<String> updatePassword(HttpSession session, @RequestBody Map<String, String> updates) {
+    
+    User user = (User) session.getAttribute("user");
+    if (user == null) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in.");
     }
+
+
+    String currentPassword = updates.get("currentPassword");
+    if (currentPassword == null || !user.getPassword().equals(currentPassword)) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Current password is incorrect.");
+    }
+
+    String newPassword = updates.get("newPassword");
+    String confirmNewPassword = updates.get("confirmNewPassword");
+    if (newPassword == null || !newPassword.equals(confirmNewPassword)) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("New passwords do not match.");
+    }
+
+
+    user.setPassword(newPassword);
+    userService.save(user);
+
+    return ResponseEntity.ok("Password changed successfully");
+}
 }
 
