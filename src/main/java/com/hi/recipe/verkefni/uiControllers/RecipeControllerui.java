@@ -74,7 +74,7 @@ public class RecipeControllerui {
         }
 
         model.addAttribute("recipes", recipes);
-        return "RecipeCard"; //recipeList.html
+        return "recipeList"; //recipeList.html
     }
 
     /**
@@ -94,8 +94,8 @@ public class RecipeControllerui {
     }
 
     /**
-     * @param recipe nýtt recipe object
-     * @param model Módelið
+     * @param recipe new recipe object
+     * @param model the model
      * @return addRecipe.html
      */
     @GetMapping("/addRecipe")

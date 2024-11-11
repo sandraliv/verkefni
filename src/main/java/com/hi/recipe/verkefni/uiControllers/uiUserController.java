@@ -204,12 +204,12 @@ public class uiUserController {
     // check if current password matches
     if (!user.getPassword().equals(currentPassword)) {
         model.addAttribute("errorMessage", "Current password is incorrect.");
-        return "changepassword";
+        return "changePassword";
     }
     // check if new password and confirmation match
     if (!newPassword.equals(confirmNewPassword)) {
         model.addAttribute("errorMessage", "New passwords do not match.");
-        return "changepassword";
+        return "changePassword";
     }
     // Update the password
     user.setPassword(newPassword);
