@@ -33,24 +33,6 @@ public class RecipeControllerui {
     // GET Methods
     //================================================================================
 
-    @GetMapping("")
-    public String getHomePage(HttpSession session, Model model) {
-        // Get the list of all categories
-        List<Category> allCategoryNames  = List.of(Category.values());
-        model.addAttribute("categories", allCategoryNames);
-
-        // Check if the user is logged in
-        boolean isLoggedIn = session.getAttribute("user") != null;
-        model.addAttribute("isLoggedIn", isLoggedIn);
-
-        // Add a search bar
-        model.addAttribute("searchQuery", "");
-
-        // Return the homepage view (e.g., homepage.html)
-        return "HomePage"; // This should point to the Thymeleaf template
-    }
-
-
     /**
      * Retrieves recipes with optional search and tag filtering
      * @param query Optional search term to filter recipes by title
@@ -74,7 +56,7 @@ public class RecipeControllerui {
         }
 
         model.addAttribute("recipes", recipes);
-        return "RecipeCard"; //recipeList.html
+        return "recipeList"; //recipeList.html
     }
 
     /**
@@ -87,7 +69,7 @@ public class RecipeControllerui {
         Optional<Recipe> recipe = recipeService.findById(id);
         if (recipe.isPresent()) {
             model.addAttribute("recipe", recipe.get());
-            return "recipeDetail"; // recipeDetail.html
+            return "recipeList";
         }
         model.addAttribute("errorMessage", "Recipe not found.");
         return "error";
@@ -126,7 +108,7 @@ public class RecipeControllerui {
             List<Recipe> recipes = recipeService.findByCategoryIn(Collections.singleton(category));
             model.addAttribute("recipes", recipes);
         }
-        return "recipes/recipe-list"; // Return the view name to display the filtered recipes
+        return "recipeList";
     }
 
 
@@ -148,7 +130,7 @@ public class RecipeControllerui {
     @GetMapping("/highestRated")
     public String getRecipesByHighestRating(Model model) {
         model.addAttribute("recipes", recipeService.findAllByAverageRatingDesc());
-        return "recipes/recipe-list";
+        return "recipeList";
     }
 
     //================================================================================
