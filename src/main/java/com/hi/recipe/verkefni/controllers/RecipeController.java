@@ -51,13 +51,19 @@ public class RecipeController {
         return ResponseEntity.ok(recipeService.findByTitleAndTags(query, tags));
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<List<Recipe>> getAll(){
+        List<Recipe> recipes = recipeService.findAll();
+        return ResponseEntity.ok(recipes);
+    }
+
     /**
      * Retrieves recipes with optional category filtering
      *
      * @param categories search term to filter recipes by category
      * @return Filtered list of recipes, or all recipes if no filters applied
      */
-   @GetMapping("/recipes/byCategory")
+   @GetMapping("byCategory")
     public ResponseEntity<List<Recipe>> getRecipesByCategory(
             @RequestParam(value = "categories", required = false) Set<Category> categories) {
 

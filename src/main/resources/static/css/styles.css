@@ -9,3 +9,58 @@ img {
 .contact_error {
     color: red;
 }
+/* General styles for the recipe page */
+ body {
+     font-family: Arial, sans-serif;
+     margin: 0;
+     padding: 0;
+     background-color: #f4f4f4;
+ }
+
+ h1 {
+     text-align: center;
+     margin-top: 20px;
+ }
+
+/* Rating container - Using flexbox to align stars and rating count horizontally */
+.rating {
+    display: flex;
+    align-items: center; /* Vertically center the stars and rating count */
+    margin-bottom: 10px; /* Optional: adds some space below the rating container */
+}
+
+/* Rating stars container */
+.stars {
+    display: flex; /* Arrange stars in a row */
+}
+
+/* Individual star styles */
+.star-filled,
+.star-half-filled,
+.star-empty {
+    font-size: 1.5rem; /* Adjust size as needed */
+    display: inline-block;
+    color: lightgrey; /* Default color for empty stars */
+}
+
+/* Style for filled stars (yellow color) */
+.star-filled {
+    color: gold;
+}
+
+/* Style for half-filled stars (gold color) */
+.star-half-filled {
+    color: gold;
+}
+
+/* Style for empty stars (light grey color) */
+.star-empty {
+    color: lightgrey; /* Light grey color for empty stars */
+}
+
+/* Rating count styling (adds space between stars and the count) */
+.rating-count {
+    margin-left: 8px; /* Adds space between stars and rating count */
+    font-size: 1rem;  /* Adjust font size if needed */
+    color: #555;      /* Adjust color for rating count */
+}

@@ -74,9 +74,6 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
 
-
-
-
     public Optional<Recipe> findRecipeById(int id) {
         System.out.println("id = " + id);
         return recipeRepository.findById(id);
@@ -98,7 +95,7 @@ public class RecipeServiceImpl implements RecipeService {
     public List<Recipe> findByDate() {
 
         int page = 0;
-        int size = 2;
+        int size = 10;
 
         Pageable pageable = PageRequest.of(page, size);
         Page<Recipe> recipes = recipeRepository.findByDate(pageable);
@@ -112,7 +109,7 @@ public class RecipeServiceImpl implements RecipeService {
     public List<Recipe> findAllByAverageRatingDesc() {
 
         int page = 0;
-        int size = 2;
+        int size = 10;
 
         Pageable pageable = PageRequest.of(page, size);
         Page<Recipe> recipes = recipeRepository.findAllByAverageRatingDesc(pageable);
@@ -135,7 +132,7 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     public String formatDate(LocalDateTime date) {
         return Optional.ofNullable(date)
-                .map(d -> d.format(DateTimeFormatter.ofPattern("d MMM yyyy")))
+                .map(d -> d.format(DateTimeFormatter.ofPattern("d MMMM yyyy")))
                 .orElse("No Date");
     }
 

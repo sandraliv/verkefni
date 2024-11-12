@@ -55,6 +55,8 @@ public class RecipeControllerui {
             recipes = recipeService.findByTitleAndTags(query, tags);
         }
 
+
+
         model.addAttribute("recipes", recipes);
         return "recipeList"; //recipeList.html
     }
@@ -98,7 +100,7 @@ public class RecipeControllerui {
         return "recipeList";
     }
 
-    @GetMapping("/recipes/byCategory")
+    @GetMapping("/byCategory")
     public String getRecipesByCategory(@RequestParam("category") Category category, Model model) {
         // If the category is null or empty, return all recipes as a fallback
         if (category == null) {
@@ -110,7 +112,6 @@ public class RecipeControllerui {
         }
         return "recipeList";
     }
-
 
     /**
      * Retrieves the featured recipes list from a predefined user
@@ -129,7 +130,13 @@ public class RecipeControllerui {
 
     @GetMapping("/highestRated")
     public String getRecipesByHighestRating(Model model) {
-        model.addAttribute("recipes", recipeService.findAllByAverageRatingDesc());
+        List<Recipe> recipes = recipeService.findAllByAverageRatingDesc();
+        // Format the date before adding it to the model
+        for (Recipe recipe : recipes) {
+            String formattedDate = recipeService.formatDate(recipe.getDateAdded());
+            recipe.setFormattedDate(formattedDate);  // Add formatted date to recipe
+        }
+        model.addAttribute("recipes", recipes);
         return "recipeList";
     }
 

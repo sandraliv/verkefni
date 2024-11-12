@@ -15,6 +15,7 @@ public class Recipe {
     private String image_url;
     private String description;
     private String instructions;
+    private String formattedDate;
 
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -197,6 +198,12 @@ public class Recipe {
        }
    }
 
+    public String getFormattedDate() {
+        return formattedDate;
+    }
 
+    public void setFormattedDate(String formattedDate) {
+        this.formattedDate = formattedDate;
+    }
 }
 

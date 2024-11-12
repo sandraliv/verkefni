@@ -11,8 +11,38 @@
 <ul>
     <!-- Iterate over each recipe -->
     <li th:each="recipe : ${recipes}">
+
+        <div class="heart-icon-container">
+            <!-- Heart Icon for Favorites -->
+            <!-- Check if user is logged in and has favorited the recipe -->
+            <div th:if="${recipe.isFavoritedByUser != null}" class="heart-icon">
+                <span th:class="${recipe.isFavoritedByUser ? 'filled' : 'empty'}">❤️</span>
+            </div>
+            <!-- If the user is not logged in or has not favorited the recipe -->
+            <div th:if="${recipe.isFavoritedByUser == null}" class="heart-icon">
+                <span class="empty">🤍</span>
+            </div>
+        </div>
+
         <h3 th:text="${recipe.title}">Recipe Title</h3>
         <p th:text="${recipe.description}">Recipe Description</p>
+
+
+        <!-- Use formattedDate -->
+        <p><strong>Date Added:</strong>
+            <span th:text="${recipe.formattedDate}">Date Added</span>
+        </p>
+
+        <div class="rating">
+            <div class="stars">
+                <span th:each="i : ${#numbers.sequence(1, 5)}"
+                    th:class="${i <= recipe.averageRating.intValue() ? 'star-filled' :
+                              (i - 0.5 <= recipe.averageRating.doubleValue() && i > recipe.averageRating.doubleValue() ? 'star-half-filled' : 'star-empty')}">
+                    ★
+                </span>
+            </div>
+            <span class="rating-count" th:text="${recipe.ratingCount == 0 ? 'No ratings yet' : '(' + recipe.ratingCount + ')'}"></span>
+        </div>
 
         <!-- Ingredients Table -->
         <table>
@@ -22,7 +52,7 @@
             </tr>
             <!-- Iterate over each ingredient in the recipe.ingredients map -->
             <tr th:each="ingredient : ${recipe.ingredients}">
-                <td th:text="${ingredient.key}">Ingredient Quantity</td>
+                <td th:text="${ingredient.key.replace('_', ' ')}">Ingredient Name</td>
                 <td th:text="${ingredient.value}">Ingredient Quantity</td>
             </tr>
         </table>
