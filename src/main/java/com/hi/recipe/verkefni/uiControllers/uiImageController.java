@@ -31,8 +31,8 @@ public class uiImageController {
 
     /**
      *
-     * @param recipeId Id á uppskrift sem vantar mynd
-     * @param model Modelið
+     * @param recipeId Id of the recipe which picture is missing
+     * @param model the model
      * @return uploadImage.html
      */
     @GetMapping("/{recipeId}/upload")
