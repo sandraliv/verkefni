@@ -75,7 +75,7 @@
     <!-- Categories Field with Checkboxes -->
     <div>
         <label>Merki:</label>
-        <div th:each="tag : ${allCategories}">
+        <div th:each="category : ${allCategories}">
             <input type="checkbox" th:field="*{categories}" th:value="${category}" th:attr="id='category_' + ${category}" />
             <label th:attr="for='category_' + ${category}" th:text="${category}"></label>
         </div>
