@@ -12,18 +12,6 @@
     <!-- Iterate over each recipe -->
     <li th:each="recipe : ${recipes}">
 
-        <div class="heart-icon-container">
-            <!-- Heart Icon for Favorites -->
-            <!-- Check if user is logged in and has favorited the recipe -->
-            <div th:if="${recipe.isFavoritedByUser != null}" class="heart-icon">
-                <span th:class="${recipe.isFavoritedByUser ? 'filled' : 'empty'}">❤️</span>
-            </div>
-            <!-- If the user is not logged in or has not favorited the recipe -->
-            <div th:if="${recipe.isFavoritedByUser == null}" class="heart-icon">
-                <span class="empty">🤍</span>
-            </div>
-        </div>
-
         <h3 th:text="${recipe.title}">Recipe Title</h3>
         <p th:text="${recipe.description}">Recipe Description</p>
 
