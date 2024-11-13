@@ -76,20 +76,12 @@
     <div>
         <label>Merki:</label>
         <div th:each="category : ${allCategories}">
-            <input type="checkbox" th:field="*{categories}" th:value="${category}" th:attr="id='category_' + ${category}" />
-            <label th:attr="for='category_' + ${category}" th:text="${category}"></label>
+           <label th:attr="for='category_' + ${category}" th:text="${category}">
+               <input type="checkbox" th:field="*{categories}" th:value="${category}" th:attr="id='category_' + ${category}" />
+           </label>
         </div>
         <p class="contact_error" th:if="${#fields.hasErrors('categories')}" th:errors="*{categories}"></p>
     </div>
     <button type="submit">Submit</button>
-    </form>
-    <form id="photo-upload-form" th:action="@{/recipesui/{id}/upload(id=${id})}" method="post" enctype="multipart/form-data" style="display: none;">
-        <h2>Upload a Photo for Your Recipe</h2>
-        <div>
-            <label for="photo">Choose a photo:</label>
-            <input type="file" id="photo" name="photo" accept="image/*" required />
-        </div>
-        <button type="submit">Upload Photo</button>
-    </form>
 </body>
 </html>

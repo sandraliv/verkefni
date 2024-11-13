@@ -13,8 +13,8 @@ public class VerkefniApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(VerkefniApplication.class, args);
-
     }
+
     // Configure Cloudinary Bean with dotenv
     @Bean
     public Cloudinary cloudinary() {

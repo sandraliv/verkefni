@@ -156,7 +156,7 @@ public class RecipeController {
             Optional<User> userOpt = userService.findById(sessionUser.getId());
             if (userOpt.isPresent()) {
                 User user = userOpt.get();
-                user.addFavourite(recipe);
+                user.setFavourites(recipe);
                 userService.save(user);
                 // Update the session with the new user state
                 session.setAttribute("user", user);

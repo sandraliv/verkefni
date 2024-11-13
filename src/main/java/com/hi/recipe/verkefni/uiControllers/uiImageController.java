@@ -36,9 +36,9 @@ public class uiImageController {
      * @return uploadImage.html
      */
     @GetMapping("/{recipeId}/upload")
-    public String showUploadForm(@PathVariable int recipeId, Model model) {
-        model.addAttribute("recipeId", recipeId);
-        return "uploadImage"; // uploadImage.html 
+    public String showUploadForm(@PathVariable("recipeId") int recipeId, Model model) {
+        model.addAttribute("id", recipeId);
+        return "uploadPhoto"; // Returns the uploadPhoto.html view
     }
 
     //================================================================================
@@ -58,23 +58,21 @@ public class uiImageController {
             Recipe recipe = recipeRepository.findById(recipeId)
                     .orElseThrow(() -> new IllegalArgumentException("Recipe not found"));
 
-            // Step 2: Upload the image to Cloudinary and get the URL
+            if (file == null || file.isEmpty()) {
+                model.addAttribute("message", "No image uploaded, but recipe was found successfully.");
+                return "redirect:/recipeList"; // You may want to redirect or display a different message here
+            }
             String imageUrl = imageService.uploadImage(file);
-
-            // Step 3: Update the Recipe's imageUrl field
             recipe.setImage_url(imageUrl);
-
-            // Step 4: Save the updated Recipe
             recipeRepository.save(recipe);
             model.addAttribute("message", "Image uploaded and added to recipe successfully");
-            model.addAttribute("imageUrl", imageUrl);
-            return "uploadImage"; 
+            return "redirect:../allrecipes/all";
         } catch (IOException e) {
             model.addAttribute("errorMessage", "Error uploading image: " + e.getMessage());
-            return "uploadImage"; 
+            return "uploadPhoto";
         } catch (IllegalArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());
-            return "uploadImage";
+            return "uploadPhoto";
         }
     }
 

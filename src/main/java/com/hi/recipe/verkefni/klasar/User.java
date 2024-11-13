@@ -66,15 +66,8 @@ public class User {
         return favourites;
     }
 
-    public void setFavourites(List<Recipe> favourites) {
-        this.favourites = favourites;
-    }
-
-    public void addFavourite(Recipe recipe) {
-        if (favourites == null) {
-            favourites = new ArrayList<>();
-        }
-        favourites.add(recipe);
+    public void setFavourites(Recipe recipe) {
+        this.favourites.add(recipe);
     }
 
     public void removeFavourite(Recipe recipe) {

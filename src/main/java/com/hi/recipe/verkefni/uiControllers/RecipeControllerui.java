@@ -42,7 +42,7 @@ public class RecipeControllerui {
     @GetMapping("/all")
     public String getAllRecipes(
             @RequestParam(value = "query", required = false) String query,
-            @RequestParam(value = "tags", required = false) Set<RecipeTag> tags,
+            @RequestParam(value = "tags", required = false) Set<RecipeTag> tags, HttpSession session,
             Model model) {
         List<Recipe> recipes;
         if ((query == null || query.isEmpty()) && tags == null) {
@@ -54,7 +54,10 @@ public class RecipeControllerui {
         } else {
             recipes = recipeService.findByTitleAndTags(query, tags);
         }
-
+        User user = (User) session.getAttribute("user");
+        if(user != null){
+            model.addAttribute("user", user);
+        }
         model.addAttribute("recipes", recipes);
         return "recipeList"; //recipeList.html
     }
@@ -82,6 +85,7 @@ public class RecipeControllerui {
      */
     @GetMapping("/addRecipe")
     public String addNewRecipe(@ModelAttribute("recipe") Recipe recipe, Model model) {
+        model.addAttribute("allCategories", Category.values());
         model.addAttribute("newRecipe", new Recipe());
         model.addAttribute("allTags", RecipeTag.values()); // Pass all enum values
         return "addRecipe";
@@ -143,13 +147,12 @@ public class RecipeControllerui {
      * @return Redirects to recipe list with a success message
      */
     @PostMapping("/newRecipe")
-    public String addANewRecipe(@ModelAttribute("recipe") Recipe recipe, RedirectAttributes redirectAttributes, Model model) {
+    public String addANewRecipe(@ModelAttribute("recipe") Recipe recipe, RedirectAttributes redirectAttributes) {
         Recipe savedRecipe = recipeService.save(recipe);
-        model.addAttribute("message", "Recipe added successfully!");
-        redirectAttributes.addAttribute("id", savedRecipe.getId()); // Pass the recipe ID
-        redirectAttributes.addFlashAttribute("message", "Recipe created successfully!");
-        return "redirect:/allrecipes";
+        redirectAttributes.addAttribute("recipeId", savedRecipe.getId());
+        return "redirect:/recipesui/{recipeId}/upload"; // Redirects to upload with recipeId
     }
+
 
     /**
      * Adds a recipe to the current user's favorites list

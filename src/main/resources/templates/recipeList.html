@@ -5,8 +5,8 @@
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-<h1 th:text="'Hello, ' + ${name}">Hello, User</h1>
-
+<h1 th:if="${user}" th:text="'Hello, ' + ${user.name}">Hello, User</h1>
+<p th:if="${message}" th:text="${message}"></p>
 <h2>Recipes:</h2>
 <ul>
     <!-- Iterate over each recipe -->
