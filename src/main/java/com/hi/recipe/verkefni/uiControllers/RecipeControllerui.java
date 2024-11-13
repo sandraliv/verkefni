@@ -170,7 +170,7 @@ public class RecipeControllerui {
             user.setFavourites(or.get());
             userService.save(user);
             model.addAttribute("message", "Recipe added to favorites.");
-            return "redirect:/users/favorites";
+            return "redirect:/usersui/favorites";
         }
 
         model.addAttribute("errorMessage", "User not logged in.");

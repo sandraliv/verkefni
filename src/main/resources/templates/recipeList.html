@@ -28,6 +28,10 @@
         </table>
 
         <img th:src="${recipe.image_url}" alt="Recipe Image">
+
+        <form th:action="@{/allrecipes/{id}/addAsFav(id=${recipe.id})}" method="post">
+            <button type="submit">Add to Favorites</button>
+        </form>
     </li>
 </ul>
 </body>
