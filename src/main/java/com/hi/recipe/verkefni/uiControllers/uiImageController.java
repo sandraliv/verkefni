@@ -66,7 +66,7 @@ public class uiImageController {
             recipe.setImage_url(imageUrl);
             recipeRepository.save(recipe);
             model.addAttribute("message", "Image uploaded and added to recipe successfully");
-            return "redirect:../allrecipes/all";
+            return "redirect:/allrecipes/all";
         } catch (IOException e) {
             model.addAttribute("errorMessage", "Error uploading image: " + e.getMessage());
             return "uploadPhoto";
