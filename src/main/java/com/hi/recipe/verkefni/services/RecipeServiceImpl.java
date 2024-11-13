@@ -2,6 +2,8 @@ package com.hi.recipe.verkefni.services;
 
 import com.hi.recipe.verkefni.klasar.*;
 import com.hi.recipe.verkefni.repository.RecipeRepository;
+import com.hi.recipe.verkefni.repository.UserRepository;
+
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,11 +19,13 @@ import java.util.stream.Collectors;
 @Service
 public class RecipeServiceImpl implements RecipeService {
     private final RecipeRepository recipeRepository;
+    private final UserRepository userRepository;
 
 
     @Autowired
-    public RecipeServiceImpl(RecipeRepository recipeRepository) {
+    public RecipeServiceImpl(RecipeRepository recipeRepository, UserRepository userRepository) {
         this.recipeRepository = recipeRepository;
+        this.userRepository = userRepository;
     }
     // Fetch all recipes
     @Override
@@ -30,8 +34,21 @@ public class RecipeServiceImpl implements RecipeService {
     }
     // Delete recipe by id
     @Override
+    @Transactional
     public void deleteById(int id) {
-        recipeRepository.deleteById(id);
+        Optional<Recipe> recipeOpt = recipeRepository.findById(id);
+        if (recipeOpt.isPresent()) {
+            Recipe recipe = recipeOpt.get();
+
+            // Remove the recipe from user favorites first
+            for (User user : recipe.getUserList()) {
+                user.getFavourites().remove(recipe);
+                //System.out.println("hello"+user.getFavourites());
+            }
+
+            // Now delete the recipe
+            recipeRepository.deleteById(id);
+        }
     }
 
     @Override

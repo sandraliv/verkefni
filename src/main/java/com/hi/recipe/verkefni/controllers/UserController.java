@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -61,13 +62,16 @@ public class UserController {
      * @return List of favorite recipes if user is logged in, or 401 if not authenticated
      */
     @GetMapping("/getUserFav")
-    public ResponseEntity<List<Recipe>> getUser(HttpSession session) {
-        User user = (User) session.getAttribute("user");
+    @Transactional(readOnly = true)  // Add this
+    public ResponseEntity<User> getUser(HttpSession session) {
+        User user = (User) session.getAttribute("LoggedInUser");
         if (user != null) {
-            List<Recipe> favs = user.getFavourites();
-            return ResponseEntity.ok().body(favs);
+            // Get a fresh copy from the database
+            User freshUser = userService.findById(user.getId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+            return ResponseEntity.ok(freshUser);
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     //================================================================================

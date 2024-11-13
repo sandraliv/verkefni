@@ -3,6 +3,8 @@ package com.hi.recipe.verkefni.klasar;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
@@ -18,27 +20,32 @@ public class Recipe {
 
 
     @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "recipe_ingredients", joinColumns = @JoinColumn(name = "recipe_id"))
     @MapKeyColumn(name = "ingredient_name")
     @Column(name = "ingredient_quantity")
-    @CollectionTable(name = "recipe_ingredients", joinColumns = @JoinColumn(name = "recipe_id"))
     private Map<String, String> ingredients = new HashMap<>();
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+        name = "recipe_tags", 
+        joinColumns = @JoinColumn(name = "recipe_id")
+    )
+    @Column(name = "tag")
+    @Enumerated(EnumType.STRING)  // Make sure this is STRING, not ORDINAL
+    private Set<RecipeTag> tags = new HashSet<>();
 
-    /*Tells hibernate that the tags field is a collection of values that will be stored in a separate table and we are using the RecipeTag enum*/
-    //The CollectionTable defines the table(recipe_tags) and column(recipe_id) that will store the relationship between recipes and their tags.
-    //The set ensures that there are no duplicates for a recipe
-    @ElementCollection(targetClass = RecipeTag.class, fetch = FetchType.EAGER)  // To store multiple tags
-    @Enumerated(EnumType.STRING)  // Store enums as strings in the database
-    @CollectionTable(name = "recipe_tags", joinColumns = @JoinColumn(name = "recipe_id"), uniqueConstraints = @UniqueConstraint(columnNames = {"recipe_id", "tags"}))
-    @Column(name = "tag")  // Define the column name for tags
-    private Set<RecipeTag> tags = new HashSet<>();  // Multiple tags
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+        name = "recipe_newCategories", 
+        joinColumns = @JoinColumn(name = "recipe_id")
+    )
+    @Column(name = "newCategory")
+    @Enumerated(EnumType.STRING)  // Make sure this is STRING, not ORDINAL
+    private Set<Category> categories = new HashSet<>();
 
-
-    @ElementCollection(targetClass = Category.class, fetch = FetchType.EAGER)  // To store multiple categories
-    @Enumerated(EnumType.STRING)  // Store enums as strings in the database
-    @CollectionTable(name = "recipe_newCategories", joinColumns = @JoinColumn(name = "recipe_id"), uniqueConstraints = @UniqueConstraint(columnNames = {"recipe_id", "newCategory"}))
-    @Column(name = "newCategory")  // Define the column name for categories
-    private Set<Category> categories = new HashSet<>();  // Multiple categories
+    @ManyToMany(mappedBy = "favourites")
+    @JsonIgnore
+    private List<User> userList = new ArrayList<>();
 
 
     // Use ElementCollection to store ratings temporarily
@@ -59,10 +66,7 @@ public class Recipe {
 
     @Column(name = "rating_count")
     private Integer ratingCount = 0;  // The count of ratings
-
-    @ManyToMany(mappedBy = "favourites")
-    private List<User> userList;
-
+    
     @CreationTimestamp
     private LocalDateTime dateAdded;
 
@@ -197,6 +201,15 @@ public class Recipe {
        }
    }
 
+   public List<User> getUserList() {
+    if (userList == null) {
+        userList = new ArrayList<>();
+    }
+    return userList;
+    }
 
+    public void setUserList(List<User> userList) {
+      this.userList = userList;
+    }
 }
 

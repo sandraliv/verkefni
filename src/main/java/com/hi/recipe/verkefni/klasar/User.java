@@ -2,7 +2,10 @@ package com.hi.recipe.verkefni.klasar;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="users")
@@ -18,10 +21,13 @@ public class User {
     @Column(unique = true)
     private String username;
 
-   @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-   @JoinTable(name = "user_recipes",
-   joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")}, inverseJoinColumns = {@JoinColumn(name = "recipe_id", referencedColumnName = "id")})
-   private List<Recipe> favourites;
+    @ManyToMany(fetch = FetchType.EAGER)  // Change to EAGER loading
+    @JoinTable(
+        name = "user_recipes",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "recipe_id")
+    )
+    private List<Recipe> favourites = new ArrayList<>();
 
 
     public User(){
@@ -53,12 +59,28 @@ public class User {
 
     public String getUsername(){return username;}
 
-    public List<Recipe> getFavourites(){
+    public List<Recipe> getFavourites() {
+        if (favourites == null) {
+            favourites = new ArrayList<>();
+        }
         return favourites;
     }
 
-    public void setFavourites(Recipe recipe ){
+    public void setFavourites(List<Recipe> favourites) {
+        this.favourites = favourites;
+    }
+
+    public void addFavourite(Recipe recipe) {
+        if (favourites == null) {
+            favourites = new ArrayList<>();
+        }
         favourites.add(recipe);
+    }
+
+    public void removeFavourite(Recipe recipe) {
+        if (favourites != null) {
+            favourites.remove(recipe);
+        }
     }
 
     public void setId(int id) {
