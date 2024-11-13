@@ -34,7 +34,7 @@ public class uiUserController {
     public String getAllUsers(Model model) {
         List<User> users = userService.findAll();
         model.addAttribute("users", users);
-        return "userList"; // userList.html 
+        return "userList"; // userList.html
     }
 
     /**
@@ -47,10 +47,10 @@ public class uiUserController {
         Optional<User> userProfile = userService.findById(id);
         if (userProfile.isPresent()) {
             model.addAttribute("user", userProfile.get());
-            return "userProfile"; // userProfile.html 
+            return "userProfile"; // userProfile.html
         }
         model.addAttribute("errorMessage", "User not found.");
-        return "error"; // Error page 
+        return "error"; // Error page
     }
 
     /**
@@ -63,7 +63,7 @@ public class uiUserController {
         User user = (User) session.getAttribute("user");
         if (user != null) {
             model.addAttribute("favorites", user.getFavourites());
-            return "favorites"; // favorites.html 
+            return "favorites"; // favorites.html
         }
         model.addAttribute("errorMessage", "User not logged in.");
         return "error";
@@ -92,7 +92,7 @@ public class uiUserController {
     /**
      * Authenticates a user and creates a session
      * @param session The HTTP session to store user information
-     * @param user The user credentials for authentication
+     * @param model The user credentials for authentication
      * @return Success message if login successful, error if credentials invalid or user not found
      */
 
@@ -108,7 +108,7 @@ public class uiUserController {
         return "userProfile";
     }
 
-    
+
 
 
 
@@ -159,14 +159,13 @@ public class uiUserController {
     //================================================================================
 
     /**
-     * Updates the logged-in user's profile details, such as name and email.
-     * 
-     * @param session The HTTP session containing user information
-     * @param updates A Map with the fields to update ("name" and "email") and their new values
-     * @return A success message if the profile was updated successfully, 
-     *         401 message if the user is not logged in
+     * Shows the password change form for the logged-in user.
+     * @param id The user's ID.
+     * @param session The session to check if the user is logged in.
+     * @param model The model
+     * @return Displays the password change page if the user is logged in
      */
-  
+
    @GetMapping("/{id}/changepassword")
    public String showChangePasswordForm(@PathVariable int id, HttpSession session, Model model) {
        User user = (User) session.getAttribute("user");
@@ -177,10 +176,20 @@ public class uiUserController {
        model.addAttribute("user", user);
        return "changePassword";
    }
-   
+    /**
+     * Handles password change for the logged-in user.
+     * @param id The user's ID.
+     * @param session The session to get the logged-in user info.
+     * @param currentPassword The user's current password.
+     * @param newPassword The new password to be set.
+     * @param confirmNewPassword The new password retyped for confirmation.
+     * @param model The model to display messages.
+     * @return Redirects to profile if successful, or shows errors on the same page.
+     */
+
    @PostMapping("/{id}/changepassword")
-    public String changePassword(@PathVariable int id, 
-                             HttpSession session, 
+    public String changePassword(@PathVariable int id,
+                             HttpSession session,
                              @RequestParam("currentPassword") String currentPassword,
                              @RequestParam("newPassword") String newPassword,
                              @RequestParam("confirmNewPassword") String confirmNewPassword,
@@ -195,12 +204,12 @@ public class uiUserController {
     // check if current password matches
     if (!user.getPassword().equals(currentPassword)) {
         model.addAttribute("errorMessage", "Current password is incorrect.");
-        return "changepassword";
+        return "changePassword";
     }
     // check if new password and confirmation match
     if (!newPassword.equals(confirmNewPassword)) {
         model.addAttribute("errorMessage", "New passwords do not match.");
-        return "changepassword";
+        return "changePassword";
     }
     // Update the password
     user.setPassword(newPassword);
@@ -210,9 +219,9 @@ public class uiUserController {
     return "redirect:/usersui/" + id; // redirect to profile page
 }
 
-   
-   
+
+
 
 }
 
-   
+

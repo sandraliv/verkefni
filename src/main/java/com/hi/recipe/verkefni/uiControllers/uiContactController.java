@@ -25,11 +25,25 @@ public class uiContactController {
         this.userService = userService;
     }
 
+    /**
+ * Displays the contact form page.
+ * @param model The model .
+ * @return contact.html
+ */
     @GetMapping("/contact")
     public String showContactForm(Model model) {
         model.addAttribute("contactForm", new ContactForm()); 
-        return "contact"; // shows the contact.html page
+        return "contact"; // contact.html 
     }
+    
+/**
+ * Processes the submitted contact form.
+ * @param contactForm The contact form data submitted by the user.
+ * @param result checks for any mistakes in the form
+ * @param redirectAttributes Used to pass a success message after redirect.
+ * @param model The model 
+ * @return Redirects to /contact with either with a success message or error if they are any.
+ */
 
     @PostMapping("/contact")
     public String submitContactForm(@Valid @ModelAttribute("contactForm") ContactForm contactForm, BindingResult result,RedirectAttributes redirectAttributes, Model model) {
@@ -47,11 +61,25 @@ public class uiContactController {
         return "redirect:/contact";
     }
 
+ /**
+ * Displays the login form page.
+ * @param model The model 
+ * @return login.html
+ */
+
     @GetMapping("/login")
     public String showLoginForm(Model model) {
         model.addAttribute("user", new User());
         return "login";
     }
+/**
+ * Handles the login form submission.
+ * @param session Used to store info about the logged-in user.
+ * @param user The user’s login info (username and password).
+ * @param model The model
+ * @return Goes to the user’s profile page if login works, or shows the login page with an error message if it doesn’t.
+ */
+
 
     @PostMapping("/login")
     public String login(HttpSession session, @ModelAttribute("user") User user, Model model) {
@@ -72,7 +100,7 @@ public class uiContactController {
             return "login";
         }
 
-        // Successful login
+        
         session.setAttribute("user", foundUser);
         return "redirect:/usersui/" + foundUser.getId();
 

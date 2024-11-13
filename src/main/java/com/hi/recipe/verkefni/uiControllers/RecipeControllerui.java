@@ -1,6 +1,6 @@
 package com.hi.recipe.verkefni.uiControllers;
 
-import java.util.HashMap;
+import com.hi.recipe.verkefni.klasar.Category;
 import com.hi.recipe.verkefni.klasar.Recipe;
 import com.hi.recipe.verkefni.klasar.RecipeTag;
 import com.hi.recipe.verkefni.klasar.User;
@@ -13,9 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 @RequestMapping("allrecipes")
@@ -23,10 +21,12 @@ public class RecipeControllerui {
     private final RecipeService recipeService;
     private final UserService userService;
 
+
     @Autowired
     public RecipeControllerui(RecipeService recipeService, UserService userService) {
         this.recipeService = recipeService;
         this.userService = userService;
+
     }
 
     //================================================================================
@@ -39,7 +39,7 @@ public class RecipeControllerui {
      * @param tags Optional set of RecipeTags to filter recipes
      * @return Filtered list of recipes, or all recipes if no filters applied
      */
-    @GetMapping("")
+    @GetMapping("/all")
     public String getAllRecipes(
             @RequestParam(value = "query", required = false) String query,
             @RequestParam(value = "tags", required = false) Set<RecipeTag> tags,
@@ -56,7 +56,7 @@ public class RecipeControllerui {
         }
 
         model.addAttribute("recipes", recipes);
-        return "recipeList"; //recipeList.html 
+        return "recipeList"; //recipeList.html
     }
 
     /**
@@ -69,12 +69,17 @@ public class RecipeControllerui {
         Optional<Recipe> recipe = recipeService.findById(id);
         if (recipe.isPresent()) {
             model.addAttribute("recipe", recipe.get());
-            return "recipeDetail"; // recipeDetail.html 
+            return "recipeList";
         }
         model.addAttribute("errorMessage", "Recipe not found.");
         return "error";
     }
 
+    /**
+     * @param recipe new recipe object
+     * @param model the model
+     * @return addRecipe.html
+     */
     @GetMapping("/addRecipe")
     public String addNewRecipe(@ModelAttribute("recipe") Recipe recipe, Model model) {
         model.addAttribute("newRecipe", new Recipe());
@@ -93,6 +98,20 @@ public class RecipeControllerui {
         return "recipeList";
     }
 
+    @GetMapping("/recipes/byCategory")
+    public String getRecipesByCategory(@RequestParam("category") Category category, Model model) {
+        // If the category is null or empty, return all recipes as a fallback
+        if (category == null) {
+            model.addAttribute("recipes", recipeService.findAll()); // Or any fallback to return all recipes
+        } else {
+            // Fetch recipes by the specified category (which is now an enum)
+            List<Recipe> recipes = recipeService.findByCategoryIn(Collections.singleton(category));
+            model.addAttribute("recipes", recipes);
+        }
+        return "recipeList";
+    }
+
+
     /**
      * Retrieves the featured recipes list from a predefined user
      * @return List of recipes marked as featured
@@ -106,6 +125,12 @@ public class RecipeControllerui {
         }
         model.addAttribute("errorMessage", "User not found for featured recipes.");
         return "error";
+    }
+
+    @GetMapping("/highestRated")
+    public String getRecipesByHighestRating(Model model) {
+        model.addAttribute("recipes", recipeService.findAllByAverageRatingDesc());
+        return "recipeList";
     }
 
     //================================================================================
@@ -139,7 +164,7 @@ public class RecipeControllerui {
             model.addAttribute("errorMessage", "Recipe not found.");
             return "error";
         }
-        
+
         User user = (User) session.getAttribute("user");
         if (user != null) {
             user.setFavourites(or.get());
@@ -147,9 +172,20 @@ public class RecipeControllerui {
             model.addAttribute("message", "Recipe added to favorites.");
             return "redirect:/users/favorites";
         }
-        
+
         model.addAttribute("errorMessage", "User not logged in.");
         return "error";
+    }
+
+    @PostMapping("/{id}/addTempRating")
+    public String addTempRating(@PathVariable int id, @RequestParam int score, Model model) {
+        try {
+            recipeService.addTempRatingToRecipe(id, score);
+            return "redirect:/recipes/" + id; // Redirect to the recipe detail page
+        } catch (NoSuchElementException e) {
+            model.addAttribute("error", e.getMessage());
+            return "error/404";
+        }
     }
 
     //================================================================================
@@ -197,6 +233,19 @@ public class RecipeControllerui {
         return "error";
     }
 
+    @PatchMapping("/{id}/addCategory")
+    public String addCategoryToRecipe(@PathVariable int id, @RequestParam Category category, Model model) {
+        Optional<Recipe> optionalRecipe = recipeService.findById(id);
+        if (optionalRecipe.isPresent()) {
+            Recipe recipe = optionalRecipe.get();
+            recipe.getCategories().add(category);
+            recipeService.save(recipe);
+            return "redirect:/recipes/" + id; // Redirect to updated recipe
+        }
+        model.addAttribute("error", "Recipe not found");
+        return "error/404";
+    }
+
     //================================================================================
     // DELETE Methods
     //================================================================================
@@ -206,10 +255,16 @@ public class RecipeControllerui {
      * @param id The ID of the recipe to delete
      * @return Redirects to the recipe list with a success message
      */
-    @DeleteMapping("{id}/delete")
+    @DeleteMapping("{id}")
     public String deleteRecipe(@PathVariable int id, Model model) {
         recipeService.deleteById(id);
         model.addAttribute("message", "Deleted recipe");
         return "redirect:/recipes";
     }
+
+
+
+
+
+
 }
