@@ -79,8 +79,8 @@ public class RecipeControllerui {
     }
 
     /**
-     * @param recipe new recipe object
-     * @param model the model
+     * @param recipe New recipe object
+     * @param model The model
      * @return addRecipe.html
      */
     @GetMapping("/addRecipe")
@@ -180,6 +180,15 @@ public class RecipeControllerui {
         return "error";
     }
 
+    /**
+ * Adds a temporary rating to a recipe
+ *
+ * @param id The ID of the recipe to which the temporary rating is added
+ * @param score The rating score to be added to the recipe
+ * @param model The model object
+ * @return Redirects to the recipe's detail page if success or returns to an error page if recipe is not found
+ */
+
     @PostMapping("/{id}/addTempRating")
     public String addTempRating(@PathVariable int id, @RequestParam int score, Model model) {
         try {
@@ -235,6 +244,14 @@ public class RecipeControllerui {
         model.addAttribute("errorMessage", "Recipe not found.");
         return "error";
     }
+    /**
+ * Adds a category to the recipe
+ *
+ * @param id The ID of the recipe to update
+ * @param category The category to be added to the recipe
+ * @param model The Model object
+ * @return Redirects to the updated recipe page if successful or to error page if not successful
+ */
 
     @PatchMapping("/{id}/addCategory")
     public String addCategoryToRecipe(@PathVariable int id, @RequestParam Category category, Model model) {
