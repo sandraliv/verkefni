@@ -3,9 +3,9 @@ package com.hi.recipe.verkefni.services;
 import com.hi.recipe.verkefni.klasar.Category;
 import com.hi.recipe.verkefni.klasar.Recipe;
 import com.hi.recipe.verkefni.klasar.RecipeTag;
+import com.hi.recipe.verkefni.klasar.User;
 import com.hi.recipe.verkefni.repository.RecipeRepository;
 import com.hi.recipe.verkefni.repository.UserRepository;
-
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

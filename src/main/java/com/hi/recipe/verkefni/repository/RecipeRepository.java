@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -46,8 +47,8 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
     @Modifying
     @Query(value = "DELETE FROM user_recipes WHERE recipe_id = :recipeId", nativeQuery = true)
     void deleteUserRecipeRelations(@Param("recipeId") int recipeId);
-}
-    List<Recipe> findByCategoriesIn(Collection <Category> categories);
+
+    List<Recipe> findByCategoriesIn(Collection<Category> categories);
 
     List<Recipe> findByTitleContainingIgnoreCaseAndCategoriesIn(String query, Set<Category> categories);
 
@@ -61,7 +62,7 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
 
     @Query("SELECT r FROM Recipe r JOIN r.categories c WHERE c IN :categories ORDER BY r.dateAdded DESC")
     Page<Recipe> findByCategoriesInOrderByDateAddedDesc(@Param("categories") Collection<Category> categories, Pageable pageable);
-
+}
 
 
 

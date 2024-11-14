@@ -48,6 +48,7 @@ public class RecipeControllerui {
 
         List<Recipe> recipes;
 
+
         if ((query == null || query.isEmpty()) && tags == null && categories == null) {
             recipes = recipeService.findAllPaginated();
         }
@@ -66,10 +67,6 @@ public class RecipeControllerui {
         else if (query != null && tags != null) {
             recipes = recipeService.findByTitleAndTags(query, tags);
         }
-        User user = (User) session.getAttribute("user");
-        if(user != null){
-            model.addAttribute("user", user);
-        }
         else if (query != null && categories != null) {
             recipes = recipeService.findByTitleAndCategories(query, categories);
         }
@@ -79,10 +76,17 @@ public class RecipeControllerui {
         else {
             recipes = recipeService.findByTitleAndTagsAndCategories(query, tags, categories);
         }
+
+        User user = (User) session.getAttribute("user");
+        if(user != null){
+            model.addAttribute("user", user);
+        }
+
         for (Recipe recipe : recipes) {
             String formattedDate = recipeService.formatDate(recipe.getDateAdded());
             recipe.setFormattedDate(formattedDate);  // Add formatted date to recipe
         }
+
         model.addAttribute("recipes", recipes);
         return "recipeList"; //recipeList.html
     }
