@@ -13,7 +13,8 @@
     <a class="category-buttons"
        th:href="@{/allrecipes/byCategory?categories={category}(category=${category})}"
        th:text="${category.getDisplayName()}"
-       style="background-color: rosybrown; color: white; font-size: 1.6em; font-weight: bold; padding: 15px 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); text-decoration: none; transition: background-color 0.3s ease, transform 0.2s ease;">
+       style="background-color: rosybrown; color: white; font-size: 1.6em; font-weight: bold; padding: 15px 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); text-decoration: none; transition: background-color 0.3s ease, transform 0.2s ease;"
+       th:classappend="${selectedCategories != null && selectedCategories.contains(category.name()) ? ' selected' : ''}">
       Category Name
     </a>
   </li>
@@ -26,7 +27,7 @@
   <label for="sortOptions">Sort by: </label>
   <select id="sortOptions" name="sort" onchange="updateSortOption(this)">
     <option value="highestRated" th:selected="${sort == 'highestRated'}">Highest Rating</option>
-    <option value="byDate" th:selected="${sort == 'byDate'}">Date Added</option>
+    <option value="byDate" th:selected="${sort == 'byDate'}">Newest</option>
   </select>
 </form>
 
@@ -35,7 +36,7 @@
   <li th:each="recipe : ${recipes}" class="li">
     <h3 th:text="${recipe.title}">Recipe Title</h3>
     <p th:text="${recipe.description}">Recipe Description</p>
-    <p><strong>Date Added:</strong>
+    <p><strong>Date:</strong>
       <span th:text="${recipe.formattedDate}">Date Added</span>
     </p>
 
@@ -62,17 +63,27 @@
       </tr>
     </table>
 
-    <!-- Display Recipe Categories (with spaces between words and proper case) -->
+    <!-- Display Recipe Categories -->
     <p><strong>Categories:</strong>
+      <!-- Check if categories is empty -->
+      <span th:if="${#lists.isEmpty(recipe.categories)}">No categories assigned</span>
+
+      <!-- Display each category if it exists -->
       <span th:each="category : ${recipe.categories}"
-            th:text="${#strings.capitalize(#strings.replace(category, '_', ' '))}">Category Name</span>
+            th:text="${category.getDisplayName()}"
+            style="display: inline-block; padding: 5px 10px; background-color: #f0f0f0; border-radius: 15px; margin: 5px;">
+      </span>
     </p>
 
     <!-- Display Recipe Tags -->
     <p><strong>Tags:</strong>
-      <span th:each="tag, iterStat : ${recipe.tags}" th:text="${tag}"
-            th:if="${iterStat.index < recipe.tags.size() - 1}">, </span>
+      <span th:if="${#lists.isEmpty(recipe.tags)}">No tags assigned</span>
+      <span th:each="tag : ${recipe.tags}"
+            th:text="${#strings.capitalize(tag.name())}"
+            style="display: inline-block; padding: 5px 10px; background-color: #d1e7f3; border-radius: 15px; margin: 5px;">
+      </span>
     </p>
+
 
     <img th:src="${recipe.image_url}" alt="Recipe Image" />
   </li>

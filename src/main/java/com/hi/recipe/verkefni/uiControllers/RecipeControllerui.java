@@ -161,7 +161,13 @@ public class RecipeControllerui {
         // Get sorted recipes based on the selected sort option and category filter
         recipes = recipeService.getSortedRecipes(sort, categoryEnumSet);
 
+        for (Recipe recipe : recipes) {
+            String formattedDate = recipeService.formatDate(recipe.getDateAdded());
+            recipe.setFormattedDate(formattedDate);  // Add formatted date to recipe
+        }
+
         // Add attributes to the model
+        model.addAttribute("tags", RecipeTag.values());  // Pass all tags to the view
         model.addAttribute("recipes", recipes);  // Add the list of recipes
         model.addAttribute("categories", Category.values());  // Add all categories to the view
         model.addAttribute("sort", sort);  // Keep track of the selected sort option in the model
