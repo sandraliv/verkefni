@@ -37,8 +37,8 @@ public class Recipe {
 
     @ElementCollection(targetClass = Category.class, fetch = FetchType.EAGER)  // To store multiple categories
     @Enumerated(EnumType.STRING)  // Store enums as strings in the database
-    @CollectionTable(name = "recipe_newCategories", joinColumns = @JoinColumn(name = "recipe_id"), uniqueConstraints = @UniqueConstraint(columnNames = {"recipe_id", "newCategory"}))
-    @Column(name = "newCategory")  // Define the column name for categories
+    @CollectionTable(name = "recipe_categories", joinColumns = @JoinColumn(name = "recipe_id"), uniqueConstraints = @UniqueConstraint(columnNames = {"recipe_id", "categories"}))
+    @Column(name = "category")  // Correct column name in the database
     private Set<Category> categories = new HashSet<>();  // Multiple categories
 
 

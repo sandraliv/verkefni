@@ -6,7 +6,6 @@ import com.hi.recipe.verkefni.klasar.Recipe;
 import com.hi.recipe.verkefni.klasar.RecipeTag;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -26,15 +25,21 @@ public interface RecipeService {
 
     List<Recipe> findByTagsIn(Set<RecipeTag> tags);
 
-    List<Recipe> findByCategoryIn(Set<Category> categories);
+    List<Recipe> findByCategoriesIn(Set<Category> categories);
+
+    Optional<Recipe> findRecipeById(int id);
+
+    List<Recipe> findByTitleAndCategories(String query, Set<Category> categories);
+
+    List<Recipe> findByTagsInAndCategoriesIn(Set<RecipeTag> tags, Set<Category> categories);
+
+    List<Recipe> findByTitleAndTagsAndCategories(String query, Set<RecipeTag> tags, Set<Category> categories);
 
     List<Recipe> findByTitleContainingIgnoreCase(String keyword);
 
     List<Recipe> findByTitleAndTags(String title, Set<RecipeTag> tags);
 
     List<Recipe> findByDate();
-
-    <T> List<String> convertEntitiesToList(Collection<T> entities);
 
     String formatDate(LocalDateTime date);
 
@@ -43,6 +48,10 @@ public interface RecipeService {
     // Paginated recipes sorted by average rating
     List<Recipe> findAllByAverageRatingDesc();
 
+    // Fetch distinct category names directly from the enum
+    Set<String> getDistinctCategoryNames();
+
+    List<Recipe> getSortedRecipes(String sort, Set<Category> categories);
 }
 
 

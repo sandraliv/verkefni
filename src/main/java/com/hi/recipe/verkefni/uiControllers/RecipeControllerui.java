@@ -43,23 +43,47 @@ public class RecipeControllerui {
     public String getAllRecipes(
             @RequestParam(value = "query", required = false) String query,
             @RequestParam(value = "tags", required = false) Set<RecipeTag> tags,
+            @RequestParam(value = "categories", required = false) Set<Category> categories, // Add this line
             Model model) {
+
         List<Recipe> recipes;
-        if ((query == null || query.isEmpty()) && tags == null) {
+
+        if ((query == null || query.isEmpty()) && tags == null && categories == null) {
             recipes = recipeService.findAllPaginated();
-        } else if (tags == null || tags.isEmpty()) {
-            recipes = recipeService.findByTitleContainingIgnoreCase(query);
-        } else if (query == null || query.isEmpty()) {
-            recipes = recipeService.findByTagsIn(tags);
-        } else {
-            recipes = recipeService.findByTitleAndTags(query, tags);
         }
 
+        else if (tags == null && categories == null) {
+            recipes = recipeService.findByTitleContainingIgnoreCase(query);
+        }
 
+        else if (query == null || query.isEmpty()) {
+            recipes = recipeService.findByTagsIn(tags);
+        }
 
+        else if (tags == null && categories != null) {
+            recipes = recipeService.findByCategoriesIn(categories);
+        }
+        else if (query != null && tags != null) {
+            recipes = recipeService.findByTitleAndTags(query, tags);
+        }
+        else if (query != null && categories != null) {
+            recipes = recipeService.findByTitleAndCategories(query, categories);
+        }
+        else if (tags != null && categories != null) {
+            recipes = recipeService.findByTagsInAndCategoriesIn(tags, categories);
+        }
+        else {
+            recipes = recipeService.findByTitleAndTagsAndCategories(query, tags, categories);
+        }
+        for (Recipe recipe : recipes) {
+            String formattedDate = recipeService.formatDate(recipe.getDateAdded());
+            recipe.setFormattedDate(formattedDate);  // Add formatted date to recipe
+        }
         model.addAttribute("recipes", recipes);
-        return "recipeList"; //recipeList.html
+
+        return "recipeList"; // Return the Thymeleaf view to display the recipes
     }
+
 
     /**
      * Retrieves a specific recipe by its identifier
@@ -73,6 +97,7 @@ public class RecipeControllerui {
             model.addAttribute("recipe", recipe.get());
             return "recipeList";
         }
+
         model.addAttribute("errorMessage", "Recipe not found.");
         return "error";
     }
@@ -86,6 +111,7 @@ public class RecipeControllerui {
     public String addNewRecipe(@ModelAttribute("recipe") Recipe recipe, Model model) {
         model.addAttribute("newRecipe", new Recipe());
         model.addAttribute("allTags", RecipeTag.values()); // Pass all enum values
+        model.addAttribute("allCategories",Category.values());
         return "addRecipe";
     }
 
@@ -96,21 +122,47 @@ public class RecipeControllerui {
     @GetMapping("/byDate")
     public String getRecipesByDate(Model model) {
         List<Recipe> recipes = recipeService.findByDate();
+        for (Recipe recipe : recipes) {
+            String formattedDate = recipeService.formatDate(recipe.getDateAdded());
+            recipe.setFormattedDate(formattedDate);  // Add formatted date to recipe
+        }
         model.addAttribute("recipes", recipes);
         return "recipeList";
     }
 
+
     @GetMapping("/byCategory")
-    public String getRecipesByCategory(@RequestParam("category") Category category, Model model) {
-        // If the category is null or empty, return all recipes as a fallback
-        if (category == null) {
-            model.addAttribute("recipes", recipeService.findAll()); // Or any fallback to return all recipes
-        } else {
-            // Fetch recipes by the specified category (which is now an enum)
-            List<Recipe> recipes = recipeService.findByCategoryIn(Collections.singleton(category));
-            model.addAttribute("recipes", recipes);
+    public String getRecipesByCategory(
+            @RequestParam(value = "categories", required = false) Set<String> categories,
+            @RequestParam(value = "sort", required = false, defaultValue = "byDate") String sort, // Default sort is "byDate"
+            Model model) {
+
+        List<Recipe> recipes;
+
+        // Convert category strings to Category enum values
+        Set<Category> categoryEnumSet = null;
+        if (categories != null && !categories.isEmpty()) {
+            categoryEnumSet = new HashSet<>();
+            for (String category : categories) {
+                try {
+                    categoryEnumSet.add(Category.valueOf(category));  // Convert string to Category enum
+                } catch (IllegalArgumentException e) {
+                    // Handle invalid category value (optional: log the error)
+                    System.err.println("Invalid category: " + category);
+                }
+            }
         }
-        return "recipeList";
+
+        // Get sorted recipes based on the selected sort option and category filter
+        recipes = recipeService.getSortedRecipes(sort, categoryEnumSet);
+
+        // Add attributes to the model
+        model.addAttribute("recipes", recipes);  // Add the list of recipes
+        model.addAttribute("categories", Category.values());  // Add all categories to the view
+        model.addAttribute("sort", sort);  // Keep track of the selected sort option in the model
+        model.addAttribute("selectedCategories", categories);  // Keep track of selected categories
+
+        return "byCategory";  // Return to the 'byCategory' template
     }
 
     /**
@@ -127,6 +179,7 @@ public class RecipeControllerui {
         model.addAttribute("errorMessage", "User not found for featured recipes.");
         return "error";
     }
+
 
     @GetMapping("/highestRated")
     public String getRecipesByHighestRating(Model model) {

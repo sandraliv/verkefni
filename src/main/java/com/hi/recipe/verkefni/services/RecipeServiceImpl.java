@@ -1,6 +1,8 @@
 package com.hi.recipe.verkefni.services;
 
-import com.hi.recipe.verkefni.klasar.*;
+import com.hi.recipe.verkefni.klasar.Category;
+import com.hi.recipe.verkefni.klasar.Recipe;
+import com.hi.recipe.verkefni.klasar.RecipeTag;
 import com.hi.recipe.verkefni.repository.RecipeRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class RecipeServiceImpl implements RecipeService {
@@ -23,11 +24,13 @@ public class RecipeServiceImpl implements RecipeService {
     public RecipeServiceImpl(RecipeRepository recipeRepository) {
         this.recipeRepository = recipeRepository;
     }
+
     // Fetch all recipes
     @Override
     public List<Recipe> findAll() {
         return recipeRepository.findAll();
     }
+
     // Delete recipe by id
     @Override
     public void deleteById(int id) {
@@ -69,15 +72,31 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public List<Recipe> findByCategoryIn(Set<Category> categories) {
-        return recipeRepository.findByCategoryIn(categories);
+    public List<Recipe> findByCategoriesIn(Set<Category> categories) {
+        return recipeRepository.findByCategoriesIn(categories);
     }
 
-
+    @Override
     public Optional<Recipe> findRecipeById(int id) {
         System.out.println("id = " + id);
         return recipeRepository.findById(id);
     }
+    @Override
+    public List<Recipe> findByTitleAndCategories(String query, Set<Category> categories) {
+        return recipeRepository.findByTitleContainingIgnoreCaseAndCategoriesIn(query, categories);
+    }
+
+    @Override
+    public List<Recipe> findByTagsInAndCategoriesIn(Set<RecipeTag> tags, Set<Category> categories) {
+        return recipeRepository.findByTagsInAndCategoriesIn(tags, categories);
+    }
+
+    @Override
+    public List<Recipe> findByTitleAndTagsAndCategories(String query, Set<RecipeTag> tags, Set<Category> categories) {
+        return recipeRepository.findByTitleContainingIgnoreCaseAndTagsInAndCategoriesIn(query, tags, categories);
+    }
+
+
     // Search by title (case-insensitive)
     @Override
     public List<Recipe> findByTitleContainingIgnoreCase(String keyword) {
@@ -117,15 +136,9 @@ public class RecipeServiceImpl implements RecipeService {
         return recipeList;
     }
 
-
-    @Override
-    public <T> List<String> convertEntitiesToList(Collection<T> entities) {
-        return entities.stream()
-                .map(entity -> entity instanceof Enum ? ((Enum<?>) entity).name() : entity.toString())
-                .collect(Collectors.toList());
+    public Set<String> getDistinctCategoryNames() {
+        return Set.of();
     }
-
-
 
 
     // Helper method to format date
@@ -160,7 +173,49 @@ public class RecipeServiceImpl implements RecipeService {
             }
         }
         return tags;
+
     }
+    @Override
+    public List<Recipe> getSortedRecipes(String sort, Set<Category> categories) {
+        int page = 0; // starting page
+        int size = 10; // page size
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        // Default sorting by date if 'sort' is null or invalid
+        if (sort == null || sort.isEmpty()) {
+            sort = "byDate";
+        }
+        // If categories are provided, return filtered and sorted results
+        if (categories != null && !categories.isEmpty()) {
+            switch (sort) {
+                case "highestRated":
+                    // Sort by rating and apply categories filter
+                    return recipeRepository.findByCategoriesInOrderByAverageRatingDesc(categories, pageable).getContent();
+                case "byDate":
+                    // Sort by date and apply categories filter
+                    return recipeRepository.findByCategoriesInOrderByDateAddedDesc(categories, pageable).getContent();
+                default:
+                    // Default unsorted with category filter
+                    return recipeRepository.findByCategoriesIn(categories);
+            }
+        } else {
+            // If no categories, return all recipes sorted by the selected option
+            switch (sort) {
+                case "highestRated":
+                    // Sort by rating, no category filter
+                    return recipeRepository.findAllByAverageRatingDesc(pageable).getContent();
+                case "byDate":
+                    // Sort by date, no category filter
+                    return recipeRepository.findByDate(pageable).getContent();
+                default:
+                    // Default unsorted, no category filter
+                    return recipeRepository.findAllPaginated(pageable).getContent();
+            }
+        }
+    }
+
+
 
 
 }

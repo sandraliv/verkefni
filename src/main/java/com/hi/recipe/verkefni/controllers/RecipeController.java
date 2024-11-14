@@ -54,6 +54,7 @@ public class RecipeController {
     @GetMapping("/all")
     public ResponseEntity<List<Recipe>> getAll(){
         List<Recipe> recipes = recipeService.findAll();
+
         return ResponseEntity.ok(recipes);
     }
 
@@ -63,18 +64,21 @@ public class RecipeController {
      * @param categories search term to filter recipes by category
      * @return Filtered list of recipes, or all recipes if no filters applied
      */
-   @GetMapping("byCategory")
+    @GetMapping("/byCategory")
     public ResponseEntity<List<Recipe>> getRecipesByCategory(
             @RequestParam(value = "categories", required = false) Set<Category> categories) {
-
-        System.out.println("Category name received: " + categories);  // This will print the category name
-        if (categories == null || categories.isEmpty()) {
-            return ResponseEntity.ok(recipeService.findAll()); // Or any fallback
+        // If no category is provided, return all recipes
+        if (categories == null) {
+            return ResponseEntity.ok(recipeService.findAll());
         }
 
-        List<Recipe> recipes = recipeService.findByCategoryIn(categories);
+        // Fetch recipes by the selected category
+        List<Recipe> recipes = recipeService.findByCategoriesIn(categories);
         return ResponseEntity.ok(recipes);
     }
+
+
+
 
     /**
      * Retrieves all recipes sorted by their creation date

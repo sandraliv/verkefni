@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="is">
 <head>
+    <meta charset="UTF-8">
     <title>Recipes</title>
     <link rel="stylesheet" href="/css/styles.css">
 </head>
@@ -8,15 +9,11 @@
 <h1 th:text="'Hello, ' + ${name}">Hello, User</h1>
 
 <h2>Recipes:</h2>
-<ul>
-    <!-- Iterate over each recipe -->
-    <li th:each="recipe : ${recipes}">
 
+<ul id="recipe-list">
+    <li th:each="recipe : ${recipes}">
         <h3 th:text="${recipe.title}">Recipe Title</h3>
         <p th:text="${recipe.description}">Recipe Description</p>
-
-
-        <!-- Use formattedDate -->
         <p><strong>Date Added:</strong>
             <span th:text="${recipe.formattedDate}">Date Added</span>
         </p>
@@ -24,8 +21,8 @@
         <div class="rating">
             <div class="stars">
                 <span th:each="i : ${#numbers.sequence(1, 5)}"
-                    th:class="${i <= recipe.averageRating.intValue() ? 'star-filled' :
-                              (i - 0.5 <= recipe.averageRating.doubleValue() && i > recipe.averageRating.doubleValue() ? 'star-half-filled' : 'star-empty')}">
+                      th:class="${i <= recipe.averageRating.intValue() ? 'star-filled' :
+                                (i - 0.5 <= recipe.averageRating.doubleValue() && i > recipe.averageRating.doubleValue() ? 'star-half-filled' : 'star-empty')}">
                     ★
                 </span>
             </div>
@@ -38,15 +35,27 @@
                 <th>Ingredient</th>
                 <th>Quantity</th>
             </tr>
-            <!-- Iterate over each ingredient in the recipe.ingredients map -->
             <tr th:each="ingredient : ${recipe.ingredients}">
-                <td th:text="${ingredient.key.replace('_', ' ')}">Ingredient Name</td>
+                <td th:text="${#strings.replace(ingredient.key, '_', ' ')}">Ingredient Name</td>
                 <td th:text="${ingredient.value}">Ingredient Quantity</td>
             </tr>
         </table>
 
+        <!-- Display Recipe Categories (with spaces between words and proper case) -->
+        <p><strong>Categories:</strong>
+            <span th:each="category : ${recipe.categories}"
+                  th:text="${#strings.capitalize(#strings.replace(category, '_', ' '))}">Category Name</span>
+        </p>
+
+        <!-- Display Recipe Tags -->
+        <p><strong>Tags:</strong>
+            <span th:each="tag, iterStat : ${recipe.tags}" th:text="${tag}"
+                  th:if="${iterStat.index < recipe.tags.size() - 1}">, </span>
+        </p>
+
         <img th:src="${recipe.image_url}" alt="Recipe Image">
     </li>
 </ul>
+
 </body>
 </html>

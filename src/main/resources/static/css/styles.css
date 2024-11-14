@@ -9,26 +9,64 @@ img {
 .contact_error {
     color: red;
 }
-/* General styles for the recipe page */
- body {
-     font-family: Arial, sans-serif;
-     margin: 0;
-     padding: 0;
-     background-color: #f4f4f4;
- }
-
- h1 {
-     text-align: center;
-     margin-top: 20px;
- }
-
-/* Rating container - Using flexbox to align stars and rating count horizontally */
-.rating {
-    display: flex;
-    align-items: center; /* Vertically center the stars and rating count */
-    margin-bottom: 10px; /* Optional: adds some space below the rating container */
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+    color: #333;
 }
 
+h1, h2 {
+    text-align: center;
+    color: #2c3e50;
+}
+
+h1 {
+    font-size: 3em;
+    margin-top: 20px;
+}
+
+h2 {
+    font-size: 2.5em;
+    margin-top: 40px;
+    font-family: system-ui;
+    color: rosybrown;
+    font-style: italic;
+    }
+}
+
+/* Rating container - Using flexbox to align stars and rating count horizontally */
+/* Recipe List */
+.recipe-List {
+    list-style-type: none;
+    padding: 0;
+    margin: 0 auto;
+    max-width: 900px;
+}
+
+.li {
+    background-color: #fff;
+    padding: 20px;
+    margin: 15px 0;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h3 {
+   color: rosybrown;
+    font-size: 1.8em;
+    margin-bottom: 10px;
+}
+
+p {
+    font-size: 1em;
+    line-height: 1.6;
+}
+.rating{
+    display:flex;
+}
 /* Rating stars container */
 .stars {
     display: flex; /* Arrange stars in a row */
@@ -53,14 +91,114 @@ img {
     color: gold;
 }
 
-/* Style for empty stars (light grey color) */
-.star-empty {
-    color: lightgrey; /* Light grey color for empty stars */
-}
-
 /* Rating count styling (adds space between stars and the count) */
 .rating-count {
     margin-left: 8px; /* Adds space between stars and rating count */
     font-size: 1rem;  /* Adjust font size if needed */
     color: #555;      /* Adjust color for rating count */
 }
+ /* Default heart icon styles */
+.heart-icon {
+   font-size: 30px;   /* Control the size of the heart */
+   cursor: pointer;   /* Pointer cursor to indicate the icon is clickable */
+   transition: color 0.3s ease; /* Smooth transition for color changes */
+}
+
+/* Filled heart icon (red when favorited) */
+.heart-icon .fa-heart {
+    color: #e74c3c; /* Red color for filled heart */
+}
+/* Empty heart icon (gray when not favorited) */
+.heart-icon .fa-heart-o {
+    color: #ccc; /* Gray color for empty heart */
+}
+/* Hover effect for both filled and empty hearts */
+.heart-icon:hover .fa-heart {
+  color: #c0392b; /* Darker red when hovering over the filled heart */
+}
+.heart-icon:hover .fa-heart-o {
+ color: #e74c3c; /* Change empty heart to red on hover */
+}
+
+/* General Styling for Category List */
+.category-list {
+    list-style: none;            /* Remove default list bullets */
+    padding: 0;                  /* Remove default padding */
+    display: flex;               /* Use flexbox for layout */
+    flex-wrap: wrap;             /* Allow items to wrap to the next line if needed */
+    justify-content: center;     /* Center buttons horizontally */
+    align-items: center;         /* Center buttons vertically */
+    gap: 35px;                   /* Add space between items */
+    margin-top: 20px;            /* Space above the list */
+    height: 30vh;               /* Full height of the viewport */
+}
+
+/* Styling for Each <li> inside category-list */
+.category-list li {
+    margin: 0;                   /* Remove default margin */
+    display: flex;               /* Flexbox for alignment inside the <li> */
+    align-items: center;         /* Center content inside <li> */
+}
+
+/* Styling for the category buttons */
+.category-buttons {
+    background-color: rosybrown;
+    color: white;
+    font-size: 1.6em;
+    font-weight: bold;
+    border: none;                /* Remove border */
+    border-radius: 12px;         /* Rounded corners */
+    padding: 18px 40px;          /* Larger padding for bigger buttons */
+    cursor: pointer;            /* Pointer on hover */
+    text-decoration: none;       /* Remove underline */
+    transition: all 0.3s ease;   /* Smooth transition for all changes */
+    display: inline-block;       /* Make the <a> behave like a block-level element */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+    text-align: center;          /* Center text inside button */
+}
+
+/* Hover effect on category buttons */
+.category-buttons:hover {
+    background-color: #3498db;   /* Lighter blue on hover */
+    transform: scale(1.1);       /* Slightly enlarge button on hover */
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15); /* Darker shadow on hover */
+}
+
+/* Focus effect on category buttons */
+.category-buttons:focus {
+    outline: none;               /* Remove the default focus outline */
+    box-shadow: 0 0 12px rgba(41, 128, 185, 0.7); /* Add a
+
+/* Dropdown (Sort Options) */
+form {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+#sortOptions {
+    padding: 10px 20px;
+    font-size: 1.1em;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#sortOptions:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+#sortOptions option {
+    padding: 10px;
+}
+
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
