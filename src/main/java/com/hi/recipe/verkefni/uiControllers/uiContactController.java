@@ -61,18 +61,22 @@ public class uiContactController {
         return "redirect:/contact";
     }
 
- /**
- * Displays the login form page.
- * @param model The model 
- * @return login.html
- */
+     /**
+     * Displays the login form page.
+     * @param model The model
+     * @return login.html
+     */
+     @GetMapping("/login")
+     public String showLoginForm(Model model, HttpSession session) {
+         User user = (User) session.getAttribute("user");
+         if (user != null) {
+             return "redirect:/usersui/" + user.getId();
+         }
+         model.addAttribute("user", new User());
+         return "login";
+     }
 
-    @GetMapping("/login")
-    public String showLoginForm(Model model) {
-        model.addAttribute("user", new User());
-        return "login";
-    }
-/**
+    /**
  * Handles the login form submission.
  * @param session Used to store info about the logged-in user.
  * @param user The user’s login info (username and password).
@@ -96,11 +100,10 @@ public class uiContactController {
         }
         User foundUser = optionalUser.get();
         if (!foundUser.getPassword().equals(user.getPassword())) {
-            model.addAttribute("errorMessage", "Incorrect password.");
+            model.addAttribute("errorMessage", "User not found.");
             return "login";
         }
 
-        
         session.setAttribute("user", foundUser);
         return "redirect:/usersui/" + foundUser.getId();
 

@@ -42,8 +42,8 @@ public class RecipeControllerui {
     @GetMapping("/all")
     public String getAllRecipes(
             @RequestParam(value = "query", required = false) String query,
-            @RequestParam(value = "tags", required = false) Set<RecipeTag> tags,
             @RequestParam(value = "categories", required = false) Set<Category> categories, // Add this line
+            @RequestParam(value = "tags", required = false) Set<RecipeTag> tags, HttpSession session,
             Model model) {
 
         List<Recipe> recipes;
@@ -66,6 +66,10 @@ public class RecipeControllerui {
         else if (query != null && tags != null) {
             recipes = recipeService.findByTitleAndTags(query, tags);
         }
+        User user = (User) session.getAttribute("user");
+        if(user != null){
+            model.addAttribute("user", user);
+        }
         else if (query != null && categories != null) {
             recipes = recipeService.findByTitleAndCategories(query, categories);
         }
@@ -80,10 +84,8 @@ public class RecipeControllerui {
             recipe.setFormattedDate(formattedDate);  // Add formatted date to recipe
         }
         model.addAttribute("recipes", recipes);
-
-        return "recipeList"; // Return the Thymeleaf view to display the recipes
+        return "recipeList"; //recipeList.html
     }
-
 
     /**
      * Retrieves a specific recipe by its identifier
@@ -97,14 +99,13 @@ public class RecipeControllerui {
             model.addAttribute("recipe", recipe.get());
             return "recipeList";
         }
-
         model.addAttribute("errorMessage", "Recipe not found.");
         return "error";
     }
 
     /**
-     * @param recipe new recipe object
-     * @param model the model
+     * @param recipe New recipe object
+     * @param model The model
      * @return addRecipe.html
      */
     @GetMapping("/addRecipe")
@@ -180,7 +181,6 @@ public class RecipeControllerui {
         return "error";
     }
 
-
     @GetMapping("/highestRated")
     public String getRecipesByHighestRating(Model model) {
         List<Recipe> recipes = recipeService.findAllByAverageRatingDesc();
@@ -203,12 +203,10 @@ public class RecipeControllerui {
      * @return Redirects to recipe list with a success message
      */
     @PostMapping("/newRecipe")
-    public String addANewRecipe(@ModelAttribute("recipe") Recipe recipe, RedirectAttributes redirectAttributes, Model model) {
+    public String addANewRecipe(@ModelAttribute("recipe") Recipe recipe, RedirectAttributes redirectAttributes) {
         Recipe savedRecipe = recipeService.save(recipe);
-        model.addAttribute("message", "Recipe added successfully!");
-        redirectAttributes.addAttribute("id", savedRecipe.getId()); // Pass the recipe ID
-        redirectAttributes.addFlashAttribute("message", "Recipe created successfully!");
-        return "redirect:/allrecipes";
+        redirectAttributes.addAttribute("recipeId", savedRecipe.getId());
+        return "redirect:/recipesui/{recipeId}/upload"; // Redirects to upload with recipeId
     }
 
     /**
@@ -230,12 +228,21 @@ public class RecipeControllerui {
             user.setFavourites(or.get());
             userService.save(user);
             model.addAttribute("message", "Recipe added to favorites.");
-            return "redirect:/users/favorites";
+            return "redirect:/usersui/favorites";
         }
 
         model.addAttribute("errorMessage", "User not logged in.");
         return "error";
     }
+
+    /**
+ * Adds a temporary rating to a recipe
+ *
+ * @param id The ID of the recipe to which the temporary rating is added
+ * @param score The rating score to be added to the recipe
+ * @param model The model object
+ * @return Redirects to the recipe's detail page if success or returns to an error page if recipe is not found
+ */
 
     @PostMapping("/{id}/addTempRating")
     public String addTempRating(@PathVariable int id, @RequestParam int score, Model model) {

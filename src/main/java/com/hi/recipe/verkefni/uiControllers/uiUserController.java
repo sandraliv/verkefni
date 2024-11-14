@@ -109,9 +109,6 @@ public class uiUserController {
     }
 
 
-
-
-
     //================================================================================
     // DELETE Methods
     //================================================================================
@@ -137,6 +134,7 @@ public class uiUserController {
     public String removeFavoriteRecipe(@PathVariable int recipeId, HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
         if (user == null) {
+            System.out.println("halló ekki user hér");
             model.addAttribute("errorMessage", "User not logged in.");
             return "error";
         }
@@ -150,6 +148,7 @@ public class uiUserController {
             userService.save(user);
             return "redirect:/usersui/favorites"; // Redirects to favorites page
         }
+        System.out.println("hæ hér er villan");
         model.addAttribute("errorMessage", "Recipe not found in favorites.");
         return "error";
     }
@@ -171,7 +170,7 @@ public class uiUserController {
        User user = (User) session.getAttribute("user");
        if (user == null || user.getId() != id) {
            model.addAttribute("errorMessage", "Unauthorized access.");
-           return "error";
+           return "redirect:/login";
        }
        model.addAttribute("user", user);
        return "changePassword";
@@ -195,33 +194,32 @@ public class uiUserController {
                              @RequestParam("confirmNewPassword") String confirmNewPassword,
                              Model model) {
 
-    User user = (User) session.getAttribute("user");
-    if (user == null || user.getId() != id) {
-        model.addAttribute("errorMessage", "Unauthorized access.");
-        return "error";
-    }
+       User user = (User) session.getAttribute("user");
+       model.addAttribute("user", user);
+       model.addAttribute("currentPassword", currentPassword);
 
-    // check if current password matches
-    if (!user.getPassword().equals(currentPassword)) {
-        model.addAttribute("errorMessage", "Current password is incorrect.");
-        return "changePassword";
-    }
-    // check if new password and confirmation match
-    if (!newPassword.equals(confirmNewPassword)) {
-        model.addAttribute("errorMessage", "New passwords do not match.");
-        return "changePassword";
-    }
-    // Update the password
-    user.setPassword(newPassword);
-    userService.save(user);
+       if (user == null || user.getId() != id) {
+           System.out.println("hallo villa");
+           model.addAttribute("errorMessage", "Unauthorized access.");
+           return "error";
+       }
+       // check if current password matches
+       if (!user.getPassword().equals(currentPassword)) {
+           model.addAttribute("errorMessage", "Your password is incorrect");
+           return "changePassword";
+       }
+       if (newPassword.isEmpty() || !newPassword.equals(confirmNewPassword)) {
+           model.addAttribute("pwMessage", "Please add a new password");
+           return "changePassword";
+       }
 
-    model.addAttribute("message", "Password changed successfully.");
-    return "redirect:/usersui/" + id; // redirect to profile page
-}
+       // Update the password
+       user.setPassword(newPassword);
+       userService.save(user);
+       model.addAttribute("message", "Password changed successfully.");
+       return "redirect:/usersui/" + id; // redirect to profile page
 
-
-
-
+   }
 }
 
 

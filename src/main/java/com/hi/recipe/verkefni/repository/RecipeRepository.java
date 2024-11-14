@@ -24,6 +24,9 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
 
     List<Recipe> findByTagsIn(Collection<RecipeTag> tags);
 
+    @Query("SELECT r FROM Recipe r JOIN r.categories c WHERE c IN :categories")
+    List<Recipe> findByCategoryIn(@Param("categories") Set<Category> categories);
+
 
     List<Recipe> findByTitleContainingIgnoreCaseAndTagsIn(String title, Collection<RecipeTag> tags);
 
@@ -40,6 +43,10 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
     @Query("SELECT r FROM Recipe r ORDER BY r.averageRating DESC")
     Page<Recipe> findAllByAverageRatingDesc(Pageable pageable);
 
+    @Modifying
+    @Query(value = "DELETE FROM user_recipes WHERE recipe_id = :recipeId", nativeQuery = true)
+    void deleteUserRecipeRelations(@Param("recipeId") int recipeId);
+}
     List<Recipe> findByCategoriesIn(Collection <Category> categories);
 
     List<Recipe> findByTitleContainingIgnoreCaseAndCategoriesIn(String query, Set<Category> categories);
@@ -57,5 +64,4 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
 
 
 
-}
 

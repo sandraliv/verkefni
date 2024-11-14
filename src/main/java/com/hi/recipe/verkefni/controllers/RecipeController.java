@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Min;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -149,19 +150,28 @@ public class RecipeController {
      * @return Success message if added, error if user not found or recipe doesn't exist
      */
     @PostMapping("/{id}/addAsFav")
-    public ResponseEntity<String> addRecipeToFav(@PathVariable int id, HttpSession session){
+    @Transactional
+    public ResponseEntity<String> addRecipeToFav(@PathVariable int id, HttpSession session) {
         Optional<Recipe> or = recipeService.findById(id);
         Recipe recipe;
-        if(or.isPresent()){
+        if (or.isPresent()) {
             recipe = or.get();
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Problem adding favourite");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Recipe not found");
         }
-        User user = (User)session.getAttribute("user");
-        if(user != null){
-            user.setFavourites(recipe);
-            userService.save(user);
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Favourite added to logged in user");
+    
+        User sessionUser = (User) session.getAttribute("user");
+        if (sessionUser != null) {
+            // Get fresh copy of user from database
+            Optional<User> userOpt = userService.findById(sessionUser.getId());
+            if (userOpt.isPresent()) {
+                User user = userOpt.get();
+                user.setFavourites(recipe);
+                userService.save(user);
+                // Update the session with the new user state
+                session.setAttribute("user", user);
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body("Favourite added to logged in user");
+            }
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Could not update user");
     }
@@ -269,18 +279,6 @@ public class RecipeController {
     @DeleteMapping("{id}")
     public ResponseEntity<String> deleteRecipe(@PathVariable int id){
         recipeService.deleteById(id);
-        return ResponseEntity.status(200).body("Deleted recipe");
-    }
-
-    /**
-     * Removes a user from the system
-     *
-     * @param id The ID of the user to delete
-     * @return Success message if deleted
-     */
-    @DeleteMapping("{user}")
-    public ResponseEntity<String> deleteUser(@PathVariable int id) {
-        userService.deleteById(id);
         return ResponseEntity.status(200).body("Deleted recipe");
     }
 }
