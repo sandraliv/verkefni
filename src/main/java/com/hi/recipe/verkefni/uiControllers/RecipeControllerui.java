@@ -240,7 +240,7 @@ public class RecipeControllerui {
     }
 
     /**
- * Adds a temporary rating to a recipe
+ * Adds a  rating to a recipe
  *
  * @param id The ID of the recipe to which the temporary rating is added
  * @param score The rating score to be added to the recipe
