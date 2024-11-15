@@ -25,10 +25,6 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
 
     List<Recipe> findByTagsIn(Collection<RecipeTag> tags);
 
-    @Query("SELECT r FROM Recipe r JOIN r.categories c WHERE c IN :categories")
-    List<Recipe> findByCategoryIn(@Param("categories") Set<Category> categories);
-
-
     List<Recipe> findByTitleContainingIgnoreCaseAndTagsIn(String title, Collection<RecipeTag> tags);
 
     @Query("SELECT r FROM Recipe r ORDER BY dateAdded DESC")
@@ -62,7 +58,10 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
 
     @Query("SELECT r FROM Recipe r JOIN r.categories c WHERE c IN :categories ORDER BY r.dateAdded DESC")
     Page<Recipe> findByCategoriesInOrderByDateAddedDesc(@Param("categories") Collection<Category> categories, Pageable pageable);
+
+
 }
+
 
 
 

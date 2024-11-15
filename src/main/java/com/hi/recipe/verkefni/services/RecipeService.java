@@ -51,7 +51,14 @@ public interface RecipeService {
     // Fetch distinct category names directly from the enum
     Set<String> getDistinctCategoryNames();
 
+    List<Recipe> filterRecipes(String query, Set<RecipeTag> tags);
+
     List<Recipe> getSortedRecipes(String sort, Set<Category> categories);
+
+    // Method to convert a set of category strings to Set<Category> enum
+    Set<Category> convertToCategoryEnum(Set<String> categoryStrings);
+
+    Set<RecipeTag> convertToRecipeTagEnum(Set<String> tagStrings);
 }
 
 

@@ -32,7 +32,6 @@ public class RecipeControllerui {
     //================================================================================
     // GET Methods
     //================================================================================
-
     /**
      * Retrieves recipes with optional search and tag filtering
      * @param query Optional search term to filter recipes by title
@@ -42,51 +41,22 @@ public class RecipeControllerui {
     @GetMapping("/all")
     public String getAllRecipes(
             @RequestParam(value = "query", required = false) String query,
-            @RequestParam(value = "categories", required = false) Set<Category> categories, // Add this line
-            @RequestParam(value = "tags", required = false) Set<RecipeTag> tags, HttpSession session,
+            @RequestParam(value = "tags", required = false) Set<String> tags, HttpSession session,
             Model model) {
-
-        List<Recipe> recipes;
-
-
-        if ((query == null || query.isEmpty()) && tags == null && categories == null) {
-            recipes = recipeService.findAllPaginated();
-        }
-
-        else if (tags == null && categories == null) {
-            recipes = recipeService.findByTitleContainingIgnoreCase(query);
-        }
-
-        else if (query == null || query.isEmpty()) {
-            recipes = recipeService.findByTagsIn(tags);
-        }
-
-        else if (tags == null && categories != null) {
-            recipes = recipeService.findByCategoriesIn(categories);
-        }
-        else if (query != null && tags != null) {
-            recipes = recipeService.findByTitleAndTags(query, tags);
-        }
-        else if (query != null && categories != null) {
-            recipes = recipeService.findByTitleAndCategories(query, categories);
-        }
-        else if (tags != null && categories != null) {
-            recipes = recipeService.findByTagsInAndCategoriesIn(tags, categories);
-        }
-        else {
-            recipes = recipeService.findByTitleAndTagsAndCategories(query, tags, categories);
-        }
-
+        // Convert tag strings to RecipeTag enum values
+        Set<RecipeTag> tagsEnumSet = recipeService.convertToRecipeTagEnum(tags);
+        // Call the service method to get filtered recipes
+        List<Recipe> recipes = recipeService.filterRecipes(query, tagsEnumSet);
         User user = (User) session.getAttribute("user");
         if(user != null){
             model.addAttribute("user", user);
         }
-
         for (Recipe recipe : recipes) {
             String formattedDate = recipeService.formatDate(recipe.getDateAdded());
             recipe.setFormattedDate(formattedDate);  // Add formatted date to recipe
         }
 
+        model.addAttribute("allTags",RecipeTag.values());
         model.addAttribute("recipes", recipes);
         return "recipeList"; //recipeList.html
     }
@@ -131,6 +101,7 @@ public class RecipeControllerui {
             String formattedDate = recipeService.formatDate(recipe.getDateAdded());
             recipe.setFormattedDate(formattedDate);  // Add formatted date to recipe
         }
+
         model.addAttribute("recipes", recipes);
         return "recipeList";
     }
@@ -143,36 +114,20 @@ public class RecipeControllerui {
             Model model) {
 
         List<Recipe> recipes;
-
-        // Convert category strings to Category enum values
-        Set<Category> categoryEnumSet = null;
-        if (categories != null && !categories.isEmpty()) {
-            categoryEnumSet = new HashSet<>();
-            for (String category : categories) {
-                try {
-                    categoryEnumSet.add(Category.valueOf(category));  // Convert string to Category enum
-                } catch (IllegalArgumentException e) {
-                    // Handle invalid category value (optional: log the error)
-                    System.err.println("Invalid category: " + category);
-                }
-            }
-        }
-
+        // Convert the category strings to Category enum
+        Set<Category> categoryEnumSet = recipeService.convertToCategoryEnum(categories);
         // Get sorted recipes based on the selected sort option and category filter
         recipes = recipeService.getSortedRecipes(sort, categoryEnumSet);
-
         for (Recipe recipe : recipes) {
             String formattedDate = recipeService.formatDate(recipe.getDateAdded());
             recipe.setFormattedDate(formattedDate);  // Add formatted date to recipe
         }
-
         // Add attributes to the model
         model.addAttribute("tags", RecipeTag.values());  // Pass all tags to the view
         model.addAttribute("recipes", recipes);  // Add the list of recipes
         model.addAttribute("categories", Category.values());  // Add all categories to the view
         model.addAttribute("sort", sort);  // Keep track of the selected sort option in the model
         model.addAttribute("selectedCategories", categories);  // Keep track of selected categories
-
         return "byCategory";  // Return to the 'byCategory' template
     }
 

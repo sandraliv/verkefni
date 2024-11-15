@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="is">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html" lang="eng">
 <head>
     <meta charset="UTF-8">
     <title>Recipes</title>
@@ -8,23 +8,43 @@
 <body>
 <h1 th:if="${user}" th:text="'Hello, ' + ${user.name}">Hello, User</h1>
 <p th:if="${message}" th:text="${message}"></p>
+
+<form action="#" method="get" id="search-form">
+    <!-- Search input for title -->
+    <label for="query" class="search-label">Search by Title:</label>
+    <input type="text" id="query" name="query"
+           placeholder="Enter recipe title"
+           class="search-input">
+
+    <!-- Search input for tags (multi-select dropdown) -->
+    <label for="tags" class="tags-label">Tags:</label>
+    <select id="tags" name="tags" multiple="multiple" class="tags-select">
+        <option th:each="tag : ${allTags}"
+                th:value="${tag}"
+                th:text="${tag.getDisplayName()}">
+        </option>
+    </select>
+
+    <!-- Submit button -->
+    <button type="submit" class="search-button">Search</button>
+</form>
 <h2>Recipes:</h2>
 
-<ul id="recipe-list">
-    <li th:each="recipe : ${recipes}">
+<ul class="recipe-list" id="recipe-list">
+    <li th:each="recipe : ${recipes}" class="li">
         <h3 th:text="${recipe.title}">Recipe Title</h3>
         <p th:text="${recipe.description}">Recipe Description</p>
-        <p><strong>Date Added:</strong>
+        <p><strong>Date:</strong>
             <span th:text="${recipe.formattedDate}">Date Added</span>
         </p>
 
         <div class="rating">
             <div class="stars">
-                <span th:each="i : ${#numbers.sequence(1, 5)}"
-                      th:class="${i <= recipe.averageRating.intValue() ? 'star-filled' :
-                                (i - 0.5 <= recipe.averageRating.doubleValue() && i > recipe.averageRating.doubleValue() ? 'star-half-filled' : 'star-empty')}">
-                    ★
-                </span>
+          <span th:each="i : ${#numbers.sequence(1, 5)}"
+                th:class="${i <= recipe.averageRating.intValue() ? 'star-filled' :
+                          (i - 0.5 <= recipe.averageRating.doubleValue() && i > recipe.averageRating.doubleValue() ? 'star-half-filled' : 'star-empty')}">
+              ★
+          </span>
             </div>
             <span class="rating-count" th:text="${recipe.ratingCount == 0 ? 'No ratings yet' : '(' + recipe.ratingCount + ')'}"></span>
         </div>
@@ -41,25 +61,73 @@
             </tr>
         </table>
 
-        <!-- Display Recipe Categories (with spaces between words and proper case) -->
+        <!-- Display Recipe Categories -->
         <p><strong>Categories:</strong>
+            <!-- Check if categories is empty -->
+            <span th:if="${#lists.isEmpty(recipe.categories)}">No categories assigned</span>
+
+            <!-- Display each category if it exists -->
             <span th:each="category : ${recipe.categories}"
-                  th:text="${#strings.capitalize(#strings.replace(category, '_', ' '))}">Category Name</span>
+                  th:text="${category.getDisplayName()}"
+                  style="display: inline-block; padding: 5px 10px; background-color: #f0f0f0; border-radius: 15px; margin: 5px;">
+      </span>
         </p>
 
         <!-- Display Recipe Tags -->
         <p><strong>Tags:</strong>
-            <span th:each="tag, iterStat : ${recipe.tags}" th:text="${tag}"
-                  th:if="${iterStat.index < recipe.tags.size() - 1}">, </span>
+            <span th:if="${#lists.isEmpty(recipe.tags)}">No tags assigned</span>
+            <span th:each="tag : ${recipe.tags}"
+                  th:text="${tag.getDisplayName()}"
+                  style="display: inline-block; padding: 5px 10px; background-color: #d1e7f3; border-radius: 15px; margin: 5px;">
+      </span>
         </p>
 
-        <img th:src="${recipe.image_url}" alt="Recipe Image">
+
+        <img th:src="${recipe.image_url}" alt="Recipe Image" />
 
         <form th:action="@{/allrecipes/{id}/addAsFav(id=${recipe.id})}" method="post">
             <button type="submit">Add to Favorites</button>
         </form>
     </li>
 </ul>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Ensure jQuery is included -->
+<script>
+    $(document).ready(function() {
+        // Get the search query value (case-insensitive)
+        var query = $('#query').val().toLowerCase(); // Assuming you have an input with id="query"
+
+        // Get the selected tags (from a multi-select dropdown or other tag selection UI)
+        var selectedTags = [];
+        $('#tags option:selected').each(function() {
+            selectedTags.push($(this).val());
+        });
+
+        // Filter the recipes based on the query and selected tags
+        $('#recipe-list li').each(function() {
+            var title = $(this).find('h3').text().toLowerCase();  // Get the title of the recipe
+            var tagsData = $(this).data('tags');  // Get the tags data attribute
+
+            // Check if the tags data exists and is a non-empty string before splitting
+            var tags = tagsData ? tagsData.split(',') : [];  // Default to empty array if no tags are set
+
+            // Filter logic:
+            // - matchesQuery checks if the title contains the query (if query is not empty)
+            // - matchesTags checks if all selected tags are included in the recipe's tags (if tags are selected)
+            var matchesQuery = query === '' || title.includes(query);  // If query is empty, skip this check
+            var matchesTags = selectedTags.length === 0 || selectedTags.every(tag => tags.includes(tag));  // If no tags selected, skip this check
+
+            // Show or hide the recipe based on the filters
+            if (matchesQuery && matchesTags) {
+                $(this).show();  // Show recipe if it matches both query and tags
+            } else {
+                $(this).hide();  // Hide recipe if it does not match
+            }
+        });
+    });
+
+</script>
 
 </body>
 </html>

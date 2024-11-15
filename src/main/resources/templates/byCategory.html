@@ -79,13 +79,17 @@
     <p><strong>Tags:</strong>
       <span th:if="${#lists.isEmpty(recipe.tags)}">No tags assigned</span>
       <span th:each="tag : ${recipe.tags}"
-            th:text="${#strings.capitalize(tag.name())}"
+            th:text="${tag.getDisplayName()}"
             style="display: inline-block; padding: 5px 10px; background-color: #d1e7f3; border-radius: 15px; margin: 5px;">
       </span>
     </p>
 
 
     <img th:src="${recipe.image_url}" alt="Recipe Image" />
+
+    <form th:action="@{/allrecipes/{id}/addAsFav(id=${recipe.id})}" method="post">
+      <button type="submit">Add to Favorites</button>
+    </form>
   </li>
 </ul>
 <!-- JavaScript to Update the URL with Sort Parameter -->

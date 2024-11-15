@@ -84,6 +84,12 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
+    public Optional<Recipe> findRecipeById(int id) {
+        System.out.println("id = " + id);
+        return recipeRepository.findById(id);
+    }
+
+    @Override
     public List<Recipe> findByTagsIn(Set<RecipeTag> tags) {
         return recipeRepository.findByTagsIn(tags);
     }
@@ -93,11 +99,6 @@ public class RecipeServiceImpl implements RecipeService {
         return recipeRepository.findByCategoriesIn(categories);
     }
 
-    @Override
-    public Optional<Recipe> findRecipeById(int id) {
-        System.out.println("id = " + id);
-        return recipeRepository.findById(id);
-    }
     @Override
     public List<Recipe> findByTitleAndCategories(String query, Set<Category> categories) {
         return recipeRepository.findByTitleContainingIgnoreCaseAndCategoriesIn(query, categories);
@@ -192,6 +193,24 @@ public class RecipeServiceImpl implements RecipeService {
         return tags;
 
     }
+
+    @Override
+    public List<Recipe> filterRecipes(String query, Set<RecipeTag> tags) {
+        if ((query == null || query.isEmpty()) && (tags == null || tags.isEmpty())) {
+            // If no filter is applied, return all recipes (paginated if necessary)
+            return findAllPaginated(); // Assuming this method exists for paginated results
+        } else if (tags == null || tags.isEmpty()) {
+            // If only query is provided, filter by title
+            return findByTitleContainingIgnoreCase(query);
+        } else if (query == null || query.isEmpty()) {
+            // If only tags are provided, filter by tags
+            return findByTagsIn(tags);
+        } else {
+            // If both query and tags are provided, filter by both
+            return findByTitleAndTags(query, tags);
+        }
+    }
+
     @Override
     public List<Recipe> getSortedRecipes(String sort, Set<Category> categories) {
         int page = 0; // starting page
@@ -231,6 +250,38 @@ public class RecipeServiceImpl implements RecipeService {
             }
         }
     }
+    @Override
+    public Set<Category> convertToCategoryEnum(Set<String> categoryStrings) {
+        Set<Category> categoryEnumSet = new HashSet<>();
+        if (categoryStrings != null && !categoryStrings.isEmpty()) {
+            for (String category : categoryStrings) {
+                try {
+                    categoryEnumSet.add(Category.valueOf(category));  // Convert string to Category enum
+                } catch (IllegalArgumentException e) {
+                    // Handle invalid category value (log the error if needed)
+                    System.err.println("Invalid category: " + category);
+                }
+            }
+        }
+        return categoryEnumSet;
+    }
+
+    @Override
+    public Set<RecipeTag> convertToRecipeTagEnum(Set<String> tagStrings) {
+        Set<RecipeTag> tagEnumSet = new HashSet<>();
+        if (tagStrings != null && !tagStrings.isEmpty()) {
+            for (String tag : tagStrings) {
+                try {
+                    tagEnumSet.add(RecipeTag.valueOf(tag));  // Convert string to RecipeTag enum
+                } catch (IllegalArgumentException e) {
+                    // Handle invalid tag value (optional: log the error)
+                    System.err.println("Invalid tag: " + tag);
+                }
+            }
+        }
+        return tagEnumSet;
+    }
+
 
 
 
