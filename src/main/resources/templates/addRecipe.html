@@ -3,6 +3,7 @@
 <head>
     <title>Bæta við uppskrift</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/grunnur.css">
     <script>
         function addIngredientRow() {
             const ingredientContainer = document.getElementById("ingredients-container");
@@ -29,6 +30,7 @@
             // Append the row div to the container
             ingredientContainer.appendChild(rowDiv);
         }
+
     </script>
 </head>
 <body>
@@ -43,7 +45,7 @@
     <!-- Title Field -->
     <div>
         <label for="title">Nafn á uppskrift:</label>
-        <input type="text" id="title" name="title" th:field="*{title}" />
+        <input type="text" id="title" name="title" th:field="*{title}"/>
         <p class="contact_error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></p>
     </div>
 
@@ -67,7 +69,7 @@
     <div>
         <label>Merki:</label>
         <div th:each="tag : ${allTags}">
-            <input type="checkbox" th:field="*{tags}" th:value="${tag}" th:attr="id='tag_' + ${tag}" />
+            <input type="checkbox" th:field="*{tags}" th:value="${tag}" th:attr="id='tag_' + ${tag}"/>
             <label th:attr="for='tag_' + ${tag}" th:text="${tag}"></label>
         </div>
         <p class="contact_error" th:if="${#fields.hasErrors('tags')}" th:errors="*{tags}"></p>
@@ -76,20 +78,22 @@
     <div>
         <label>Flokkar:</label>
         <div th:each="category : ${allCategories}">
-            <input type="checkbox" th:field="*{categories}" th:value="${category}" th:attr="id='category_' + ${category}" />
+            <input type="checkbox" th:field="*{categories}" th:value="${category}"
+                   th:attr="id='category_' + ${category}"/>
             <label th:attr="for='category_' + ${category}" th:text="${category}"></label>
         </div>
         <p class="contact_error" th:if="${#fields.hasErrors('categories')}" th:errors="*{categories}"></p>
     </div>
-    </form>
+</form>
 
-    <form id="photo-upload-form" th:action="@{/recipesui/{id}/upload(id=${id})}" method="post" enctype="multipart/form-data" style="display: none;">
-        <h2>Upload a Photo for Your Recipe</h2>
-        <div>
-            <label for="photo">Choose a photo:</label>
-            <input type="file" id="photo" name="photo" accept="image/*" required />
-        </div>
-        <button type="submit">Upload Photo</button>
-    </form>
+<form id="photo-upload-form" th:action="@{/recipesui/{id}/upload(id=${id})}" method="post" enctype="multipart/form-data"
+      style="display: none;">
+    <h2>Upload a Photo for Your Recipe</h2>
+    <div>
+        <label for="photo">Choose a photo:</label>
+        <input type="file" id="photo" name="photo" accept="image/*" required/>
+    </div>
+    <button type="submit">Upload Photo</button>
+</form>
 </body>
 </html>

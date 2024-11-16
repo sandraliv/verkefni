@@ -42,22 +42,13 @@ public interface RecipeService {
     // Paginated recipes sorted by average rating
     List<Recipe> findAllByAverageRatingDesc();
 
-    // Fetch distinct category names directly from the enum
-    Set<String> getDistinctCategoryNames();
-
     @Transactional
     void addRating(int recipeId, User user, int score);
-
-    List<Recipe> filterRecipes(String query, Set<RecipeTag> tags);
 
     List<Recipe> getSortedRecipes(String sort, Set<Category> categories);
 
     // Method to convert a set of category strings to Set<Category> enum
     Set<Category> convertToCategoryEnum(Set<String> categoryStrings);
-
-    Set<RecipeTag> convertToRecipeTagEnum(Set<String> tagStrings);
-
-    List<Recipe> getRecipesWithFavoritedFlag(User user);
 
     // Method to remove rating from a recipe
     void removeRatingFromRecipe(int recipeId);

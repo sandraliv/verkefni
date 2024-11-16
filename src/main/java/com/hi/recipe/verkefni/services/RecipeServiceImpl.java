@@ -102,8 +102,6 @@ public class RecipeServiceImpl implements RecipeService {
     // Search by title (case-insensitive)
     @Override
     public List<Recipe> findByTitleContainingIgnoreCase(String keyword) {
-        System.out.println(keyword);
-        System.out.println(recipeRepository.findByTitleContaining(keyword));
         return recipeRepository.findByTitleContaining(keyword);
     }
 
@@ -181,20 +179,6 @@ public class RecipeServiceImpl implements RecipeService {
             }
         }
         return tags;
-
-    }
-
-    @Override
-    public List<Recipe> filterRecipes(String query, Set<RecipeTag> tags) {
-        if ((query == null || query.isEmpty()) && (tags == null || tags.isEmpty())) {
-            return findAll();
-        } else if (tags == null || tags.isEmpty()) {
-            return findByTitleContainingIgnoreCase(query);
-        } else if (query == null || query.isEmpty()) {
-            return findByTagsIn(tags);
-        } else {
-            return findByTitleAndTags(query, tags);
-        }
     }
 
     @Override
@@ -225,6 +209,7 @@ public class RecipeServiceImpl implements RecipeService {
             }
         }
     }
+
     @Override
     public Set<Category> convertToCategoryEnum(Set<String> categoryStrings) {
         Set<Category> categoryEnumSet = new HashSet<>();
@@ -242,32 +227,6 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public Set<RecipeTag> convertToRecipeTagEnum(Set<String> tagStrings) {
-        Set<RecipeTag> tagEnumSet = new HashSet<>();
-        if (tagStrings != null && !tagStrings.isEmpty()) {
-            for (String tag : tagStrings) {
-                try {
-                    tagEnumSet.add(RecipeTag.valueOf(tag));  // Convert string to RecipeTag enum
-                } catch (IllegalArgumentException e) {
-                    // Handle invalid tag value (optional: log the error)
-                    System.err.println("Invalid tag: " + tag);
-                }
-            }
-        }
-        return tagEnumSet;
-    }
-    @Override
-    public List<Recipe> getRecipesWithFavoritedFlag(User user) {
-        List<Recipe> recipes = recipeRepository.findAll();
-        if (user != null) {
-            for (Recipe recipe : recipes) {
-                recipe.setIsFavoritedByUser(user.getFavourites().contains(recipe));
-            }
-        }
-        return recipes;
-    }
-
-    @Override
     public void removeRatingFromRecipe(int recipeId) {
         // Find the recipe by ID
         Recipe recipe = recipeRepository.findById(recipeId)
@@ -276,9 +235,6 @@ public class RecipeServiceImpl implements RecipeService {
         recipe.recalculateAverageRating();
         recipeRepository.save(recipe);
     }
-
-
-
 
 
 }

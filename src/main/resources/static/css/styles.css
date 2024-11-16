@@ -9,6 +9,8 @@ img {
 .contact_error {
     color: red;
 }
+
+
 /* General Styles */
 body {
     font-family: Arial, sans-serif;
@@ -281,13 +283,6 @@ form {
 
 #sortOptions option {
     padding: 10px;
-}
-
-/* General Reset */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
 }
 
 

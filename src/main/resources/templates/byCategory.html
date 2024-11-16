@@ -1,96 +1,99 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Recipe List</title>
-  <link rel="stylesheet" href="/css/styles.css"> <!-- Link to your CSS file -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> <!-- Font Awesome -->
+    <title>Recipe List</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/grunnur.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Font Awesome -->
 </head>
 <body>
 <h1>Categories</h1>
 
 <ul class="category-list">
-  <li th:each="category : ${categories}">
-    <a class="category-buttons"
-       th:href="@{/allrecipes/byCategory?categories={category}(category=${category})}"
-       th:text="${category.getDisplayName()}"
-       style="background-color: rosybrown; color: white; font-size: 1.6em; font-weight: bold; padding: 15px 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); text-decoration: none; transition: background-color 0.3s ease, transform 0.2s ease;"
-       th:classappend="${selectedCategories != null && selectedCategories.contains(category.name()) ? ' selected' : ''}">
-      Category Name
-    </a>
-  </li>
+    <li th:each="category : ${categories}">
+        <a class="category-buttons"
+           th:href="@{/allrecipes/byCategory?categories={category}(category=${category})}"
+           th:text="${category.getDisplayName()}"
+           style="background-color: rosybrown; color: white; font-size: 1.6em; font-weight: bold; padding: 15px 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); text-decoration: none; transition: background-color 0.3s ease, transform 0.2s ease;"
+           th:classappend="${selectedCategories != null && selectedCategories.contains(category.name()) ? ' selected' : ''}">
+            Category Name
+        </a>
+    </li>
 </ul>
 
 
 <h2>Recipes</h2>
 <!-- Dropdown to select sorting option -->
 <form action="#" method="get">
-  <label for="sortOptions">Sort by: </label>
-  <select id="sortOptions" name="sort" onchange="updateSortOption(this)">
-    <option value="highestRated" th:selected="${sort == 'highestRated'}">Highest Rating</option>
-    <option value="byDate" th:selected="${sort == 'byDate'}">Newest</option>
-  </select>
+    <label for="sortOptions">Sort by: </label>
+    <select id="sortOptions" name="sort" onchange="updateSortOption(this)">
+        <option value="highestRated" th:selected="${sort == 'highestRated'}">Highest Rating</option>
+        <option value="byDate" th:selected="${sort == 'byDate'}">Newest</option>
+    </select>
 </form>
 
 <!-- Recipe List -->
 <ul class="recipe-list" id="recipe-list">
-  <li th:each="recipe : ${recipes}" class="li">
-    <h3 th:text="${recipe.title}">Recipe Title</h3>
-    <p th:text="${recipe.description}">Recipe Description</p>
-    <p><strong>Date:</strong>
-      <span th:text="${recipe.formattedDate}">Date Added</span>
-    </p>
+    <li th:each="recipe : ${recipes}" class="li">
+        <h3 th:text="${recipe.title}">Recipe Title</h3>
+        <p th:text="${recipe.description}">Recipe Description</p>
+        <p><strong>Date:</strong>
+            <span th:text="${recipe.formattedDate}">Date Added</span>
+        </p>
 
-    <div class="rating">
-      <div class="stars">
+        <div class="rating">
+            <div class="stars">
           <span th:each="i : ${#numbers.sequence(1, 5)}"
                 th:class="${i <= recipe.averageRating.intValue() ? 'star-filled' :
                           (i - 0.5 <= recipe.averageRating.doubleValue() && i > recipe.averageRating.doubleValue() ? 'star-half-filled' : 'star-empty')}">
               ★
           </span>
-      </div>
-      <span class="rating-count" th:text="${recipe.ratingCount == 0 ? 'No ratings yet' : '(' + recipe.ratingCount + ')'}"></span>
-    </div>
+            </div>
+            <span class="rating-count"
+                  th:text="${recipe.ratingCount == 0 ? 'No ratings yet' : '(' + recipe.ratingCount + ')'}"></span>
+        </div>
 
-    <!-- Ingredients Table -->
-    <table>
-      <tr>
-        <th>Ingredient</th>
-        <th>Quantity</th>
-      </tr>
-      <tr th:each="ingredient : ${recipe.ingredients}">
-        <td th:text="${#strings.replace(ingredient.key, '_', ' ')}">Ingredient Name</td>
-        <td th:text="${ingredient.value}">Ingredient Quantity</td>
-      </tr>
-    </table>
+        <!-- Ingredients Table -->
+        <table>
+            <tr>
+                <th>Ingredient</th>
+                <th>Quantity</th>
+            </tr>
+            <tr th:each="ingredient : ${recipe.ingredients}">
+                <td th:text="${#strings.replace(ingredient.key, '_', ' ')}">Ingredient Name</td>
+                <td th:text="${ingredient.value}">Ingredient Quantity</td>
+            </tr>
+        </table>
 
-    <!-- Display Recipe Categories -->
-    <p><strong>Categories:</strong>
-      <!-- Check if categories is empty -->
-      <span th:if="${#lists.isEmpty(recipe.categories)}">No categories assigned</span>
+        <!-- Display Recipe Categories -->
+        <p><strong>Categories:</strong>
+            <!-- Check if categories is empty -->
+            <span th:if="${#lists.isEmpty(recipe.categories)}">No categories assigned</span>
 
-      <!-- Display each category if it exists -->
-      <span th:each="category : ${recipe.categories}"
-            th:text="${category.getDisplayName()}"
-            style="display: inline-block; padding: 5px 10px; background-color: #f0f0f0; border-radius: 15px; margin: 5px;">
+            <!-- Display each category if it exists -->
+            <span th:each="category : ${recipe.categories}"
+                  th:text="${category.getDisplayName()}"
+                  style="display: inline-block; padding: 5px 10px; background-color: #f0f0f0; border-radius: 15px; margin: 5px;">
       </span>
-    </p>
+        </p>
 
-    <!-- Display Recipe Tags -->
-    <p><strong>Tags:</strong>
-      <span th:if="${#lists.isEmpty(recipe.tags)}">No tags assigned</span>
-      <span th:each="tag : ${recipe.tags}"
-            th:text="${tag.getDisplayName()}"
-            style="display: inline-block; padding: 5px 10px; background-color: #d1e7f3; border-radius: 15px; margin: 5px;">
+        <!-- Display Recipe Tags -->
+        <p><strong>Tags:</strong>
+            <span th:if="${#lists.isEmpty(recipe.tags)}">No tags assigned</span>
+            <span th:each="tag : ${recipe.tags}"
+                  th:text="${tag.getDisplayName()}"
+                  style="display: inline-block; padding: 5px 10px; background-color: #d1e7f3; border-radius: 15px; margin: 5px;">
       </span>
-    </p>
+        </p>
 
 
-    <img th:src="${recipe.image_url}" alt="Recipe Image" />
+        <img th:src="${recipe.image_url}" alt="Recipe Image"/>
 
-    <form th:action="@{/allrecipes/{id}/addAsFav(id=${recipe.id})}" method="post">
-      <button type="submit">Add to Favorites</button>
-    </form>
-  </li>
+        <form th:action="@{/allrecipes/{id}/addAsFav(id=${recipe.id})}" method="post">
+            <button type="submit">Add to Favorites</button>
+        </form>
+    </li>
 </ul>
 <!-- JavaScript to Update the URL with Sort Parameter -->
 <script type="text/javascript">
@@ -113,6 +116,7 @@
     // Redirect to the new URL with the updated sort parameter
     window.location.href = url.toString();
   }
+
 </script>
 </body>
 </html>
