@@ -1,7 +1,9 @@
 package com.hi.recipe.verkefni.uiControllers;
 
 import com.hi.recipe.verkefni.klasar.ContactForm;
+import com.hi.recipe.verkefni.klasar.RecipeTag;
 import com.hi.recipe.verkefni.klasar.User;
+import com.hi.recipe.verkefni.services.RecipeService;
 import com.hi.recipe.verkefni.services.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -18,9 +20,11 @@ import java.util.Optional;
 @Controller
 public class uiContactController {
     private final UserService userService;
+    private final RecipeService recipeService;
 
-    public uiContactController(UserService userService) {
+    public uiContactController(UserService userService, RecipeService recipeService) {
         this.userService = userService;
+        this.recipeService = recipeService;
     }
 
     /**
@@ -91,6 +95,8 @@ public class uiContactController {
         if (user != null) {
             model.addAttribute("user", user);
         }
+        model.addAttribute("recipes", recipeService.findAllPaginated());
+        model.addAttribute("allTags", RecipeTag.values());
         return "frontPage";
     }
 

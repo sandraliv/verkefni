@@ -8,12 +8,117 @@
 </head>
 <body>
 <div class="container">
-    <div class="login_page">
-        <h1>Anna's Recipes</h1>
-        <div>
-            <a th:if="${user}" th:href="@{/usersui/{id}(id=${user.id})}" th:text="'My Profile'"></a>
-            <a th:unless="${user}" th:href="@{/login}" th:text="'Login'"></a>
-            <a th:href="@{/contact}">Contact us</a>
+    <div class="around">
+        <div class="login_page">
+            <h1>Anna's Recipes</h1>
+            <div>
+                <a th:if="${user}" th:href="@{/usersui/{id}(id=${user.id})}" th:text="'My Profile'"></a>
+                <a th:unless="${user}" th:href="@{/login}" th:text="'Login'"></a>
+                <a th:href="@{/contact}">Contact us</a>
+            </div>
+        </div>
+        <div class="contains">
+            <h1 th:if="${user}" th:text="'Hello, ' + ${user.name}">Hello, User</h1>
+            <p th:if="${message}" th:text="${message}"></p>
+
+            <form action="#" method="get" id="search-form">
+                <!-- Search input for title -->
+                <label for="query" class="search-label">Search by Title:</label>
+                <input type="text" id="query" name="query"
+                       placeholder="Enter recipe title"
+                       class="search-input"
+                       th:value="${query}"
+                >  <!-- Prepopulate with the search query if available -->
+
+                <!-- Search input for tags (multi-select dropdown) -->
+                <label for="tags" class="tags-label">Tags:</label>
+                <select id="tags" name="tags" multiple="multiple" class="tags-select">
+                    <option th:each="tag : ${allTags}"
+                            th:value="${tag}"
+                            th:text="${tag.getDisplayName()}">
+                    </option>
+                </select>
+                <button type="submit" class="search-button">Search</button>
+            </form>
+            <!-- Display the "No recipes found" message if it's present -->
+            <div th:if="${noResultsMessage}" class="no-results-message">
+                <p th:text="${noResultsMessage}"></p>
+            </div>
+            <h2>Recipes:</h2>
+
+            <ul class="recipe-list" id="recipe-list">
+                <li th:each="recipe : ${recipes}" class="li">
+                    <form th:action="@{/allrecipes/{id}/addAsFav(id=${recipe.id})}" method="post">
+                        <button class="heart-icon toggle-fav-button" type="submit">
+                            <i class="fa-regular fa-heart"></i> <!-- Default empty heart -->
+                        </button>
+                    </form>
+                    <h3 th:text="${recipe.title}">Recipe Title</h3>
+                    <p th:text="${recipe.description}">Recipe Description</p>
+                    <p><strong>Date:</strong>
+                        <span th:text="${recipe.formattedDate}">Date Added</span>
+                    </p>
+
+                    <div class="rating">
+                        <div class="stars">
+          <span th:each="i : ${#numbers.sequence(1, 5)}"
+                th:class="${i <= recipe.averageRating.intValue() ? 'star-filled' :
+                          (i - 0.5 <= recipe.averageRating.doubleValue() && i > recipe.averageRating.doubleValue() ? 'star-half-filled' : 'star-empty')}">
+              ★
+          </span>
+                        </div>
+                        <span class="rating-count"
+                              th:text="${recipe.ratingCount == 0 ? 'No ratings yet' : '(' + recipe.ratingCount + ')'}"></span>
+                    </div>
+
+                    <!-- Ingredients Table -->
+                    <table>
+                        <tr>
+                            <th>Ingredient</th>
+                            <th>Quantity</th>
+                        </tr>
+                        <tr th:each="ingredient : ${recipe.ingredients}">
+                            <td th:text="${#strings.replace(ingredient.key, '_', ' ')}">Ingredient Name</td>
+                            <td th:text="${ingredient.value}">Ingredient Quantity</td>
+                        </tr>
+                    </table>
+
+                    <!-- Display Recipe Categories -->
+                    <p><strong>Categories:</strong>
+                        <!-- Check if categories is empty -->
+                        <span th:if="${#lists.isEmpty(recipe.categories)}">No categories assigned</span>
+
+                        <!-- Display each category if it exists -->
+                        <span th:each="category : ${recipe.categories}"
+                              th:text="${category.getDisplayName()}"
+                              style="display: inline-block; padding: 5px 10px; background-color: #f0f0f0; border-radius: 15px; margin: 5px;">
+      </span>
+                    </p>
+
+                    <!-- Display Recipe Tags -->
+                    <p><strong>Tags:</strong>
+                        <span th:if="${#lists.isEmpty(recipe.tags)}">No tags assigned</span>
+                        <span th:each="tag : ${recipe.tags}"
+                              th:text="${tag.getDisplayName()}"
+                              style="display: inline-block; padding: 5px 10px; background-color: #d1e7f3; border-radius: 15px; margin: 5px;">
+      </span>
+                    </p>
+                    <form class="rating-form" action="#" th:action="@{/allrecipes/{id}/addRating(id=${recipe.id})}"
+                          method="post">
+                        <div class="form-group">
+                            <label for="score">Rate this recipe:</label>
+                            <input type="number" id="score" name="score" min="1" max="5" required/>
+                        </div>
+                        <button type="submit">Submit Rating</button>
+                    </form>
+
+                    <img th:src="${recipe.image_url}" alt="Recipe Image"/>
+
+                    <form th:action="@{/allrecipes/{id}/addAsFav(id=${recipe.id})}" method="post">
+                        <button type="submit">Add to Favorites</button>
+                    </form>
+                </li>
+            </ul>
         </div>
     </div>
 </div>
