@@ -1,8 +1,6 @@
 package com.hi.recipe.verkefni.uiControllers;
 
-import com.hi.recipe.verkefni.klasar.ContactForm;
-import com.hi.recipe.verkefni.klasar.RecipeTag;
-import com.hi.recipe.verkefni.klasar.User;
+import com.hi.recipe.verkefni.klasar.*;
 import com.hi.recipe.verkefni.services.RecipeService;
 import com.hi.recipe.verkefni.services.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -113,6 +111,57 @@ public class uiContactController {
             return "redirect:/";
         }
         return "redirect:/login";
+    }
+
+    @GetMapping("/admin")
+    public String getAdminView(Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null || !user.getRole().equals("admin")) {
+            // Redirect to a different page if the user is not an admin
+            return "redirect:/"; // Or any other page
+        }
+        model.addAttribute("user", user);
+        return "admin"; // Or the appropriate admin page
+    }
+
+
+    /**
+     * @param recipe New recipe object
+     * @param model  The model
+     * @return addRecipe.html
+     */
+    @GetMapping("/admin/addRecipe")
+    public String addNewRecipe(@ModelAttribute("recipe") Recipe recipe, Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+        if (user.getRole().equals("admin")) {
+            model.addAttribute("newRecipe", new Recipe());
+            model.addAttribute("allTags", RecipeTag.values()); // Pass all enum values
+            model.addAttribute("allCategories", Category.values());
+            return "addRecipe";
+        }
+        // Redirect to the home page or an appropriate page if the user is not an admin
+        return "redirect:/";
+    }
+
+    /**
+     * Creates a new recipe in the system
+     *
+     * @param recipe The recipe object containing all required recipe data
+     * @return Redirects to recipe list with a success message
+     */
+    @PostMapping("/admin/newRecipe")
+    public String addANewRecipe(@ModelAttribute("recipe") Recipe recipe, RedirectAttributes redirectAttributes, Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        assert user != null;
+        if (user.getRole().equals("admin")) {
+            Recipe savedRecipe = recipeService.save(recipe);
+            redirectAttributes.addAttribute("recipeId", savedRecipe.getId());
+            return "redirect:/recipesui/{recipeId}/upload"; // Redirects to upload with recipeId
+        }
+        return "redirect:/error/404";
     }
 
     /**

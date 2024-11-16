@@ -31,6 +31,7 @@
             ingredientContainer.appendChild(rowDiv);
         }
 
+
     </script>
 </head>
 <body>
@@ -41,7 +42,7 @@
     <p th:text="${message}"></p>
 </div>
 
-<form th:action="@{/allrecipes/newRecipe}" method="post" th:object="${newRecipe}">
+<form th:action="@{/admin/newRecipe}" method="post" th:object="${newRecipe}">
     <!-- Title Field -->
     <div>
         <label for="title">Nafn á uppskrift:</label>

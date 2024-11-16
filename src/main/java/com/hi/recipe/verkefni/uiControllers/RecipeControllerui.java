@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +40,7 @@ public class RecipeControllerui {
     public String test500Error() {
         throw new RuntimeException("Simulated Internal Server Error");
     }
-    
+
     /**
      * Retrieves recipes with optional search and tag filtering
      *
@@ -86,19 +85,6 @@ public class RecipeControllerui {
         }
         model.addAttribute("errorMessage", "Recipe not found.");
         return "error";
-    }
-
-    /**
-     * @param recipe New recipe object
-     * @param model  The model
-     * @return addRecipe.html
-     */
-    @GetMapping("/addRecipe")
-    public String addNewRecipe(@ModelAttribute("recipe") Recipe recipe, Model model) {
-        model.addAttribute("newRecipe", new Recipe());
-        model.addAttribute("allTags", RecipeTag.values()); // Pass all enum values
-        model.addAttribute("allCategories", Category.values());
-        return "addRecipe";
     }
 
     /**
@@ -173,20 +159,7 @@ public class RecipeControllerui {
     //================================================================================
     // POST Methods
     //================================================================================
-
-    /**
-     * Creates a new recipe in the system
-     *
-     * @param recipe The recipe object containing all required recipe data
-     * @return Redirects to recipe list with a success message
-     */
-    @PostMapping("/newRecipe")
-    public String addANewRecipe(@ModelAttribute("recipe") Recipe recipe, RedirectAttributes redirectAttributes) {
-        Recipe savedRecipe = recipeService.save(recipe);
-        redirectAttributes.addAttribute("recipeId", savedRecipe.getId());
-        return "redirect:/recipesui/{recipeId}/upload"; // Redirects to upload with recipeId
-    }
-
+    
     /**
      * Adds a recipe to the current user's favorites list
      *
