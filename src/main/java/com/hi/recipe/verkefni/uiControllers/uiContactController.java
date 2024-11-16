@@ -27,6 +27,11 @@ public class uiContactController {
         this.recipeService = recipeService;
     }
 
+    @GetMapping("/error")
+    public String handle404() {
+        return "404";
+    }
+
     /**
      * Displays the contact form page.
      *

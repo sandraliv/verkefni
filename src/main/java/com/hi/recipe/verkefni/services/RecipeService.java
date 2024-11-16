@@ -17,6 +17,8 @@ public interface RecipeService {
 
     List<Recipe> findAllPaginated();
 
+    List<Recipe> findAllPaginated(int page, int size);
+
     Recipe save(Recipe recipe);
 
     Optional<Recipe> findById(int id);
@@ -52,6 +54,8 @@ public interface RecipeService {
 
     // Method to remove rating from a recipe
     void removeRatingFromRecipe(int recipeId);
+
+    int getTotalPages(int staerd);
 }
 
 

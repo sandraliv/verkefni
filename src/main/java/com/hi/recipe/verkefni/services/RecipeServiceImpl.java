@@ -63,8 +63,20 @@ public class RecipeServiceImpl implements RecipeService {
         Page<Recipe> recipes = recipeRepository.findAllPaginated(pageable);
         System.out.println("Total elements: " + recipes.getTotalElements());  // Total number of records
         System.out.println("Total pages: " + recipes.getTotalPages());
-        List<Recipe> recipeList = recipes.getContent();
-        return recipeList;
+        return recipes.getContent();
+    }
+
+    @Override
+    public List<Recipe> findAllPaginated(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Recipe> recipes = recipeRepository.findAllPaginated(pageable);
+        return recipes.getContent();
+    }
+
+    public int getTotalPages(int size) {
+        Pageable pageable = PageRequest.of(0, size); // Use page 0 since we're only interested in total pages
+        Page<Recipe> recipes = recipeRepository.findAllPaginated(pageable);
+        return recipes.getTotalPages();
     }
 
     @Override

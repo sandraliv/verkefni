@@ -37,6 +37,11 @@ public class RecipeControllerui {
     // GET Methods
     //================================================================================
 
+    @GetMapping("/test500")
+    public String test500Error() {
+        throw new RuntimeException("Simulated Internal Server Error");
+    }
+    
     /**
      * Retrieves recipes with optional search and tag filtering
      *
@@ -47,7 +52,8 @@ public class RecipeControllerui {
     @GetMapping("/all")
     public String getAllRecipes(
             @RequestParam(value = "query", required = false) String query,
-            @RequestParam(value = "tags", required = false) Set<RecipeTag> tags, HttpSession session,
+            @RequestParam(value = "tags", required = false) Set<RecipeTag> tags,
+            HttpSession session,
             Model model) {
         List<Recipe> recipes;
         if ((query == null || query.isEmpty()) && (tags == null || tags.isEmpty())) {
@@ -59,7 +65,6 @@ public class RecipeControllerui {
         } else {
             recipes = recipeService.findByTitleAndTags(query, tags);
         }
-
         model.addAttribute("allTags", RecipeTag.values());
         model.addAttribute("recipes", recipes);
         model.addAttribute("query", query);
