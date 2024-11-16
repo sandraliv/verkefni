@@ -4,15 +4,18 @@ import com.hi.recipe.verkefni.klasar.*;
 import com.hi.recipe.verkefni.services.RecipeService;
 import com.hi.recipe.verkefni.services.UserService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/recipes")
@@ -78,9 +81,6 @@ public class RecipeController {
         return ResponseEntity.ok(recipes);
     }
 
-
-
-
     /**
      * Retrieves all recipes sorted by their creation date
      *
@@ -97,7 +97,7 @@ public class RecipeController {
      * @return List of recipes marked as featured
      */
     @GetMapping("/featured")
-    public ResponseEntity<List<Recipe>> getFeaturedRecipes() {
+    public ResponseEntity<Set<Recipe>> getFeaturedRecipes() {
         User u = userService.findById(2).get();
         return ResponseEntity.ok(u.getFavourites());
     }
@@ -159,7 +159,6 @@ public class RecipeController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Recipe not found");
         }
-    
         User sessionUser = (User) session.getAttribute("user");
         if (sessionUser != null) {
             // Get fresh copy of user from database
@@ -176,6 +175,8 @@ public class RecipeController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Could not update user");
     }
 
+
+
     @PostMapping("/auli/contact_us")
     public ResponseEntity<String> submitContactForm(@Valid @RequestBody ContactForm contactForm) {
         // Process form data here, e.g., save to database or send an email
@@ -185,25 +186,70 @@ public class RecipeController {
     }
 
     /**
-     * Adds a rating to an existing recipe
+     * Adds a temporary rating to an existing recipe.
      * @param id The ID of the recipe to modify
-     * @param score The score to add to the recipe
-     * @return Success message if tag added, error if recipe not found
+     * @param score The score to add to the recipe (between 1 and 5)
+     * @param session The HTTP session to check for the logged-in user
+     * @return Success message if the rating is added, error if the recipe not found or user is not logged in
      */
-    @PostMapping("/{id}/addTempRating")
-    public ResponseEntity<String> addTempRating(@PathVariable int id, @RequestParam @Min(1) @Max(5) int score) {
+    @PostMapping("/{id}/addRating")
+    public ResponseEntity<String> addRatingToRecipeRest(
+            @PathVariable("id") int id,
+            @RequestParam("score") @Min(1) @Max(5) int score,
+            HttpSession session) {
+
+        System.out.println("Looking for recipe with ID: " + id);
+        Optional<Recipe> recipeOptional = recipeService.findById(id);
+        if (recipeOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Recipe not found");
+        }
+        User sessionUser = (User) session.getAttribute("user");
+        if (sessionUser == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You must be logged in to rate a recipe");
+        }
+
+        Optional<User> userOpt = userService.findById(sessionUser.getId());
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+
+        User user = userOpt.get();
+        // Add the rating through the service layer
         try {
-            // Call the service to add rating
-            recipeService.addTempRatingToRecipe(id, score);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Rating successfully added");
-        } catch (NoSuchElementException e) {
-            // Return 404 if the recipe is not found
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            // Catch any other exceptions (e.g., database issues)
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+            recipeService.addRating(id, user, score); // This calls your service layer method
+
+            // Update the session with the latest user object (optional, if user object changes)
+            session.setAttribute("user", user);
+
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Rating submitted by " + user.getUsername());
+        } catch (NoSuchElementException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Recipe not found");
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while submitting your rating");
         }
     }
+
+
+
+
+
+    // Endpoint to remove a rating from a recipe
+    @PostMapping("/{id}/removeRating")
+    public ResponseEntity<String> removeRating(
+            @PathVariable("id") int recipeId) {  // Recipe ID to remove rating from
+
+        try {
+            // Call the service to remove the rating
+            recipeService.removeRatingFromRecipe(recipeId);
+            return ResponseEntity.status(HttpStatus.OK).body("Rating removed successfully");
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Recipe not found");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
+        }
+    }
+
+
 
     //================================================================================
     // PATCH Methods
@@ -267,6 +313,25 @@ public class RecipeController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Recipe not found.");
     }
 
+    @PatchMapping("/{id}/recalculateAverageRating")
+    public ResponseEntity<String> recalculateAverageRating(@PathVariable("id") int recipeId) {
+        // Fetch the recipe from the database
+        Optional<Recipe> optionalRecipe = recipeService.findById(recipeId);
+
+        if (optionalRecipe.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Recipe not found");
+        }
+
+        Recipe recipe = optionalRecipe.get();
+
+        // Recalculate the average rating
+        recipe.recalculateAverageRating();
+
+        // Save the updated recipe with the new average rating
+        recipeService.save(recipe);
+
+        return ResponseEntity.ok("Average rating recalculated successfully.");
+    }
     //================================================================================
     // DELETE Methods
     //================================================================================

@@ -2,10 +2,7 @@ package com.hi.recipe.verkefni.klasar;
 
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.*;
 
 @Entity
 @Table(name="users")
@@ -27,7 +24,14 @@ public class User {
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "recipe_id")
     )
-    private List<Recipe> favourites = new ArrayList<>();
+    private Set<Recipe> favourites = new HashSet<>();
+
+    // The map stores the ratings where the key is the Recipe and the value is the rating score
+    @ElementCollection
+    @CollectionTable(name = "user_ratings", joinColumns = @JoinColumn(name = "user_id"))
+    @MapKeyJoinColumn(name = "recipe_id")
+    @Column(name = "score")
+    private Map<Recipe, Integer> userRatings = new HashMap<>();
 
 
     public User(){
@@ -59,9 +63,9 @@ public class User {
 
     public String getUsername(){return username;}
 
-    public List<Recipe> getFavourites() {
+    public Set<Recipe> getFavourites() {
         if (favourites == null) {
-            favourites = new ArrayList<>();
+            favourites = new HashSet<>();
         }
         return favourites;
     }
@@ -98,6 +102,21 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public Map<Recipe, Integer> getUserRatings() {
+        return userRatings;
+    }
+
+    public void setUserRatings(Map<Recipe, Integer> userRatings) {
+        this.userRatings = userRatings;
+    }
+
+    public boolean hasRated(Recipe recipe) {
+        return this.userRatings.containsKey(recipe);
+    }
+    public void addUserRating(Recipe recipe, int score) {
+        this.userRatings.put(recipe, score);
     }
 
 

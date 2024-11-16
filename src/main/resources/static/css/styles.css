@@ -66,61 +66,74 @@ p {
     font-size: 1em;
     line-height: 1.6;
 }
-.rating{
-    display:flex;
-}
-/* Rating stars container */
-.stars {
-    display: flex; /* Arrange stars in a row */
-}
-
-/* Individual star styles */
-.star-filled,
-.star-half-filled,
-.star-empty {
-    font-size: 1.5rem; /* Adjust size as needed */
-    display: inline-block;
-    color: lightgrey; /* Default color for empty stars */
+/* General star styles */
+.star-rating .star,
+.rating .stars .star-filled,
+.rating .stars .star-half-filled,
+.rating .stars .star-empty {
+    font-size: 30px; /* Size of the stars */
+    cursor: pointer; /* Change cursor to pointer for clickability */
+    transition: color 0.2s ease-in-out; /* Smooth transition for color change */
 }
 
-/* Style for filled stars (yellow color) */
-.star-filled {
-    color: gold;
+/* Styles for the empty stars (default color) */
+.rating .stars .star-empty {
+    color: #ddd; /* Default color for empty stars */
 }
 
-/* Style for half-filled stars (gold color) */
-.star-half-filled {
-    color: gold;
+/* Styles for the half-filled stars */
+.rating .stars .star-half-filled {
+    color: #ffcc00; /* Gold color for half-filled stars */
 }
 
-/* Rating count styling (adds space between stars and the count) */
-.rating-count {
-    margin-left: 8px; /* Adds space between stars and rating count */
-    font-size: 1rem;  /* Adjust font size if needed */
-    color: #555;      /* Adjust color for rating count */
+/* Styles for the filled stars (highlighted stars) */
+.rating .stars .star-filled {
+    color: gold; /* Gold color for filled stars */
 }
- /* Default heart icon styles */
-.heart-icon {
+
    font-size: 30px;   /* Control the size of the heart */
    cursor: pointer;   /* Pointer cursor to indicate the icon is clickable */
    transition: color 0.3s ease; /* Smooth transition for color changes */
+/* Style for the interactive rating stars (clickable) */
+.star-rating .star {
+    color: #ddd; /* Default color for empty stars */
 }
 
-/* Filled heart icon (red when favorited) */
-.heart-icon .fa-heart {
-    color: #e74c3c; /* Red color for filled heart */
+/* Fill the star when selected (clicked) */
+.star-rating .star.selected {
+    color: gold; /* Highlight selected stars with gold color */
 }
-/* Empty heart icon (gray when not favorited) */
-.heart-icon .fa-heart-o {
-    color: #ccc; /* Gray color for empty heart */
+
+/* Hover effect for interactive stars */
+.star-rating .star:hover,
+.star-rating .star:hover ~ .star {
+    color: #ffcc00; /* Change color when hovering over a star */
 }
-/* Hover effect for both filled and empty hearts */
-.heart-icon:hover .fa-heart {
-  color: #c0392b; /* Darker red when hovering over the filled heart */
+
+/* Styling for the rating count (number of ratings) */
+.rating-count {
+    margin-left: 8px; /* Space between the stars and the rating count */
+    font-size: 1rem;
+    color: #555; /* Color for the rating count text */
 }
-.heart-icon:hover .fa-heart-o {
- color: #e74c3c; /* Change empty heart to red on hover */
-}
+
+
+ /* Style for the heart icon */
+ .heart-icon i {
+     font-size: 24px;
+     color: gray;  /* Default empty heart color */
+     transition: color 0.3s ease;
+ }
+
+ /* Filled heart (favorited) */
+ .heart-icon i.fa-heart {
+     color: red;  /* Color when the recipe is favorited */
+ }
+
+ /* Hover effect */
+ .heart-icon i:hover {
+     color: #ff4d4d;  /* Change color when hovered */
+ }
 
 /* General Styling for Category List */
 .category-list {

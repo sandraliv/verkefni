@@ -7,13 +7,17 @@ import com.hi.recipe.verkefni.klasar.User;
 import com.hi.recipe.verkefni.services.RecipeService;
 import com.hi.recipe.verkefni.services.UserService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Controller
 @RequestMapping("allrecipes")
@@ -43,14 +47,17 @@ public class RecipeControllerui {
             @RequestParam(value = "query", required = false) String query,
             @RequestParam(value = "tags", required = false) Set<String> tags, HttpSession session,
             Model model) {
-        // Convert tag strings to RecipeTag enum values
         Set<RecipeTag> tagsEnumSet = recipeService.convertToRecipeTagEnum(tags);
-        // Call the service method to get filtered recipes
         List<Recipe> recipes = recipeService.filterRecipes(query, tagsEnumSet);
         User user = (User) session.getAttribute("user");
-        if(user != null){
+        if (user != null) {
+            // Use the method to get recipes with the favorited flag
+            recipes = recipeService.getRecipesWithFavoritedFlag(user);
+
+            // Add the user to the model to be used in the view
             model.addAttribute("user", user);
         }
+
         for (Recipe recipe : recipes) {
             String formattedDate = recipeService.formatDate(recipe.getDateAdded());
             recipe.setFormattedDate(formattedDate);  // Add formatted date to recipe
@@ -105,7 +112,6 @@ public class RecipeControllerui {
         model.addAttribute("recipes", recipes);
         return "recipeList";
     }
-
 
     @GetMapping("/byCategory")
     public String getRecipesByCategory(
@@ -201,26 +207,57 @@ public class RecipeControllerui {
     }
 
     /**
- * Adds a  rating to a recipe
- *
- * @param id The ID of the recipe to which the temporary rating is added
- * @param score The rating score to be added to the recipe
- * @param model The model object
- * @return Redirects to the recipe's detail page if success or returns to an error page if recipe is not found
- */
+      * Adds a rating to a recipe.
+      *
+      * @param id The ID of the recipe to which the temporary rating is added
+      * @param score The rating score to be added to the recipe
+      * @param session The HTTP session containing the logged-in user
+      * @param model The model to add attributes for rendering views
+      * @return Redirects to the recipe list or the recipe detail page
+     */
+    @PostMapping("/{id}/addRating")
+    public String addRatingToRecipeMvc(
+            @PathVariable("id") int id,
+            @RequestParam("score") @Min(1) @Max(5) int score,
+            HttpSession session,
+            Model model) {
 
-    @PostMapping("/{id}/addTempRating")
-    public String addTempRating(@PathVariable int id, @RequestParam int score, Model model) {
-        try {
-            recipeService.addTempRatingToRecipe(id, score);
-            return "redirect:/recipes/" + id; // Redirect to the recipe detail page
-        } catch (NoSuchElementException e) {
-            model.addAttribute("error", e.getMessage());
-            return "error/404";
+        // Fetch the logged-in user from the session
+        User user = (User) session.getAttribute("user");
+
+        if (user == null) {
+            model.addAttribute("errorMessage", "You must be logged in to rate a recipe.");
+            return "login";  // Redirect to login page if user is not logged in
         }
+
+        // Fetch the recipe
+        Optional<Recipe> recipeOptional = recipeService.findById(id);
+        if (recipeOptional.isEmpty()) {
+            model.addAttribute("errorMessage", "Recipe not found.");
+            return "recipeList";  // Return to recipe list if recipe is not found
+        }
+
+        // Get the recipe object
+        Recipe recipe = recipeOptional.get();
+
+        try {
+            // Add the rating to the recipe
+            recipeService.addRating(id, user, score);
+
+            // Recalculate the average rating after adding the new score
+            recipe.recalculateAverageRating();
+            recipeService.save(recipe);
+
+            model.addAttribute("successMessage", "Rating successfully added!");
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "An error occurred while submitting your rating.");
+        }
+
+        // Redirect back to the recipe list or the recipe detail page
+        return "redirect:/allrecipes/all";  // Or redirect to the recipe detail page
     }
 
-    //================================================================================
+//================================================================================
     // PATCH Methods
     //================================================================================
 

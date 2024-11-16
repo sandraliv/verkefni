@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title>Recipes</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
 </head>
 <body>
 <h1 th:if="${user}" th:text="'Hello, ' + ${user.name}">Hello, User</h1>
@@ -32,6 +34,11 @@
 
 <ul class="recipe-list" id="recipe-list">
     <li th:each="recipe : ${recipes}" class="li">
+        <form th:action="@{/allrecipes/{id}/addAsFav(id=${recipe.id})}" method="post">
+            <button class="heart-icon toggle-fav-button" type="submit">
+                <i class="fa-regular fa-heart"></i> <!-- Default empty heart -->
+            </button>
+        </form>
         <h3 th:text="${recipe.title}">Recipe Title</h3>
         <p th:text="${recipe.description}">Recipe Description</p>
         <p><strong>Date:</strong>
@@ -81,7 +88,13 @@
                   style="display: inline-block; padding: 5px 10px; background-color: #d1e7f3; border-radius: 15px; margin: 5px;">
       </span>
         </p>
-
+        <form class="rating-form" action="#" th:action="@{/recipes/{id}/addRating(id=${recipe.id})}" method="post">
+            <div class="form-group">
+                <label for="score">Rate this recipe:</label>
+                <input type="number" id="score" name="score" min="1" max="5" required />
+            </div>
+            <button type="submit">Submit Rating</button>
+        </form>
 
         <img th:src="${recipe.image_url}" alt="Recipe Image" />
 
@@ -90,44 +103,78 @@
         </form>
     </li>
 </ul>
-
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Ensure jQuery is included -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function() {
-        // Get the search query value (case-insensitive)
-        var query = $('#query').val().toLowerCase(); // Assuming you have an input with id="query"
 
-        // Get the selected tags (from a multi-select dropdown or other tag selection UI)
-        var selectedTags = [];
-        $('#tags option:selected').each(function() {
-            selectedTags.push($(this).val());
+        // When the heart button is clicked
+        $(".heart-icon").on("click", function() {
+        var heartIcon = $(this).find("i");
+
+
+        // Toggle between regular and solid heart icons
+        if (heartIcon.hasClass("fa-solid")) {
+            // Change to regular heart (unfavorited)
+            heartIcon.removeClass("fa-solid").addClass("fa-regular");
+        } else {
+            // Change to solid heart (favorited)
+            heartIcon.removeClass("fa-regular").addClass("fa-solid");
+        }
+        });
+        // Filter recipes based on the search query and selected tags
+        $('#search-form').on('submit', function(event) {
+            event.preventDefault(); // Prevent the form from submitting the usual way
+
+            var query = $('#query').val().toLowerCase(); // Get the search query from the input field
+            var selectedTags = [];
+
+            // Get the selected tags from the multi-select dropdown (or other tag selection UI)
+            $('#tags option:selected').each(function() {
+                selectedTags.push($(this).val()); // Add selected tags to the array
+            });
+
+            // Filter through the recipe list based on query and selected tags
+            $('#recipe-list li').each(function() {
+                var title = $(this).find('h3').text().toLowerCase(); // Get the title of the recipe
+                var tagsData = $(this).data('tags'); // Get the tags associated with the recipe
+
+                // Split the tags into an array (assuming tags are stored as comma-separated values)
+                var tags = tagsData ? tagsData.split(',') : [];
+
+                // Check if the recipe matches the search query and the selected tags
+                var matchesQuery = query === '' || title.includes(query);
+                var matchesTags = selectedTags.length === 0 || selectedTags.every(tag => tags.includes(tag));
+
+                // Show or hide the recipe based on whether it matches the filters
+                if (matchesQuery && matchesTags) {
+                    $(this).show();  // Show recipe if it matches both the query and tags
+                } else {
+                    $(this).hide();  // Hide recipe if it does not match
+                }
+            });
         });
 
-        // Filter the recipes based on the query and selected tags
-        $('#recipe-list li').each(function() {
-            var title = $(this).find('h3').text().toLowerCase();  // Get the title of the recipe
-            var tagsData = $(this).data('tags');  // Get the tags data attribute
+        // Optional: Handle sorting functionality (if you have a sorting dropdown)
+        $('#sortOptions').on('change', function() {
+            var sortOrder = $(this).val(); // Get the selected sort order (ascending or descending)
 
-            // Check if the tags data exists and is a non-empty string before splitting
-            var tags = tagsData ? tagsData.split(',') : [];  // Default to empty array if no tags are set
+            // Sort the recipe list based on the selected sort order
+            var $recipes = $('#recipe-list li');
+            $recipes.sort(function(a, b) {
+                var textA = $(a).find('h3').text().toLowerCase(); // Get the title of the first recipe
+                var textB = $(b).find('h3').text().toLowerCase(); // Get the title of the second recipe
 
-            // Filter logic:
-            // - matchesQuery checks if the title contains the query (if query is not empty)
-            // - matchesTags checks if all selected tags are included in the recipe's tags (if tags are selected)
-            var matchesQuery = query === '' || title.includes(query);  // If query is empty, skip this check
-            var matchesTags = selectedTags.length === 0 || selectedTags.every(tag => tags.includes(tag));  // If no tags selected, skip this check
+                if (sortOrder === 'asc') {
+                    return textA.localeCompare(textB);  // Sort in ascending order
+                } else {
+                    return textB.localeCompare(textA);  // Sort in descending order
+                }
+            });
 
-            // Show or hide the recipe based on the filters
-            if (matchesQuery && matchesTags) {
-                $(this).show();  // Show recipe if it matches both query and tags
-            } else {
-                $(this).hide();  // Hide recipe if it does not match
-            }
+            // Reorder the list items based on the sorting result
+            $('#recipe-list').append($recipes);
         });
     });
-
 </script>
-
 </body>
 </html>

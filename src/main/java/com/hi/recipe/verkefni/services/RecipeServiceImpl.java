@@ -44,7 +44,7 @@ public class RecipeServiceImpl implements RecipeService {
             Recipe recipe = recipeOpt.get();
 
             // Remove the recipe from user favorites first
-            for (User user : recipe.getUserList()) {
+            for (User user : recipe.getUserFavorites()) {
                 user.getFavourites().remove(recipe);
                 //System.out.println("hello"+user.getFavourites());
             }
@@ -99,22 +99,6 @@ public class RecipeServiceImpl implements RecipeService {
         return recipeRepository.findByCategoriesIn(categories);
     }
 
-    @Override
-    public List<Recipe> findByTitleAndCategories(String query, Set<Category> categories) {
-        return recipeRepository.findByTitleContainingIgnoreCaseAndCategoriesIn(query, categories);
-    }
-
-    @Override
-    public List<Recipe> findByTagsInAndCategoriesIn(Set<RecipeTag> tags, Set<Category> categories) {
-        return recipeRepository.findByTagsInAndCategoriesIn(tags, categories);
-    }
-
-    @Override
-    public List<Recipe> findByTitleAndTagsAndCategories(String query, Set<RecipeTag> tags, Set<Category> categories) {
-        return recipeRepository.findByTitleContainingIgnoreCaseAndTagsInAndCategoriesIn(query, tags, categories);
-    }
-
-
     // Search by title (case-insensitive)
     @Override
     public List<Recipe> findByTitleContainingIgnoreCase(String keyword) {
@@ -158,7 +142,6 @@ public class RecipeServiceImpl implements RecipeService {
         return Set.of();
     }
 
-
     // Helper method to format date
     @Override
     public String formatDate(LocalDateTime date) {
@@ -169,16 +152,23 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Transactional
     @Override
-    public void addTempRatingToRecipe(int recipeId, int score) {
-        // Find the recipe by ID
-        Recipe recipe = recipeRepository.findById(recipeId)
+    public void addRating(int id, User user, int score) {
+        Recipe recipe = recipeRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Recipe not found"));
 
-        // Add the new rating to the recipe
-        recipe.addTempRating(score); // This will add the score and update the average
+        Map<Recipe, Integer> ratings = user.getUserRatings();
+        if (ratings.containsKey(recipe)) {
+            ratings.put(recipe, score);
+        } else {
+            ratings.put(recipe, score);
+        }
+        user.setUserRatings(ratings);
+        userRepository.save(user);
 
-        // Save the recipe (this will also save the ratings in the temp_recipe_ratings table)
+        recipe.addRating(user, score);
+        recipe.recalculateAverageRating();
         recipeRepository.save(recipe);
+
     }
 
     // Find Tags by their names (optional, if tags are needed)
@@ -197,16 +187,12 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     public List<Recipe> filterRecipes(String query, Set<RecipeTag> tags) {
         if ((query == null || query.isEmpty()) && (tags == null || tags.isEmpty())) {
-            // If no filter is applied, return all recipes (paginated if necessary)
-            return findAllPaginated(); // Assuming this method exists for paginated results
+            return findAllPaginated();
         } else if (tags == null || tags.isEmpty()) {
-            // If only query is provided, filter by title
             return findByTitleContainingIgnoreCase(query);
         } else if (query == null || query.isEmpty()) {
-            // If only tags are provided, filter by tags
             return findByTagsIn(tags);
         } else {
-            // If both query and tags are provided, filter by both
             return findByTitleAndTags(query, tags);
         }
     }
@@ -215,37 +201,26 @@ public class RecipeServiceImpl implements RecipeService {
     public List<Recipe> getSortedRecipes(String sort, Set<Category> categories) {
         int page = 0; // starting page
         int size = 10; // page size
-
         Pageable pageable = PageRequest.of(page, size);
-
-        // Default sorting by date if 'sort' is null or invalid
         if (sort == null || sort.isEmpty()) {
             sort = "byDate";
         }
-        // If categories are provided, return filtered and sorted results
         if (categories != null && !categories.isEmpty()) {
             switch (sort) {
                 case "highestRated":
-                    // Sort by rating and apply categories filter
                     return recipeRepository.findByCategoriesInOrderByAverageRatingDesc(categories, pageable).getContent();
                 case "byDate":
-                    // Sort by date and apply categories filter
                     return recipeRepository.findByCategoriesInOrderByDateAddedDesc(categories, pageable).getContent();
                 default:
-                    // Default unsorted with category filter
                     return recipeRepository.findByCategoriesIn(categories);
             }
         } else {
-            // If no categories, return all recipes sorted by the selected option
             switch (sort) {
                 case "highestRated":
-                    // Sort by rating, no category filter
                     return recipeRepository.findAllByAverageRatingDesc(pageable).getContent();
                 case "byDate":
-                    // Sort by date, no category filter
                     return recipeRepository.findByDate(pageable).getContent();
                 default:
-                    // Default unsorted, no category filter
                     return recipeRepository.findAllPaginated(pageable).getContent();
             }
         }
@@ -280,6 +255,26 @@ public class RecipeServiceImpl implements RecipeService {
             }
         }
         return tagEnumSet;
+    }
+    @Override
+    public List<Recipe> getRecipesWithFavoritedFlag(User user) {
+        List<Recipe> recipes = recipeRepository.findAll();
+        if (user != null) {
+            for (Recipe recipe : recipes) {
+                recipe.setIsFavoritedByUser(user.getFavourites().contains(recipe));
+            }
+        }
+        return recipes;
+    }
+
+    @Override
+    public void removeRatingFromRecipe(int recipeId) {
+        // Find the recipe by ID
+        Recipe recipe = recipeRepository.findById(recipeId)
+                .orElseThrow(() -> new NoSuchElementException("Recipe not found"));
+        recipe.clearRatings();
+        recipe.recalculateAverageRating();
+        recipeRepository.save(recipe);
     }
 
 

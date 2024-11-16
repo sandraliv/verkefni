@@ -4,6 +4,8 @@ package com.hi.recipe.verkefni.services;
 import com.hi.recipe.verkefni.klasar.Category;
 import com.hi.recipe.verkefni.klasar.Recipe;
 import com.hi.recipe.verkefni.klasar.RecipeTag;
+import com.hi.recipe.verkefni.klasar.User;
+import jakarta.transaction.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,12 +31,6 @@ public interface RecipeService {
 
     Optional<Recipe> findRecipeById(int id);
 
-    List<Recipe> findByTitleAndCategories(String query, Set<Category> categories);
-
-    List<Recipe> findByTagsInAndCategoriesIn(Set<RecipeTag> tags, Set<Category> categories);
-
-    List<Recipe> findByTitleAndTagsAndCategories(String query, Set<RecipeTag> tags, Set<Category> categories);
-
     List<Recipe> findByTitleContainingIgnoreCase(String keyword);
 
     List<Recipe> findByTitleAndTags(String title, Set<RecipeTag> tags);
@@ -43,13 +39,14 @@ public interface RecipeService {
 
     String formatDate(LocalDateTime date);
 
-    void addTempRatingToRecipe(int recipeId, int score);
-
     // Paginated recipes sorted by average rating
     List<Recipe> findAllByAverageRatingDesc();
 
     // Fetch distinct category names directly from the enum
     Set<String> getDistinctCategoryNames();
+
+    @Transactional
+    void addRating(int recipeId, User user, int score);
 
     List<Recipe> filterRecipes(String query, Set<RecipeTag> tags);
 
@@ -59,6 +56,11 @@ public interface RecipeService {
     Set<Category> convertToCategoryEnum(Set<String> categoryStrings);
 
     Set<RecipeTag> convertToRecipeTagEnum(Set<String> tagStrings);
+
+    List<Recipe> getRecipesWithFavoritedFlag(User user);
+
+    // Method to remove rating from a recipe
+    void removeRatingFromRecipe(int recipeId);
 }
 
 

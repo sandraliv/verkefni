@@ -44,17 +44,22 @@ public class Recipe {
 
     @ManyToMany(mappedBy = "favourites")
     @JsonIgnore
-    private List<User> userList = new ArrayList<>();
+    private Set<User> userFavorites = new HashSet<>();
+
+    // Add a transient field for 'isFavoritedByUser' to avoid persisting it in the database
+    @Transient
+    private boolean isFavoritedByUser;
 
 
-    // Use ElementCollection to store ratings temporarily
     @ElementCollection
-    @CollectionTable(
-            name = "temp_recipe_ratings", // Temporary table for ratings
-            joinColumns = @JoinColumn(name = "temp_recipe_id") // Temporary foreign key to Recipe
-    )
-    @Column(name = "temp_score") // Temporary column for storing rating scores
-    private Set<Integer> tempRatings = new HashSet<>(); // Temporary set of ratings
+    @CollectionTable(name = "recipe_ratings", joinColumns = @JoinColumn(name = "recipe_id"))
+    @MapKeyJoinColumn(name = "user_id")
+    @Column(name = "score")
+    private Map<User, Integer> recipeRatings = new HashMap<>();
+    // Method to clear all ratings from the recipe
+    public void clearRatings() {
+        this.recipeRatings.clear();
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -68,8 +73,6 @@ public class Recipe {
 
     @CreationTimestamp
     private LocalDateTime dateAdded;
-
-
 
     public Recipe(String title, String description, Map<String, String> ingredients, Set<RecipeTag> tags,Set<Category> categories ,String instructions) {
         this.title = title;
@@ -97,10 +100,9 @@ public class Recipe {
     }
 
 
-    // Getter and Setter for ratingCount
     public Integer getRatingCount() {
-        if (tempRatings != null) {
-            return tempRatings.size();  // Dynamically calculate count from tempRatings set
+        if (recipeRatings != null) {
+            return recipeRatings.size();
         }
         return 0;
     }
@@ -109,18 +111,17 @@ public class Recipe {
         this.ratingCount = ratingCount;
     }
 
-    public Set<Integer> getTempRatings() {
-        return tempRatings;
+    public Map<User, Integer> getRecipeRatings() {
+        return recipeRatings;
     }
 
-    public void setTempRatings(Set<Integer> tempRatings) {
-        this.tempRatings = tempRatings;
+    public void setRecipeRatings(Map<User, Integer> recipeRatings) {
+        this.recipeRatings = recipeRatings;
     }
 
-    // Method to add a rating and recalculate the average
-    public void addTempRating(int score) {
-        this.tempRatings.add(score);
-        this.ratingCount = this.tempRatings.size();
+    public void addRating(User user,int score) {
+        this.recipeRatings.put(user,score);
+        this.ratingCount = this.recipeRatings.size();
         recalculateAverageRating();
     }
 
@@ -190,11 +191,13 @@ public class Recipe {
 
    // Recalculate the average rating from the temporary ratings
    public void recalculateAverageRating() {
-       if (!tempRatings.isEmpty()) {
-           BigDecimal sum = tempRatings.stream()
+       if (!recipeRatings.isEmpty()) {
+           // Filter out null values and calculate the sum of the ratings
+           BigDecimal sum = recipeRatings.values().stream()
+                   .filter(Objects::nonNull)  // Filter out any null ratings
                    .map(BigDecimal::valueOf)
                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-           this.averageRating = sum.divide(BigDecimal.valueOf(tempRatings.size()), 2, RoundingMode.HALF_UP);
+           this.averageRating = sum.divide(BigDecimal.valueOf(recipeRatings.size()), 2, RoundingMode.HALF_UP);
        } else {
            this.averageRating = BigDecimal.ZERO;
        }
@@ -203,18 +206,25 @@ public class Recipe {
     public String getFormattedDate() {
         return formattedDate;
     }
-   public List<User> getUserList() {
-    if (userList == null) {
-        userList = new ArrayList<>();
+   public Set<User> getUserFavorites() {
+    if (userFavorites == null) {
+        userFavorites = new HashSet<>();
     }
-    return userList;
+    return userFavorites;
     }
 
     public void setFormattedDate(String formattedDate) {
         this.formattedDate = formattedDate;
     }
-    public void setUserList(List<User> userList) {
-      this.userList = userList;
+    public void setUserFavorites(Set<User> userFavorites) {
+      this.userFavorites = userFavorites;
+    }
+
+    public boolean isFavoritedByUser() {
+        return isFavoritedByUser;
+    }
+    public void setIsFavoritedByUser(boolean isFavoritedByUser) {
+        this.isFavoritedByUser = isFavoritedByUser;
     }
 }
 

@@ -34,7 +34,6 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
     @EntityGraph(attributePaths = {"ingredients", "tags"})
     Page<Recipe> findAllPaginated(Pageable pageable);
 
-    // Method to find a recipe by its ID
     Optional<Recipe> findById(Integer id);
 
     @Query("SELECT r FROM Recipe r ORDER BY r.averageRating DESC")
@@ -45,12 +44,6 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
     void deleteUserRecipeRelations(@Param("recipeId") int recipeId);
 
     List<Recipe> findByCategoriesIn(Collection<Category> categories);
-
-    List<Recipe> findByTitleContainingIgnoreCaseAndCategoriesIn(String query, Set<Category> categories);
-
-    List<Recipe> findByTagsInAndCategoriesIn(Set<RecipeTag> tags, Set<Category> categories);
-
-    List<Recipe> findByTitleContainingIgnoreCaseAndTagsInAndCategoriesIn(String query, Set<RecipeTag> tags, Set<Category> categories);
 
     // Retrieve recipes by categories, ordered by average rating
     @Query("SELECT r FROM Recipe r JOIN r.categories c WHERE c IN :categories ORDER BY r.averageRating DESC")
