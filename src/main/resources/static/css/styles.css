@@ -91,9 +91,6 @@ p {
     color: gold; /* Gold color for filled stars */
 }
 
-   font-size: 30px;   /* Control the size of the heart */
-   cursor: pointer;   /* Pointer cursor to indicate the icon is clickable */
-   transition: color 0.3s ease; /* Smooth transition for color changes */
 /* Style for the interactive rating stars (clickable) */
 .star-rating .star {
     color: #ddd; /* Default color for empty stars */
@@ -116,6 +113,83 @@ p {
     font-size: 1rem;
     color: #555; /* Color for the rating count text */
 }
+
+
+/* Styling for the rating form */
+.rating-form {
+    width: 100%;
+    max-width: 450px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+
+/* Styling for the form label */
+.rating-form label {
+    font-size: 1.1em;
+    color: #333;
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* Styling for the number input (score) */
+.rating-form input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 1.1em;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+}
+
+.rating-form input[type="number"]:focus {
+    outline: none;
+    border-color: #4caf50;
+}
+
+/* Submit button styling */
+.rating-form button {
+    background-color: rosybrown;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 4px;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+.rating-form button:hover {
+    background-color: #45a049;
+}
+
+.rating-form button:active {
+    background-color: #388e3c;
+}
+
+/* Optional: Add some spacing between the form elements */
+.rating-form .form-group {
+    margin-bottom: 20px;
+}
+
+/* Error message styling */
+.rating-form .contact_error {
+    color: red;
+    font-size: 1em;
+    margin-top: 10px;
+    text-align: center;
+}
+
+/* Styling for validation errors */
+.rating-form input:invalid {
+    border-color: red;
+}
+
 
 
  /* Style for the heart icon */

@@ -66,6 +66,8 @@ public class RecipeControllerui {
 
         model.addAttribute("allTags",RecipeTag.values());
         model.addAttribute("recipes", recipes);
+        model.addAttribute("query", query);  // Retain the query in the form
+        model.addAttribute("tags", tags);    // Retain the selected tags in the form
         return "recipeList"; //recipeList.html
     }
 
@@ -217,46 +219,42 @@ public class RecipeControllerui {
       * @return Redirects to the recipe list or the recipe detail page
      */
     @PostMapping("/{id}/addRating")
-    public String addRatingToRecipeMvc(
+    public String addRatingToRecipe(
             @PathVariable("id") int id,
             @RequestParam("score") @Min(1) @Max(5) int score,
             HttpSession session,
             Model model) {
 
-        // Fetch the logged-in user from the session
-        User user = (User) session.getAttribute("user");
-
-        if (user == null) {
-            model.addAttribute("errorMessage", "You must be logged in to rate a recipe.");
-            return "login";  // Redirect to login page if user is not logged in
-        }
-
-        // Fetch the recipe
+        // Step 1: Check if the recipe exists
         Optional<Recipe> recipeOptional = recipeService.findById(id);
         if (recipeOptional.isEmpty()) {
-            model.addAttribute("errorMessage", "Recipe not found.");
-            return "recipeList";  // Return to recipe list if recipe is not found
+            model.addAttribute("error", "Recipe not found");
+            return "error";  // Render error page or redirect to a fallback page
         }
-
-        // Get the recipe object
         Recipe recipe = recipeOptional.get();
 
-        try {
-            // Add the rating to the recipe
-            recipeService.addRating(id, user, score);
-
-            // Recalculate the average rating after adding the new score
-            recipe.recalculateAverageRating();
-            recipeService.save(recipe);
-
-            model.addAttribute("successMessage", "Rating successfully added!");
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", "An error occurred while submitting your rating.");
+        User sessionUser = (User) session.getAttribute("user");
+        if (sessionUser == null) {
+            model.addAttribute("error", "You must be logged in to rate a recipe");
+            return "login";  // Redirect to login page if user is not logged in
         }
-
-        // Redirect back to the recipe list or the recipe detail page
-        return "redirect:/allrecipes/all";  // Or redirect to the recipe detail page
+        Optional<User> userOpt = userService.findById(sessionUser.getId());
+        if (userOpt.isEmpty()) {
+                    model.addAttribute("error", " User not found");
+                    return "error";
+        }
+        User user = userOpt.get();
+        try {
+            recipeService.addRating(id, user, score);
+            session.setAttribute("user", user);
+            model.addAttribute("message", "Rating" + score + "successfully added to recipe" + recipe.getTitle());
+            return "redirect:/allrecipes/{id}";  // Redirect back to the recipe details page
+        } catch (Exception ex) {
+            model.addAttribute("error", "An error occurred while submitting your rating");
+            return "error";  // Return error page if something goes wrong
+        }
     }
+
 
 //================================================================================
     // PATCH Methods

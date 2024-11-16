@@ -16,7 +16,8 @@
     <label for="query" class="search-label">Search by Title:</label>
     <input type="text" id="query" name="query"
            placeholder="Enter recipe title"
-           class="search-input">
+           class="search-input"
+            th:value="${query}">  <!-- Prepopulate with the search query if available -->
 
     <!-- Search input for tags (multi-select dropdown) -->
     <label for="tags" class="tags-label">Tags:</label>
@@ -26,8 +27,6 @@
                 th:text="${tag.getDisplayName()}">
         </option>
     </select>
-
-    <!-- Submit button -->
     <button type="submit" class="search-button">Search</button>
 </form>
 <!-- Display the "No recipes found" message if it's present -->
@@ -92,7 +91,7 @@
                   style="display: inline-block; padding: 5px 10px; background-color: #d1e7f3; border-radius: 15px; margin: 5px;">
       </span>
         </p>
-        <form class="rating-form" action="#" th:action="@{/recipes/{id}/addRating(id=${recipe.id})}" method="post">
+        <form class="rating-form" action="#" th:action="@{/allrecipes/{id}/addRating(id=${recipe.id})}" method="post">
             <div class="form-group">
                 <label for="score">Rate this recipe:</label>
                 <input type="number" id="score" name="score" min="1" max="5" required />
@@ -110,31 +109,33 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function() {
-
         // When the heart button is clicked
         $(".heart-icon").on("click", function() {
-        var heartIcon = $(this).find("i");
+            var heartIcon = $(this).find("i");
 
-
-        // Toggle between regular and solid heart icons
-        if (heartIcon.hasClass("fa-solid")) {
-            // Change to regular heart (unfavorited)
-            heartIcon.removeClass("fa-solid").addClass("fa-regular");
-        } else {
-            // Change to solid heart (favorited)
-            heartIcon.removeClass("fa-regular").addClass("fa-solid");
-        }
+            // Toggle between regular and solid heart icons
+            if (heartIcon.hasClass("fa-solid")) {
+                // Change to regular heart (unfavorited)
+                heartIcon.removeClass("fa-solid").addClass("fa-regular");
+            } else {
+                // Change to solid heart (favorited)
+                heartIcon.removeClass("fa-regular").addClass("fa-solid");
+            }
         });
+
         // Filter recipes based on the search query and selected tags
         $('#search-form').on('submit', function(event) {
 
             var query = $('#query').val().toLowerCase(); // Get the search query from the input field
             var selectedTags = [];
 
-            // Get the selected tags from the multi-select dropdown (or other tag selection UI)
+            // Get the selected tags from the multi-select dropdown
             $('#tags option:selected').each(function() {
                 selectedTags.push($(this).val()); // Add selected tags to the array
             });
+
+            // Initialize the foundRecipes array to track matching recipes
+            var foundRecipes = [];
 
             // Filter through the recipe list based on query and selected tags
             $('#recipe-list li').each(function() {
@@ -151,18 +152,18 @@
                 // Show or hide the recipe based on whether it matches the filters
                 if (matchesQuery && matchesTags) {
                     $(this).show();  // Show recipe if it matches both the query and tags
+                    foundRecipes.push(this);  // Add to foundRecipes
                 } else {
                     $(this).hide();  // Hide recipe if it does not match
                 }
-
             });
+
             // Show "No recipes found" message if no recipes are found
-             if (!foundRecipes) {
+            if (foundRecipes.length === 0) {
                 $('#no-results-message').show();
             } else {
                 $('#no-results-message').hide();
             }
-
         });
 
         // Optional: Handle sorting functionality (if you have a sorting dropdown)
@@ -187,5 +188,6 @@
         });
     });
 </script>
+
 </body>
 </html>
