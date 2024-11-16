@@ -27,7 +27,7 @@ html {
   --spacing: 1rem;
 
   /* Hámarksbreidd á efni */
-  --max-width: 1200px;
+  --max-width: 1600px;
   --color-primary: #f0f0f8;
   --color-header: #fff;
   --color-text: #000;
@@ -48,7 +48,6 @@ body {
   font-size: var(--font-base-body-px);
   line-height: 1.5;
   font-family: var(--font-family-base);
-  margin: 40px;
   max-width: var(--max-width);
 }
 
@@ -59,5 +58,6 @@ ul {
 .container {
   display: flex;
   justify-content: center;
-  width: var(--max-width);
+  max-width: var(--max-width);
+  min-width: 500px
 }

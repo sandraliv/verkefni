@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/login-logout.css">
+<link rel="stylesheet" href="/css/grunnur.css">
+<head>
+    <title>Front Page</title>
+</head>
+<body>
+<div class="container">
+    <div class="login_page">
+        <h1>Anna's Recipes</h1>
+        <div>
+            <a th:if="${user}" th:href="@{/usersui/{id}(id=${user.id})}" th:text="'My Profile'"></a>
+            <a th:unless="${user}" th:href="@{/login}" th:text="'Login'"></a>
+            <a th:href="@{/contact}">Contact us</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
