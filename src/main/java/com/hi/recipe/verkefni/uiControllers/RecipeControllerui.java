@@ -51,11 +51,12 @@ public class RecipeControllerui {
         List<Recipe> recipes = recipeService.filterRecipes(query, tagsEnumSet);
         User user = (User) session.getAttribute("user");
         if (user != null) {
-            // Use the method to get recipes with the favorited flag
             recipes = recipeService.getRecipesWithFavoritedFlag(user);
-
-            // Add the user to the model to be used in the view
             model.addAttribute("user", user);
+        }
+
+        if (recipes.isEmpty()) {
+            model.addAttribute("noResultsMessage", "No recipes found");
         }
 
         for (Recipe recipe : recipes) {

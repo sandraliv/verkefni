@@ -30,6 +30,10 @@
     <!-- Submit button -->
     <button type="submit" class="search-button">Search</button>
 </form>
+<!-- Display the "No recipes found" message if it's present -->
+<div th:if="${noResultsMessage}" class="no-results-message">
+    <p th:text="${noResultsMessage}"></p>
+</div>
 <h2>Recipes:</h2>
 
 <ul class="recipe-list" id="recipe-list">
@@ -123,7 +127,6 @@
         });
         // Filter recipes based on the search query and selected tags
         $('#search-form').on('submit', function(event) {
-            event.preventDefault(); // Prevent the form from submitting the usual way
 
             var query = $('#query').val().toLowerCase(); // Get the search query from the input field
             var selectedTags = [];
@@ -151,7 +154,15 @@
                 } else {
                     $(this).hide();  // Hide recipe if it does not match
                 }
+
             });
+            // Show "No recipes found" message if no recipes are found
+             if (!foundRecipes) {
+                $('#no-results-message').show();
+            } else {
+                $('#no-results-message').hide();
+            }
+
         });
 
         // Optional: Handle sorting functionality (if you have a sorting dropdown)
