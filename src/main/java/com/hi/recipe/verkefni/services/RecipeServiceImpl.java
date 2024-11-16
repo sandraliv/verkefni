@@ -187,7 +187,7 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     public List<Recipe> filterRecipes(String query, Set<RecipeTag> tags) {
         if ((query == null || query.isEmpty()) && (tags == null || tags.isEmpty())) {
-            return findAllPaginated();
+            return findAll();
         } else if (tags == null || tags.isEmpty()) {
             return findByTitleContainingIgnoreCase(query);
         } else if (query == null || query.isEmpty()) {
