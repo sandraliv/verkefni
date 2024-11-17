@@ -56,11 +56,15 @@ public class RecipeControllerui {
         List<Recipe> recipes;
         if ((query == null || query.isEmpty()) && (tags == null || tags.isEmpty())) {
             recipes = recipeService.findAllPaginated();
+            System.out.println("halló nr 1");
         } else if (tags == null || tags.isEmpty()) {
             recipes = recipeService.findByTitleContainingIgnoreCase(query);
+            System.out.println("halló nr 2");
         } else if (query == null || query.isEmpty()) {
+            System.out.println("halló nr 3");
             recipes = recipeService.findByTagsIn(tags);
         } else {
+            System.out.println("halló er að reyna með query og tags");
             recipes = recipeService.findByTitleAndTags(query, tags);
         }
         model.addAttribute("allTags", RecipeTag.values());
