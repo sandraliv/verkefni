@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
@@ -22,6 +23,10 @@ import java.util.Set;
 public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
     @Query("SELECT r FROM Recipe r WHERE LOWER(r.title) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     List<Recipe> findByTitleContaining(String keyword);
+
+    @EntityGraph(attributePaths = {"tags", "categories", "ingredients"})
+    @NonNull
+    List<Recipe> findAll();
 
     List<Recipe> findByTagsIn(Collection<RecipeTag> tags);
 

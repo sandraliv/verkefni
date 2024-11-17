@@ -311,7 +311,7 @@ public class RecipeControllerui {
     public String deleteRecipe(@PathVariable int id, Model model) {
         recipeService.deleteById(id);
         model.addAttribute("message", "Deleted recipe");
-        return "redirect:/recipes";
+        return "redirect:../admin/recipelist";
     }
 
 

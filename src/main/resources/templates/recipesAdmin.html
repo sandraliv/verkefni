@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="eng">
+<head>
+    <meta charset="UTF-8">
+    <title>Recipes</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/grunnur.css">
+</head>
+<body>
+<div class="container">
+    <div class="contains">
+        <h1>Recipes:</h1>
+        <a href="../admin">Back</a>
+        <ul class="admin-recipes" id="admin-recipes">
+            <li th:each="recipe : ${recipes}" class="lis">
+                <p>
+                    <strong>Recipe Title:</strong>
+                    <span th:text="${recipe.title}">Recipe Title</span>
+                </p>
+                <p>
+                    <strong>Categories:</strong>
+                    <span th:if="${#lists.isEmpty(recipe.categories)}">No categories assigned</span>
+                    <span th:each="category, iterStat : ${recipe.categories}">
+                        <span th:text="${category.getDisplayName()}"></span>
+                        <span th:if="${!iterStat.last}">, </span> <!-- Add comma if not the last item -->
+                    </span>
+                </p>
+
+                <p>
+                    <strong>Description:</strong>
+                    <span th:text="${recipe.description}">
+                        </span>
+                </p>
+                <p th:text="${recipe.image_url}"></p>
+
+                <p>
+                    <strong>Tags:</strong>
+                    <span th:if="${#lists.isEmpty(recipe.tags)}">No tags assigned</span>
+                    <span th:each="tag, iterStat : ${recipe.tags}">
+                        <span th:text="${tag.getDisplayName()}"></span>
+                        <span th:if="${!iterStat.last}">, </span> <!-- Add comma if not the last item -->
+                    </span>
+                </p>
+                <form th:action="@{../allrecipes/{id}(id=${recipe.id})}" th:method="delete">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit" class="delete-button">Delete</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>

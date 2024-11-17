@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface RecipeService {
+    
     List<Recipe> findAll();
 
     List<Recipe> findAllPaginated();

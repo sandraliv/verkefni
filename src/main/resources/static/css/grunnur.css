@@ -51,10 +51,6 @@ body {
   max-width: var(--max-width);
 }
 
-ul {
-  list-style-type: none;
-}
-
 .container {
   display: flex;
   justify-content: center;

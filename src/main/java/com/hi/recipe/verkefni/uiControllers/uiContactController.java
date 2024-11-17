@@ -124,6 +124,17 @@ public class uiContactController {
         return "admin"; // Or the appropriate admin page
     }
 
+    @GetMapping("/admin/recipelist")
+    public String getAdminRecipes(Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null || !user.getRole().equals("admin")) {
+            // Redirect to a different page if the user is not an admin
+            return "redirect:/"; // Or any other page
+        }
+        model.addAttribute("user", user);
+        model.addAttribute("recipes", recipeService.findAll());
+        return "recipesAdmin"; // Or the appropriate admin page
+    }
 
     /**
      * @param recipe New recipe object
