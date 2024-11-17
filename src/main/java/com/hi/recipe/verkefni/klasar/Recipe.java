@@ -2,6 +2,8 @@ package com.hi.recipe.verkefni.klasar;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
@@ -12,9 +14,12 @@ import java.util.*;
 @Entity
 @Table(name = "recipes")
 public class Recipe {
+    @NotBlank(message = "Title is required")
     private String title;
     private String image_url;
+    @NotBlank(message = "Description is required")
     private String description;
+    @NotBlank(message = "Please add instructions")
     private String instructions;
     private String formattedDate;
 
@@ -23,6 +28,7 @@ public class Recipe {
     @CollectionTable(name = "recipe_ingredients", joinColumns = @JoinColumn(name = "recipe_id"))
     @MapKeyColumn(name = "ingredient_name")
     @Column(name = "ingredient_quantity")
+    @NotEmpty
     private Map<String, String> ingredients = new HashMap<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -38,7 +44,6 @@ public class Recipe {
     @ElementCollection(targetClass = Category.class, fetch = FetchType.EAGER)  // To store multiple categories
     @Enumerated(EnumType.STRING)  // Store enums as strings in the database
     @CollectionTable(name = "recipe_categories", joinColumns = @JoinColumn(name = "recipe_id"), uniqueConstraints = @UniqueConstraint(columnNames = {"recipe_id", "categories"}))
-
     @Column(name = "category")  // Correct column name in the database
     private Set<Category> categories = new HashSet<>();  // Multiple categories
 
@@ -52,6 +57,7 @@ public class Recipe {
 
 
     @ElementCollection
+    @JsonIgnore
     @CollectionTable(name = "recipe_ratings", joinColumns = @JoinColumn(name = "recipe_id"))
     @MapKeyJoinColumn(name = "user_id")
     @Column(name = "score")
@@ -82,7 +88,6 @@ public class Recipe {
         this.tags = tags;
         this.instructions = instructions;
         this.categories = categories;
-
     }
 
     public Recipe() {

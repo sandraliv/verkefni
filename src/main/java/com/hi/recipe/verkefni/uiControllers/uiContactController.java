@@ -153,7 +153,11 @@ public class uiContactController {
      * @return Redirects to recipe list with a success message
      */
     @PostMapping("/admin/newRecipe")
-    public String addANewRecipe(@ModelAttribute("recipe") Recipe recipe, RedirectAttributes redirectAttributes, Model model, HttpSession session) {
+    public String addANewRecipe(@ModelAttribute("recipe") Recipe recipe, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model, HttpSession session) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("message", "Please fix the errors in the form.");
+            return "addRecipe"; // Replace with the name of your form template
+        }
         User user = (User) session.getAttribute("user");
         assert user != null;
         if (user.getRole().equals("admin")) {

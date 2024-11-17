@@ -18,9 +18,10 @@
             <h3>Actions:</h3>
             <ul>
                 <li><a th:href="@{/admin/addRecipe}">Add Recipe</a></li>
+                <li><a th:href="@{/usersui/{id}/changepassword(id=${user.id})}">Change Password</a></li>
                 <li><a th:href="@{/allrecipes/all}">View all recipes</a></li>
                 <li><a th:href="@{/usersui/favorites}">Featured Recipes</a></li>
-                <li><a th:href="@{/contact}">Manage users</a></li>
+                <li><a th:href="@{/usersui}">Manage users</a></li>
                 <li><a th:href="@{/logout}">Logout</a></li>
             </ul>
         </section>

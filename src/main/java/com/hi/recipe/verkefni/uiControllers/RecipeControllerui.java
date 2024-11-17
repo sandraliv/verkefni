@@ -35,7 +35,6 @@ public class RecipeControllerui {
     //================================================================================
     // GET Methods
     //================================================================================
-
     @GetMapping("/test500")
     public String test500Error() {
         throw new RuntimeException("Simulated Internal Server Error");
@@ -159,7 +158,7 @@ public class RecipeControllerui {
     //================================================================================
     // POST Methods
     //================================================================================
-    
+
     /**
      * Adds a recipe to the current user's favorites list
      *

@@ -7,16 +7,21 @@
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/grunnur.css">
 </head>
-<body>
-<h1>Do you want to add a photo to the recipe?</h1>
-<form id="photo-upload-form" th:action="@{/recipesui/{id}/upload(id=${id})}" method="post"
-      enctype="multipart/form-data">
-    <h2>Upload a Photo for Your Recipe</h2>
-    <div>
-        <label for="photo">Choose a photo:</label>
-        <input type="file" id="photo" name="file" accept="image/*"/>
+<div class="container">
+    <div class="contains">
+        <body>
+        <h1>Add a Photo?</h1>
+        <form id="photo-upload-form" th:action="@{/recipesui/{id}/upload(id=${id})}" method="post"
+              enctype="multipart/form-data">
+            <h2>Upload a Photo for Your Recipe</h2>
+            <div>
+                <label for="photo">Choose a photo:</label>
+                <input type="file" id="photo" name="file" accept="image/*"/>
+            </div>
+            <button type="submit">Upload Photo</button>
+        </form>
+        <button href="/">SKIP</button>
+        </body>
     </div>
-    <button type="submit">Upload Photo</button>
-</form>
-</body>
+</div>
 </html>

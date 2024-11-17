@@ -33,10 +33,17 @@ public class uiUserController {
      * @return List of all users or empty list if none exist
      */
     @GetMapping("")
-    public String getAllUsers(Model model) {
-        List<User> users = userService.findAll();
-        model.addAttribute("users", users);
-        return "userList"; // userList.html
+    public String getAllUsers(Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            if (user.getRole().equals("admin")) {
+                List<User> users = userService.findAll();
+                model.addAttribute("users", users);
+                return "userList"; // userList.html
+            }
+            return "404";
+        }
+        return "404";
     }
 
     /**
@@ -186,6 +193,9 @@ public class uiUserController {
             model.addAttribute("errorMessage", "Unauthorized access.");
             return "redirect:/login";
         }
+        if (user.getRole().equals("admin")) {
+            model.addAttribute("isAdmin", true);
+        } else model.addAttribute("isAdmin", false);
         model.addAttribute("user", user);
         return "changePassword";
     }
@@ -215,26 +225,43 @@ public class uiUserController {
         model.addAttribute("currentPassword", currentPassword);
 
         if (user == null || user.getId() != id) {
-            System.out.println("hallo villa");
             model.addAttribute("errorMessage", "Unauthorized access.");
-            return "error";
+            return "404";
         }
         // check if current password matches
         if (!user.getPassword().equals(currentPassword)) {
             model.addAttribute("errorMessage", "Your password is incorrect");
             return "changePassword";
         }
-        if (newPassword.isEmpty() || !newPassword.equals(confirmNewPassword)) {
+
+        if (newPassword.isEmpty() && confirmNewPassword.isEmpty()) {
             model.addAttribute("pwMessage", "Please add a new password");
+            return "changePassword";
+        }
+
+        if (confirmNewPassword.isEmpty()) {
+            model.addAttribute("pwMessage", "Please repeat the new password");
+            return "changePassword";
+        }
+
+        if (newPassword.isEmpty()) {
+            model.addAttribute("pwMessage", "Please repeat the new password");
+            return "changePassword";
+        }
+
+        if (!user.getPassword().equals(newPassword)) {
+            model.addAttribute("errorMessage", "The new password can't be the same as the old password");
             return "changePassword";
         }
 
         // Update the password
         user.setPassword(newPassword);
         userService.save(user);
-        model.addAttribute("message", "Password changed successfully.");
+        if (user.getRole().equals("admin")) {
+            model.addAttribute("message", "Password changed successfully.");
+            return "redirect:/admin";
+        }
         return "redirect:/usersui/" + id; // redirect to profile page
-
     }
 }
 
