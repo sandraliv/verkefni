@@ -1,9 +1,8 @@
 package com.hi.recipe.verkefni.klasar;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -39,14 +38,17 @@ public class Recipe {
     @ElementCollection(targetClass = Category.class, fetch = FetchType.EAGER)  // To store multiple categories
     @Enumerated(EnumType.STRING)  // Store enums as strings in the database
     @CollectionTable(name = "recipe_categories", joinColumns = @JoinColumn(name = "recipe_id"), uniqueConstraints = @UniqueConstraint(columnNames = {"recipe_id", "categories"}))
-    @Column(name = "category")  // Correct column name in the database
+    @Column(name = "category")
     private Set<Category> categories = new HashSet<>();  // Multiple categories
+    @PreRemove
+    public void preRemove() {
+        categories.clear();
+    }
 
     @ManyToMany(mappedBy = "favourites")
     @JsonIgnore
     private Set<User> userFavorites = new HashSet<>();
 
-    // Add a transient field for 'isFavoritedByUser' to avoid persisting it in the database
     @Transient
     private boolean isFavoritedByUser;
 
