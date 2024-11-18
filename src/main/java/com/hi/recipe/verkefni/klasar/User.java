@@ -17,6 +17,7 @@ public class User {
     private int id;
     @Column(unique = true)
     private String username;
+    private String profilePictureUrl;
 
     @ManyToMany(fetch = FetchType.EAGER)  // Change to EAGER loading
     @JoinTable(
@@ -117,6 +118,13 @@ public class User {
     }
     public void addUserRating(Recipe recipe, int score) {
         this.userRatings.put(recipe, score);
+    }
+
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
+    }
+    public void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = profilePictureUrl;
     }
 
 
