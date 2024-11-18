@@ -1,95 +1,98 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Bæta við uppskrift</title>
+    <title>Add recipe</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/grunnur.css">
     <script>
         function addIngredientRow() {
-            const ingredientContainer = document.getElementById("ingredients-container");
+    const ingredientContainer = document.getElementById("ingredients-container");
 
-            // Create a new row div for ingredient name and quantity
-            const rowDiv = document.createElement("div");
+    const rowDiv = document.createElement("div");
+    rowDiv.classList.add("ingredient-row");
 
-            // Create input for ingredient name
-            const nameInput = document.createElement("input");
-            nameInput.setAttribute("type", "text");
-            nameInput.setAttribute("name", "ingredients[NEW_NAME]");
-            nameInput.setAttribute("placeholder", "Ingredient Name");
+    const nameInput = document.createElement("input");
+    nameInput.setAttribute("type", "text");
+    nameInput.setAttribute("placeholder", "Ingredient Name");
+    nameInput.classList.add("ingredient-name");
 
-            // Create input for ingredient quantity
-            const quantityInput = document.createElement("input");
-            quantityInput.setAttribute("type", "text");
-            quantityInput.setAttribute("name", "ingredients[NEW_QUANTITY]");
-            quantityInput.setAttribute("placeholder", "Quantity");
+    const quantityInput = document.createElement("input");
+    quantityInput.setAttribute("type", "text");
+    quantityInput.setAttribute("placeholder", "Quantity");
+    quantityInput.classList.add("ingredient-quantity");
 
-            // Append inputs to the row div
-            rowDiv.appendChild(nameInput);
-            rowDiv.appendChild(quantityInput);
+    nameInput.addEventListener("input", function () {
+        quantityInput.setAttribute("name", `ingredients[${this.value}]`);
+    });
 
-            // Append the row div to the container
-            ingredientContainer.appendChild(rowDiv);
-        }
+    rowDiv.appendChild(nameInput);
+    rowDiv.appendChild(quantityInput);
+
+    const removeButton = document.createElement("button");
+    removeButton.setAttribute("type", "button");
+    removeButton.textContent = "Remove";
+    removeButton.onclick = () => ingredientContainer.removeChild(rowDiv);
+    rowDiv.appendChild(removeButton);
+
+    ingredientContainer.appendChild(rowDiv);
+}
+
+
+
+
+
+
+
     </script>
 </head>
 <body>
-<h1>Bæta við uppskrift</h1>
+<div class="container">
+    <div class="contains">
+        <h1>Add recipe</h1>
 
-<!-- Display success message -->
-<div th:if="${message}">
-    <p th:text="${message}"></p>
+        <div th:if="${message}">
+            <p th:text="${message}"></p>
+        </div>
+        <form th:action="@{/admin/newRecipe}" method="post" th:object="${newRecipe}">
+            <div>
+                <label for="title">Recipe title:</label>
+                <input type="text" id="title" name="title" th:field="*{title}"/>
+                <p class="contact_error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></p>
+            </div>
+
+            <div>
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" th:field="*{description}"></textarea>
+                <p class="contact_error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></p>
+            </div>
+            <div>
+                <label>Ingredients:</label>
+                <div id="ingredients-container">
+                </div>
+                <button type="button" onclick="addIngredientRow()">Add Ingredient</button>
+            </div>
+            <div>
+                <label>Tags:</label>
+                <div th:each="tag : ${allTags}">
+                    <input type="checkbox" th:field="*{tags}" th:value="${tag}" th:attr="id='tag_' + ${tag}"/>
+                    <label th:attr="for='tag_' + ${tag}" th:text="${tag}"></label>
+                </div>
+                <p class="contact_error" th:if="${#fields.hasErrors('tags')}" th:errors="*{tags}"></p>
+            </div>
+            <div>
+                <label>Category:</label>
+                <div th:each="category : ${allCategories}">
+                    <input type="checkbox" th:field="*{categories}" th:value="${category}"
+                           th:attr="id='category_' + ${category}"/>
+                    <label th:attr="for='category_' + ${category}" th:text="${category}"></label>
+                </div>
+                <p class="contact_error" th:if="${#fields.hasErrors('categories')}" th:errors="*{categories}"></p>
+            </div>
+            <p class="contact_error" th:if="${message}" th:text="${message}"></p>
+            <button type="submit">Submit recipe</button>
+        </form>
+        <a href="/admin">Back</a>
+    </div>
 </div>
-
-<form th:action="@{/allrecipes/newRecipe}" method="post" th:object="${newRecipe}">
-    <!-- Title Field -->
-    <div>
-        <label for="title">Nafn á uppskrift:</label>
-        <input type="text" id="title" name="title" th:field="*{title}" />
-        <p class="contact_error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></p>
-    </div>
-
-    <!-- Description Field -->
-    <div>
-        <label for="description">Lýsing:</label>
-        <textarea id="description" name="description" th:field="*{description}"></textarea>
-        <p class="contact_error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></p>
-    </div>
-
-    <!-- Dynamic Ingredients Field -->
-    <div>
-        <label>Innihaldsefni:</label>
-        <div id="ingredients-container">
-            <!-- Ingredient rows will be added here dynamically -->
-        </div>
-        <button type="button" onclick="addIngredientRow()">Add Ingredient</button>
-    </div>
-
-    <!-- Tags Field with Checkboxes -->
-    <div>
-        <label>Merki:</label>
-        <div th:each="tag : ${allTags}">
-            <input type="checkbox" th:field="*{tags}" th:value="${tag}" th:attr="id='tag_' + ${tag}" />
-            <label th:attr="for='tag_' + ${tag}" th:text="${tag}"></label>
-        </div>
-        <p class="contact_error" th:if="${#fields.hasErrors('tags')}" th:errors="*{tags}"></p>
-    </div>
-    <!-- Categories Field with Checkboxes -->
-    <div>
-        <label>Flokkar:</label>
-        <div th:each="category : ${allCategories}">
-            <input type="checkbox" th:field="*{categories}" th:value="${category}" th:attr="id='category_' + ${category}" />
-            <label th:attr="for='category_' + ${category}" th:text="${category}"></label>
-        </div>
-        <p class="contact_error" th:if="${#fields.hasErrors('categories')}" th:errors="*{categories}"></p>
-    </div>
-    </form>
-
-    <form id="photo-upload-form" th:action="@{/recipesui/{id}/upload(id=${id})}" method="post" enctype="multipart/form-data" style="display: none;">
-        <h2>Upload a Photo for Your Recipe</h2>
-        <div>
-            <label for="photo">Choose a photo:</label>
-            <input type="file" id="photo" name="photo" accept="image/*" required />
-        </div>
-        <button type="submit">Upload Photo</button>
-    </form>
 </body>
 </html>

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/grunnur.css">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,21 +9,21 @@
 </head>
 <body>
 
-    <h1>Favorite Recipes</h1>
+<h1>Favorite Recipes</h1>
 
-    <div th:if="${#lists.isEmpty(favorites)}">
-        <p>You have no favorite recipes yet.</p>
-    </div>
-    <ul th:if="${!#lists.isEmpty(favorites)}">
-        <li th:each="recipe : ${favorites}">
-            <h2 th:text="${recipe.title}">Recipe Name</h2>
-            <p th:text="${recipe.description}">Recipe Description</p>
-            <a th:href="@{/recipes/{id}(id=${recipe.id})}">View Recipe</a>
-            <form th:action="@{/usersui/favorites/{id}/remove(id=${recipe.id})}" method="post" style="display:inline;">
-                <button type="submit">Remove</button>
-            </form>
-        </li>
-    </ul>
+<div th:if="${#lists.isEmpty(favorites)}">
+    <p>You have no favorite recipes yet.</p>
+</div>
+<ul th:if="${!#lists.isEmpty(favorites)}">
+    <li th:each="recipe : ${favorites}">
+        <h2 th:text="${recipe.title}">Recipe Name</h2>
+        <p th:text="${recipe.description}">Recipe Description</p>
+        <a th:href="@{/recipes/{id}(id=${recipe.id})}">View Recipe</a>
+        <form th:action="@{/usersui/favorites/{id}/remove(id=${recipe.id})}" method="post" style="display:inline;">
+            <button type="submit">Remove</button>
+        </form>
+    </li>
+</ul>
 
 </body>
 </html>

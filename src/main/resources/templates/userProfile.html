@@ -3,25 +3,47 @@
 <head>
     <title>User Profile</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/grunnur.css">
 </head>
 <body>
-    <header>
-        <h1 th:text="'Hello, ' + ${user.name} + '!'">Hello, User!</h1>
-    </header>
+<header>
+    <h1 th:text="'Hello, ' + ${user.name} + '!'">Hello, User!</h1>
+</header>
 
-    <section>
-        <h3>Profile Details</h3>
-        <p><strong>Username:</strong> <span th:text="${user.username}">Username</span></p>
-        <p><strong>Email:</strong> <span th:text="${user.email}">Email</span></p>
+<section>
+    <h3>Profile Details</h3>
 
-        <h3>Actions:</h3>
-        <ul>
-            <li><a th:href="@{'/usersui/' + ${user.id} + '/changepassword'}">Change Password</a></li>
-            <li><a th:href="@{/allrecipes/all}">All Recipes</a></li> 
-            <li><a th:href="@{/usersui/favorites}">View Favorites</a></li>
-            <li><a th:href="@{/contact}">Contact us</a></li>
-            <li><a th:href="@{/logout}">Logout</a></li>
-        </ul>
-    </section>
+    <div>
+        <h4>Your Profile Picture</h4>
+        <img th:src="${user.profilePictureUrl != null ? user.profilePictureUrl : '/images/default-profile.png'}" 
+             alt="Profile Picture" 
+             style="width: 150px; height: 150px; border-radius: 50%; border: 2px solid #ddd;">
+    </div>
+
+    <p><strong>Username:</strong> <span th:text="${user.username}">Username</span></p>
+    <p><strong>Email:</strong> <span th:text="${user.email}">Email</span></p>
+    
+    <div>
+        <h4>Change Your Profile Picture</h4>
+        <form th:action="@{/usersui/{userId}/upload-profile-picture(userId=${user.id})}" 
+              method="post" enctype="multipart/form-data">
+            <label for="file">Choose a profile picture:</label>
+            <input type="file" id="file" name="file" accept="image/*">
+            <button type="submit">Upload</button>
+        </form>
+        <p th:text="${errorMessage}" style="color: red;"></p>
+        <p th:text="${message}" style="color: green;"></p>
+    </div>
+
+    <h3>Actions:</h3>
+    <ul>
+        <li><a th:href="@{'/usersui/' + ${user.id} + '/changepassword'}">Change Password</a></li>
+        <li><a th:href="@{/allrecipes/all}">All Recipes</a></li>
+        <li><a th:href="@{/usersui/favorites}">View Favorites</a></li>
+        <li><a th:href="@{/contact}">Contact us</a></li>
+        <li><a th:href="@{/logout}">Logout</a></li>
+    </ul>
+</section>
+
 </body>
 </html>

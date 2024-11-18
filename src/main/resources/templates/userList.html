@@ -1,23 +1,25 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/grunnur.css">
 <head>
     <title>User List</title>
 </head>
 <body>
-    <h1>All Users</h1>
-
-    <table>
-        <thead>
+<div class="container">
+    <div class="contains">
+        <h1>All Users</h1>
+        <table>
+            <thead>
             <tr>
                 <th>ID</th>
                 <th>Username</th>
                 <th>Email</th>
                 <th>Actions</th>
             </tr>
-        </thead>
-        <tbody>
-           
+            </thead>
+            <tbody>
+
             <tr th:each="user : ${users}">
                 <td th:text="${user.id}">1</td>
                 <td th:text="${user.username}">Username</td>
@@ -30,9 +32,10 @@
                     </form>
                 </td>
             </tr>
-        </tbody>
-    </table>
-
-
+            </tbody>
+        </table>
+        <a href="/admin">Back</a>
+    </div>
+</div>
 </body>
 </html>

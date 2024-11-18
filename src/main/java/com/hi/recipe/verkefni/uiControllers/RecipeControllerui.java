@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,43 +35,47 @@ public class RecipeControllerui {
     //================================================================================
     // GET Methods
     //================================================================================
+    @GetMapping("/test500")
+    public String test500Error() {
+        throw new RuntimeException("Simulated Internal Server Error");
+    }
+
     /**
      * Retrieves recipes with optional search and tag filtering
+     *
      * @param query Optional search term to filter recipes by title
-     * @param tags Optional set of RecipeTags to filter recipes
+     * @param tags  Optional set of RecipeTags to filter recipes
      * @return Filtered list of recipes, or all recipes if no filters applied
      */
     @GetMapping("/all")
     public String getAllRecipes(
             @RequestParam(value = "query", required = false) String query,
-            @RequestParam(value = "tags", required = false) Set<String> tags, HttpSession session,
+            @RequestParam(value = "tags", required = false) Set<RecipeTag> tags,
+            HttpSession session,
             Model model) {
-        Set<RecipeTag> tagsEnumSet = recipeService.convertToRecipeTagEnum(tags);
-        List<Recipe> recipes = recipeService.filterRecipes(query, tagsEnumSet);
-        User user = (User) session.getAttribute("user");
-        if (user != null) {
-            recipes = recipeService.getRecipesWithFavoritedFlag(user);
-            model.addAttribute("user", user);
+        List<Recipe> recipes;
+        if ((query == null || query.isEmpty()) && (tags == null || tags.isEmpty())) {
+            recipes = recipeService.findAllPaginated();
+            System.out.println("halló nr 1");
+        } else if (tags == null || tags.isEmpty()) {
+            recipes = recipeService.findByTitleContainingIgnoreCase(query);
+            System.out.println("halló nr 2");
+        } else if (query == null || query.isEmpty()) {
+            System.out.println("halló nr 3");
+            recipes = recipeService.findByTagsIn(tags);
+        } else {
+            System.out.println("halló er að reyna með query og tags");
+            recipes = recipeService.findByTitleAndTags(query, tags);
         }
-
-        if (recipes.isEmpty()) {
-            model.addAttribute("noResultsMessage", "No recipes found");
-        }
-
-        for (Recipe recipe : recipes) {
-            String formattedDate = recipeService.formatDate(recipe.getDateAdded());
-            recipe.setFormattedDate(formattedDate);  // Add formatted date to recipe
-        }
-
-        model.addAttribute("allTags",RecipeTag.values());
+        model.addAttribute("allTags", RecipeTag.values());
         model.addAttribute("recipes", recipes);
-        model.addAttribute("query", query);  // Retain the query in the form
-        model.addAttribute("tags", tags);    // Retain the selected tags in the form
+        model.addAttribute("query", query);
         return "recipeList"; //recipeList.html
     }
 
     /**
      * Retrieves a specific recipe by its identifier
+     *
      * @param id The unique identifier of the recipe
      * @return The requested recipe if found, or 404 if not found
      */
@@ -88,20 +91,8 @@ public class RecipeControllerui {
     }
 
     /**
-     * @param recipe New recipe object
-     * @param model The model
-     * @return addRecipe.html
-     */
-    @GetMapping("/addRecipe")
-    public String addNewRecipe(@ModelAttribute("recipe") Recipe recipe, Model model) {
-        model.addAttribute("newRecipe", new Recipe());
-        model.addAttribute("allTags", RecipeTag.values()); // Pass all enum values
-        model.addAttribute("allCategories",Category.values());
-        return "addRecipe";
-    }
-
-    /**
      * Retrieves all recipes sorted by their creation date
+     *
      * @return List of recipes ordered by date, newest first
      */
     @GetMapping("/byDate")
@@ -142,6 +133,7 @@ public class RecipeControllerui {
 
     /**
      * Retrieves the featured recipes list from a predefined user
+     *
      * @return List of recipes marked as featured
      */
     @GetMapping("/featured")
@@ -172,20 +164,9 @@ public class RecipeControllerui {
     //================================================================================
 
     /**
-     * Creates a new recipe in the system
-     * @param recipe The recipe object containing all required recipe data
-     * @return Redirects to recipe list with a success message
-     */
-    @PostMapping("/newRecipe")
-    public String addANewRecipe(@ModelAttribute("recipe") Recipe recipe, RedirectAttributes redirectAttributes) {
-        Recipe savedRecipe = recipeService.save(recipe);
-        redirectAttributes.addAttribute("recipeId", savedRecipe.getId());
-        return "redirect:/recipesui/{recipeId}/upload"; // Redirects to upload with recipeId
-    }
-
-    /**
      * Adds a recipe to the current user's favorites list
-     * @param id The ID of the recipe to be added to favorites
+     *
+     * @param id      The ID of the recipe to be added to favorites
      * @param session The current HTTP session containing user information
      * @return Redirects to favorites page with success or error message
      */
@@ -210,13 +191,13 @@ public class RecipeControllerui {
     }
 
     /**
-      * Adds a rating to a recipe.
-      *
-      * @param id The ID of the recipe to which the temporary rating is added
-      * @param score The rating score to be added to the recipe
-      * @param session The HTTP session containing the logged-in user
-      * @param model The model to add attributes for rendering views
-      * @return Redirects to the recipe list or the recipe detail page
+     * Adds a rating to a recipe.
+     *
+     * @param id      The ID of the recipe to which the temporary rating is added
+     * @param score   The rating score to be added to the recipe
+     * @param session The HTTP session containing the logged-in user
+     * @param model   The model to add attributes for rendering views
+     * @return Redirects to the recipe list or the recipe detail page
      */
     @PostMapping("/{id}/addRating")
     public String addRatingToRecipe(
@@ -240,8 +221,8 @@ public class RecipeControllerui {
         }
         Optional<User> userOpt = userService.findById(sessionUser.getId());
         if (userOpt.isEmpty()) {
-                    model.addAttribute("error", " User not found");
-                    return "error";
+            model.addAttribute("error", " User not found");
+            return "error";
         }
         User user = userOpt.get();
         try {
@@ -256,13 +237,14 @@ public class RecipeControllerui {
     }
 
 
-//================================================================================
+    //================================================================================
     // PATCH Methods
     //================================================================================
 
     /**
      * Updates an existing recipe's information
-     * @param id The ID of the recipe to update
+     *
+     * @param id     The ID of the recipe to update
      * @param recipe The updated recipe data
      * @return Redirects to the updated recipe page with a success or error message
      */
@@ -283,7 +265,8 @@ public class RecipeControllerui {
 
     /**
      * Adds a new tag to an existing recipe
-     * @param id The ID of the recipe to modify
+     *
+     * @param id  The ID of the recipe to modify
      * @param tag The tag to add to the recipe
      * @return Redirects to the recipe page with a success or error message
      */
@@ -320,6 +303,7 @@ public class RecipeControllerui {
 
     /**
      * Removes a recipe from the system
+     *
      * @param id The ID of the recipe to delete
      * @return Redirects to the recipe list with a success message
      */
@@ -327,12 +311,8 @@ public class RecipeControllerui {
     public String deleteRecipe(@PathVariable int id, Model model) {
         recipeService.deleteById(id);
         model.addAttribute("message", "Deleted recipe");
-        return "redirect:/recipes";
+        return "redirect:../admin/recipelist";
     }
-
-
-
-
 
 
 }

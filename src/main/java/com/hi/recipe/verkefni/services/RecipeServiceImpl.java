@@ -63,8 +63,20 @@ public class RecipeServiceImpl implements RecipeService {
         Page<Recipe> recipes = recipeRepository.findAllPaginated(pageable);
         System.out.println("Total elements: " + recipes.getTotalElements());  // Total number of records
         System.out.println("Total pages: " + recipes.getTotalPages());
-        List<Recipe> recipeList = recipes.getContent();
-        return recipeList;
+        return recipes.getContent();
+    }
+
+    @Override
+    public List<Recipe> findAllPaginated(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Recipe> recipes = recipeRepository.findAllPaginated(pageable);
+        return recipes.getContent();
+    }
+
+    public int getTotalPages(int size) {
+        Pageable pageable = PageRequest.of(0, size); // Use page 0 since we're only interested in total pages
+        Page<Recipe> recipes = recipeRepository.findAllPaginated(pageable);
+        return recipes.getTotalPages();
     }
 
     @Override
@@ -102,8 +114,6 @@ public class RecipeServiceImpl implements RecipeService {
     // Search by title (case-insensitive)
     @Override
     public List<Recipe> findByTitleContainingIgnoreCase(String keyword) {
-        System.out.println(keyword);
-        System.out.println(recipeRepository.findByTitleContaining(keyword));
         return recipeRepository.findByTitleContaining(keyword);
     }
 
@@ -181,20 +191,6 @@ public class RecipeServiceImpl implements RecipeService {
             }
         }
         return tags;
-
-    }
-
-    @Override
-    public List<Recipe> filterRecipes(String query, Set<RecipeTag> tags) {
-        if ((query == null || query.isEmpty()) && (tags == null || tags.isEmpty())) {
-            return findAllPaginated();
-        } else if (tags == null || tags.isEmpty()) {
-            return findByTitleContainingIgnoreCase(query);
-        } else if (query == null || query.isEmpty()) {
-            return findByTagsIn(tags);
-        } else {
-            return findByTitleAndTags(query, tags);
-        }
     }
 
     @Override
@@ -242,32 +238,6 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public Set<RecipeTag> convertToRecipeTagEnum(Set<String> tagStrings) {
-        Set<RecipeTag> tagEnumSet = new HashSet<>();
-        if (tagStrings != null && !tagStrings.isEmpty()) {
-            for (String tag : tagStrings) {
-                try {
-                    tagEnumSet.add(RecipeTag.valueOf(tag));  // Convert string to RecipeTag enum
-                } catch (IllegalArgumentException e) {
-                    // Handle invalid tag value (optional: log the error)
-                    System.err.println("Invalid tag: " + tag);
-                }
-            }
-        }
-        return tagEnumSet;
-    }
-    @Override
-    public List<Recipe> getRecipesWithFavoritedFlag(User user) {
-        List<Recipe> recipes = recipeRepository.findAll();
-        if (user != null) {
-            for (Recipe recipe : recipes) {
-                recipe.setIsFavoritedByUser(user.getFavourites().contains(recipe));
-            }
-        }
-        return recipes;
-    }
-
-    @Override
     public void removeRatingFromRecipe(int recipeId) {
         // Find the recipe by ID
         Recipe recipe = recipeRepository.findById(recipeId)
@@ -276,9 +246,6 @@ public class RecipeServiceImpl implements RecipeService {
         recipe.recalculateAverageRating();
         recipeRepository.save(recipe);
     }
-
-
-
 
 
 }

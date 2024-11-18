@@ -36,8 +36,9 @@ public class RecipeController {
 
     /**
      * Retrieves recipes with optional search and tag filtering
+     *
      * @param query Optional search term to filter recipes by title
-     * @param tags Optional set of RecipeTags to filter recipes
+     * @param tags  Optional set of RecipeTags to filter recipes
      * @return Filtered list of recipes, or all recipes if no filters applied
      */
     @GetMapping
@@ -49,14 +50,14 @@ public class RecipeController {
         } else if (tags == null || tags.isEmpty()) {
             return ResponseEntity.ok(recipeService.findByTitleContainingIgnoreCase(query));
         } else if (query == null || query.isEmpty()) {
-            return  ResponseEntity.ok(recipeService.findByTagsIn(tags));
+            return ResponseEntity.ok(recipeService.findByTagsIn(tags));
         }
 
         return ResponseEntity.ok(recipeService.findByTitleAndTags(query, tags));
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Recipe>> getAll(){
+    public ResponseEntity<List<Recipe>> getAll() {
         List<Recipe> recipes = recipeService.findAll();
 
         return ResponseEntity.ok(recipes);
@@ -125,6 +126,7 @@ public class RecipeController {
 
     /**
      * Creates a new recipe in the system
+     *
      * @param recipe The recipe object containing all required recipe data
      * @return Success message with 201 status, or error if creation fails
      */
@@ -145,7 +147,8 @@ public class RecipeController {
 
     /**
      * Adds a recipe to the current user's favorites list
-     * @param id The ID of the recipe to be added to favorites
+     *
+     * @param id      The ID of the recipe to be added to favorites
      * @param session The current HTTP session containing user information
      * @return Success message if added, error if user not found or recipe doesn't exist
      */
@@ -176,7 +179,6 @@ public class RecipeController {
     }
 
 
-
     @PostMapping("/auli/contact_us")
     public ResponseEntity<String> submitContactForm(@Valid @RequestBody ContactForm contactForm) {
         // Process form data here, e.g., save to database or send an email
@@ -187,8 +189,9 @@ public class RecipeController {
 
     /**
      * Adds a temporary rating to an existing recipe.
-     * @param id The ID of the recipe to modify
-     * @param score The score to add to the recipe (between 1 and 5)
+     *
+     * @param id      The ID of the recipe to modify
+     * @param score   The score to add to the recipe (between 1 and 5)
      * @param session The HTTP session to check for the logged-in user
      * @return Success message if the rating is added, error if the recipe not found or user is not logged in
      */
@@ -230,9 +233,6 @@ public class RecipeController {
     }
 
 
-
-
-
     // Endpoint to remove a rating from a recipe
     @PostMapping("/{id}/removeRating")
     public ResponseEntity<String> removeRating(
@@ -250,22 +250,22 @@ public class RecipeController {
     }
 
 
-
     //================================================================================
     // PATCH Methods
     //================================================================================
 
     /**
      * Updates an existing recipe's information
-     * @param id The ID of the recipe to update
+     *
+     * @param id     The ID of the recipe to update
      * @param recipe The updated recipe data
      * @return Success message if updated, error if recipe not found
      */
 
     @PatchMapping("{id}")
-    public ResponseEntity<String> updateRecipe(@PathVariable int id, @RequestBody Recipe recipe){
+    public ResponseEntity<String> updateRecipe(@PathVariable int id, @RequestBody Recipe recipe) {
         Optional<Recipe> or = recipeService.findById(id);
-        if(or.isPresent()) {
+        if (or.isPresent()) {
             Recipe excistingRecipe = or.get();
             excistingRecipe.setTitle(recipe.getTitle());
             excistingRecipe.setDescription(recipe.getDescription());
@@ -278,7 +278,8 @@ public class RecipeController {
 
     /**
      * Adds a new tag to an existing recipe
-     * @param id The ID of the recipe to modify
+     *
+     * @param id  The ID of the recipe to modify
      * @param tag The tag to add to the recipe
      * @return Success message if tag added, error if recipe not found
      */
@@ -297,7 +298,7 @@ public class RecipeController {
     /**
      * Adds a new category to an existing recipe
      *
-     * @param id  The ID of the recipe to modify
+     * @param id       The ID of the recipe to modify
      * @param category The category to add to the recipe
      * @return Success message if tag added, error if recipe not found
      */
@@ -338,11 +339,12 @@ public class RecipeController {
 
     /**
      * Removes a recipe from the system
+     *
      * @param id The ID of the recipe to delete
      * @return Success message if deleted
      */
     @DeleteMapping("{id}")
-    public ResponseEntity<String> deleteRecipe(@PathVariable int id){
+    public ResponseEntity<String> deleteRecipe(@PathVariable int id) {
         recipeService.deleteById(id);
         return ResponseEntity.status(200).body("Deleted recipe");
     }

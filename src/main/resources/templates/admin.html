@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Site</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/grunnur.css">
+</head>
+<body>
+<div class="container">
+    <div>
+        <header>
+            <h1 th:text="'Hello, ' + ${user.name} + '!'">Hello, Admin!</h1>
+        </header>
+
+        <section>
+            <h3>Profile Details</h3>
+            <p><strong>Admin username:</strong> <span th:text="${user.username}">Username</span></p>
+            <h3>Actions:</h3>
+            <ul>
+                <li><a th:href="@{/admin/addRecipe}">Add Recipe</a></li>
+                <li><a th:href="@{/usersui/{id}/changepassword(id=${user.id})}">Change Password</a></li>
+                <li><a th:href="@{/admin/recipelist}">View all recipes</a></li>
+                <li><a th:href="@{/usersui/favorites}">Featured Recipes</a></li>
+                <li><a th:href="@{/usersui}">Manage users</a></li>
+                <li><a th:href="@{/logout}">Logout</a></li>
+            </ul>
+        </section>
+    </div>
+</div>
+</body>
+</html>

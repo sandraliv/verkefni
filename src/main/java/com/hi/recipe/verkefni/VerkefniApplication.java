@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 
-
 @SpringBootApplication
 public class VerkefniApplication {
 
@@ -24,5 +23,4 @@ public class VerkefniApplication {
         // Initialize Cloudinary with CLOUDINARY_URL
         return new Cloudinary(dotenv.get("CLOUDINARY_URL"));
     }
-
-   }
+}

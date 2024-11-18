@@ -4,190 +4,113 @@
     <meta charset="UTF-8">
     <title>Recipes</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/grunnur.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-
 </head>
 <body>
-<h1 th:if="${user}" th:text="'Hello, ' + ${user.name}">Hello, User</h1>
-<p th:if="${message}" th:text="${message}"></p>
+<div class="container">
+    <h1 th:if="${user}" th:text="'Hello, ' + ${user.name}">Hello, User</h1>
+    <p th:if="${message}" th:text="${message}"></p>
 
-<form action="#" method="get" id="search-form">
-    <!-- Search input for title -->
-    <label for="query" class="search-label">Search by Title:</label>
-    <input type="text" id="query" name="query"
-           placeholder="Enter recipe title"
-           class="search-input"
-            th:value="${query}">  <!-- Prepopulate with the search query if available -->
+    <form action="#" method="get" id="search-form">
+        <!-- Search input for title -->
+        <label for="query" class="search-label">Search by Title:</label>
+        <input type="text" id="query" name="query"
+               placeholder="Enter recipe title"
+               class="search-input"
+               th:value="${query}"
+        >  <!-- Prepopulate with the search query if available -->
 
-    <!-- Search input for tags (multi-select dropdown) -->
-    <label for="tags" class="tags-label">Tags:</label>
-    <select id="tags" name="tags" multiple="multiple" class="tags-select">
-        <option th:each="tag : ${allTags}"
-                th:value="${tag}"
-                th:text="${tag.getDisplayName()}">
-        </option>
-    </select>
-    <button type="submit" class="search-button">Search</button>
-</form>
-<!-- Display the "No recipes found" message if it's present -->
-<div th:if="${noResultsMessage}" class="no-results-message">
-    <p th:text="${noResultsMessage}"></p>
-</div>
-<h2>Recipes:</h2>
+        <!-- Search input for tags (multi-select dropdown) -->
+        <label for="tags" class="tags-label">Tags:</label>
+        <select id="tags" name="tags" multiple="multiple" class="tags-select">
+            <option th:each="tag : ${allTags}"
+                    th:value="${tag}"
+                    th:text="${tag.getDisplayName()}">
+            </option>
+        </select>
+        <button type="submit" class="search-button">Search</button>
+    </form>
+    <!-- Display the "No recipes found" message if it's present -->
+    <div th:if="${noResultsMessage}" class="no-results-message">
+        <p th:text="${noResultsMessage}"></p>
+    </div>
+    <h2>Recipes:</h2>
 
-<ul class="recipe-list" id="recipe-list">
-    <li th:each="recipe : ${recipes}" class="li">
-        <form th:action="@{/allrecipes/{id}/addAsFav(id=${recipe.id})}" method="post">
-            <button class="heart-icon toggle-fav-button" type="submit">
-                <i class="fa-regular fa-heart"></i> <!-- Default empty heart -->
-            </button>
-        </form>
-        <h3 th:text="${recipe.title}">Recipe Title</h3>
-        <p th:text="${recipe.description}">Recipe Description</p>
-        <p><strong>Date:</strong>
-            <span th:text="${recipe.formattedDate}">Date Added</span>
-        </p>
+    <ul class="recipe-list" id="recipe-list">
+        <li th:each="recipe : ${recipes}" class="li">
+            <form th:action="@{/allrecipes/{id}/addAsFav(id=${recipe.id})}" method="post">
+                <button class="heart-icon toggle-fav-button" type="submit">
+                    <i class="fa-regular fa-heart"></i> <!-- Default empty heart -->
+                </button>
+            </form>
+            <h3 th:text="${recipe.title}">Recipe Title</h3>
+            <p th:text="${recipe.description}">Recipe Description</p>
+            <p><strong>Date:</strong>
+                <span th:text="${recipe.formattedDate}">Date Added</span>
+            </p>
 
-        <div class="rating">
-            <div class="stars">
+            <div class="rating">
+                <div class="stars">
           <span th:each="i : ${#numbers.sequence(1, 5)}"
                 th:class="${i <= recipe.averageRating.intValue() ? 'star-filled' :
                           (i - 0.5 <= recipe.averageRating.doubleValue() && i > recipe.averageRating.doubleValue() ? 'star-half-filled' : 'star-empty')}">
               ★
           </span>
+                </div>
+                <span class="rating-count"
+                      th:text="${recipe.ratingCount == 0 ? 'No ratings yet' : '(' + recipe.ratingCount + ')'}"></span>
             </div>
-            <span class="rating-count" th:text="${recipe.ratingCount == 0 ? 'No ratings yet' : '(' + recipe.ratingCount + ')'}"></span>
-        </div>
 
-        <!-- Ingredients Table -->
-        <table>
-            <tr>
-                <th>Ingredient</th>
-                <th>Quantity</th>
-            </tr>
-            <tr th:each="ingredient : ${recipe.ingredients}">
-                <td th:text="${#strings.replace(ingredient.key, '_', ' ')}">Ingredient Name</td>
-                <td th:text="${ingredient.value}">Ingredient Quantity</td>
-            </tr>
-        </table>
+            <!-- Ingredients Table -->
+            <table>
+                <tr>
+                    <th>Ingredient</th>
+                    <th>Quantity</th>
+                </tr>
+                <tr th:each="ingredient : ${recipe.ingredients}">
+                    <td th:text="${#strings.replace(ingredient.key, '_', ' ')}">Ingredient Name</td>
+                    <td th:text="${ingredient.value}">Ingredient Quantity</td>
+                </tr>
+            </table>
 
-        <!-- Display Recipe Categories -->
-        <p><strong>Categories:</strong>
-            <!-- Check if categories is empty -->
-            <span th:if="${#lists.isEmpty(recipe.categories)}">No categories assigned</span>
+            <!-- Display Recipe Categories -->
+            <p><strong>Categories:</strong>
+                <!-- Check if categories is empty -->
+                <span th:if="${#lists.isEmpty(recipe.categories)}">No categories assigned</span>
 
-            <!-- Display each category if it exists -->
-            <span th:each="category : ${recipe.categories}"
-                  th:text="${category.getDisplayName()}"
-                  style="display: inline-block; padding: 5px 10px; background-color: #f0f0f0; border-radius: 15px; margin: 5px;">
+                <!-- Display each category if it exists -->
+                <span th:each="category : ${recipe.categories}"
+                      th:text="${category.getDisplayName()}"
+                      style="display: inline-block; padding: 5px 10px; background-color: #f0f0f0; border-radius: 15px; margin: 5px;">
       </span>
-        </p>
+            </p>
 
-        <!-- Display Recipe Tags -->
-        <p><strong>Tags:</strong>
-            <span th:if="${#lists.isEmpty(recipe.tags)}">No tags assigned</span>
-            <span th:each="tag : ${recipe.tags}"
-                  th:text="${tag.getDisplayName()}"
-                  style="display: inline-block; padding: 5px 10px; background-color: #d1e7f3; border-radius: 15px; margin: 5px;">
+            <!-- Display Recipe Tags -->
+            <p><strong>Tags:</strong>
+                <span th:if="${#lists.isEmpty(recipe.tags)}">No tags assigned</span>
+                <span th:each="tag : ${recipe.tags}"
+                      th:text="${tag.getDisplayName()}"
+                      style="display: inline-block; padding: 5px 10px; background-color: #d1e7f3; border-radius: 15px; margin: 5px;">
       </span>
-        </p>
-        <form class="rating-form" action="#" th:action="@{/allrecipes/{id}/addRating(id=${recipe.id})}" method="post">
-            <div class="form-group">
-                <label for="score">Rate this recipe:</label>
-                <input type="number" id="score" name="score" min="1" max="5" required />
-            </div>
-            <button type="submit">Submit Rating</button>
-        </form>
+            </p>
+            <form class="rating-form" action="#" th:action="@{/allrecipes/{id}/addRating(id=${recipe.id})}"
+                  method="post">
+                <div class="form-group">
+                    <label for="score">Rate this recipe:</label>
+                    <input type="number" id="score" name="score" min="1" max="5" required/>
+                </div>
+                <button type="submit">Submit Rating</button>
+            </form>
 
-        <img th:src="${recipe.image_url}" alt="Recipe Image" />
+            <img th:src="${recipe.image_url}" alt="Recipe Image"/>
 
-        <form th:action="@{/allrecipes/{id}/addAsFav(id=${recipe.id})}" method="post">
-            <button type="submit">Add to Favorites</button>
-        </form>
-    </li>
-</ul>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function() {
-        // When the heart button is clicked
-        $(".heart-icon").on("click", function() {
-            var heartIcon = $(this).find("i");
+            <form th:action="@{/allrecipes/{id}/addAsFav(id=${recipe.id})}" method="post">
+                <button type="submit">Add to Favorites</button>
+            </form>
+        </li>
+    </ul>
 
-            // Toggle between regular and solid heart icons
-            if (heartIcon.hasClass("fa-solid")) {
-                // Change to regular heart (unfavorited)
-                heartIcon.removeClass("fa-solid").addClass("fa-regular");
-            } else {
-                // Change to solid heart (favorited)
-                heartIcon.removeClass("fa-regular").addClass("fa-solid");
-            }
-        });
-
-        // Filter recipes based on the search query and selected tags
-        $('#search-form').on('submit', function(event) {
-
-            var query = $('#query').val().toLowerCase(); // Get the search query from the input field
-            var selectedTags = [];
-
-            // Get the selected tags from the multi-select dropdown
-            $('#tags option:selected').each(function() {
-                selectedTags.push($(this).val()); // Add selected tags to the array
-            });
-
-            // Initialize the foundRecipes array to track matching recipes
-            var foundRecipes = [];
-
-            // Filter through the recipe list based on query and selected tags
-            $('#recipe-list li').each(function() {
-                var title = $(this).find('h3').text().toLowerCase(); // Get the title of the recipe
-                var tagsData = $(this).data('tags'); // Get the tags associated with the recipe
-
-                // Split the tags into an array (assuming tags are stored as comma-separated values)
-                var tags = tagsData ? tagsData.split(',') : [];
-
-                // Check if the recipe matches the search query and the selected tags
-                var matchesQuery = query === '' || title.includes(query);
-                var matchesTags = selectedTags.length === 0 || selectedTags.every(tag => tags.includes(tag));
-
-                // Show or hide the recipe based on whether it matches the filters
-                if (matchesQuery && matchesTags) {
-                    $(this).show();  // Show recipe if it matches both the query and tags
-                    foundRecipes.push(this);  // Add to foundRecipes
-                } else {
-                    $(this).hide();  // Hide recipe if it does not match
-                }
-            });
-
-            // Show "No recipes found" message if no recipes are found
-            if (foundRecipes.length === 0) {
-                $('#no-results-message').show();
-            } else {
-                $('#no-results-message').hide();
-            }
-        });
-
-        // Optional: Handle sorting functionality (if you have a sorting dropdown)
-        $('#sortOptions').on('change', function() {
-            var sortOrder = $(this).val(); // Get the selected sort order (ascending or descending)
-
-            // Sort the recipe list based on the selected sort order
-            var $recipes = $('#recipe-list li');
-            $recipes.sort(function(a, b) {
-                var textA = $(a).find('h3').text().toLowerCase(); // Get the title of the first recipe
-                var textB = $(b).find('h3').text().toLowerCase(); // Get the title of the second recipe
-
-                if (sortOrder === 'asc') {
-                    return textA.localeCompare(textB);  // Sort in ascending order
-                } else {
-                    return textB.localeCompare(textA);  // Sort in descending order
-                }
-            });
-
-            // Reorder the list items based on the sorting result
-            $('#recipe-list').append($recipes);
-        });
-    });
-</script>
-
+</div>
 </body>
 </html>
