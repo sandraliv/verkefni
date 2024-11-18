@@ -11,8 +11,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -93,13 +95,24 @@ public class uiContactController {
      * @return to login after invalidating a session
      */
     @GetMapping("")
-    public String getFrontPage(Model model, HttpSession session) {
+    public String getFrontPage(
+        Model model, 
+        HttpSession session,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "5") int size
+    ) {
         User user = (User) session.getAttribute("user");
         if (user != null) {
             model.addAttribute("user", user);
         }
-        model.addAttribute("recipes", recipeService.findAllPaginated());
+        
+        List<Recipe> recipes = recipeService.findAllPaginated(page, size);
+        model.addAttribute("recipes", recipes);
         model.addAttribute("allTags", RecipeTag.values());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("hasNext", recipes.size() == size);
+        model.addAttribute("hasPrevious", page > 0);
+        
         return "frontPage";
     }
 

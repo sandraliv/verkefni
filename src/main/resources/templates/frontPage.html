@@ -119,6 +119,17 @@
                     </form>
                 </li>
             </ul>
+            <div class="pagination-controls">
+                <a th:if="${hasPrevious}" 
+                   th:href="@{/(page=${currentPage - 1})}" 
+                   class="pagination-button">&laquo; Previous</a>
+                   
+                <span th:text="${currentPage + 1}" class="current-page"></span>
+                
+                <a th:if="${hasNext}" 
+                   th:href="@{/(page=${currentPage + 1})}" 
+                   class="pagination-button">Next &raquo;</a>
+            </div>
         </div>
     </div>
 </div>
