@@ -2,13 +2,17 @@ package com.hi.recipe.verkefni.uiControllers;
 
 import com.hi.recipe.verkefni.klasar.Recipe;
 import com.hi.recipe.verkefni.klasar.User;
+import com.hi.recipe.verkefni.services.ImageService;
 import com.hi.recipe.verkefni.services.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,10 +21,12 @@ import java.util.Optional;
 public class uiUserController {
 
     private final UserService userService;
+    private final ImageService imageService;
 
     @Autowired
-    public uiUserController(UserService userService) {
+    public uiUserController(UserService userService,ImageService imageService) {
         this.userService = userService;
+        this.imageService = imageService;
     }
 
     //================================================================================
@@ -45,6 +51,7 @@ public class uiUserController {
         }
         return "404";
     }
+
 
     /**
      * Retrieves a specific user's profile by their ID
@@ -262,6 +269,34 @@ public class uiUserController {
             return "redirect:/admin";
         }
         return "redirect:/usersui/" + id; // redirect to profile page
+    }
+
+        @PostMapping("/{userId}/upload-profile-picture")
+    public String uploadProfilePicture(@PathVariable int userId,
+                                       @RequestParam("file") MultipartFile file,
+                                       RedirectAttributes redirectAttributes) {
+        try {
+            User user = userService.findById(userId)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+            if (file.isEmpty()) {
+                redirectAttributes.addFlashAttribute("errorMessage", "No file selected.");
+                return "redirect:/usersui/" + userId;
+            }
+
+            String imageUrl = imageService.uploadImage(file);
+            user.setProfilePictureUrl(imageUrl);
+            userService.save(user);
+
+            redirectAttributes.addFlashAttribute("message", "Profile picture updated!");
+            return "redirect:/usersui/" + userId;
+        } catch (IOException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error uploading image: " + e.getMessage());
+            return "redirect:/usersui/" + userId;
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/usersui/" + userId;
+        }
     }
 }
 
