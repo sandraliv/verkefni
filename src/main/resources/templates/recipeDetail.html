@@ -1,0 +1,94 @@
+<!DOCTYPE html >
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/grunnur.css">
+    <link rel="stylesheet" href="/css/recipe.css">
+    <link rel="stylesheet" href="/css/navigation.css">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title th:text="${recipe.title}">Recipe Title></title>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+
+<div class="recipe-detail" id="recipe-detail">
+    <form th:action="@{/allrecipes/{id}/addAsFav(id=${recipe.id})}" method="post">
+      <button class="heart-icon toggle-fav-button" type="submit">
+        <i class="fa-regular fa-heart"></i> <!-- Default empty heart -->
+      </button>
+    </form>
+    <h3 th:text="${recipe.title}">Recipe Title</h3>
+    <img th:src="${recipe.image_url}" alt="Recipe Image"/>
+    <p th:text="${recipe.description}">Recipe Description</p>
+    <p><strong>Date:</strong>
+      <span th:text="${recipe.formattedDate}">Date Added</span>
+    </p>
+
+    <div class="rating">
+      <div class="stars">
+          <span th:each="i : ${#numbers.sequence(1, 5)}"
+                th:class="${i <= recipe.averageRating.intValue() ? 'star-filled' :
+                          (i - 0.5 <= recipe.averageRating.doubleValue() && i > recipe.averageRating.doubleValue() ? 'star-half-filled' : 'star-empty')}">
+              ★
+          </span>
+      </div>
+      <span class="rating-count"
+            th:text="${recipe.ratingCount == 0 ? 'No ratings yet' : '(' + recipe.ratingCount + ')'}"></span>
+    </div>
+    <div class="column">
+        <table>
+        <tr>
+            <th>Ingredient</th>
+            <th>Quantity</th>
+        </tr>
+        <tr th:each="ingredient : ${recipe.ingredients}">
+            <td th:text="${#strings.replace(ingredient.key, '_', ' ')}">Ingredient Name</td>
+            <td th:text="${ingredient.value}">Ingredient Quantity</td>
+        </tr>
+        </table>
+
+        <p><strong>Instructions:</strong>
+            <span th:text="${recipe.instructions}">Recipe Instructions</span>
+        </p>
+    </div>
+
+
+    <p><strong>Categories:</strong>
+      <span th:if="${#lists.isEmpty(recipe.categories)}">No categories assigned</span>
+      <span th:each="category : ${recipe.categories}"
+            th:text="${category.getDisplayName()}"
+            style="display: inline-block; padding: 5px 10px; background-color: #f0f0f0; border-radius: 15px; margin: 5px;">
+      </span>
+    </p>
+    <p><strong>Tags:</strong>
+      <span th:if="${#lists.isEmpty(recipe.tags)}">No tags assigned</span>
+      <span th:each="tag : ${recipe.tags}"
+            th:text="${tag.getDisplayName()}"
+            style="display: inline-block; padding: 5px 10px; background-color: #d1e7f3; border-radius: 15px; margin: 5px;">
+      </span>
+    </p>
+
+
+   <div th:if="${user != null}">
+     <form action="#" th:action="@{/allrecipes/{id}/addRating(id=${recipe.id})}" method="post">
+       <div class="form-group">
+         <label for="score">Rate this recipe:</label>
+         <input type="number" id="score" name="score" min="1" max="5" required />
+       </div>
+       <button type="submit">Submit Rating</button>
+     </form>
+   </div>
+
+   <div th:if="${user == null}">
+      <p>You are not logged in. Please log in to rate this recipe.</p>
+   </div>
+
+    <form th:action="@{/allrecipes/{id}/addAsFav(id=${recipe.id})}" method="post">
+      <button type="submit">Add to Favorites</button>
+    </form>
+</div>
+</body>
+</html>

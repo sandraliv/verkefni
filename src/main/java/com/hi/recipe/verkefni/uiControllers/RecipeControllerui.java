@@ -67,6 +67,7 @@ public class RecipeControllerui {
             System.out.println("halló er að reyna með query og tags");
             recipes = recipeService.findByTitleAndTags(query, tags);
         }
+
         model.addAttribute("allTags", RecipeTag.values());
         model.addAttribute("recipes", recipes);
         model.addAttribute("query", query);
@@ -80,12 +81,21 @@ public class RecipeControllerui {
      * @return The requested recipe if found, or 404 if not found
      */
     @GetMapping("/{id}")
-    public String getRecipeById(@PathVariable int id, Model model) {
+    public String getRecipeById(@PathVariable int id, Model model, HttpSession session) {
         Optional<Recipe> recipe = recipeService.findById(id);
         if (recipe.isPresent()) {
             model.addAttribute("recipe", recipe.get());
-            return "recipeList";
+
+
+            User sessionUser = (User) session.getAttribute("user");
+            if (sessionUser == null) {
+                Optional<User> user = userService.findById(id);
+                model.addAttribute("user", user);
+            }
+            return "recipeDetail";
         }
+
+
         model.addAttribute("errorMessage", "Recipe not found.");
         return "error";
     }
@@ -104,7 +114,7 @@ public class RecipeControllerui {
         }
 
         model.addAttribute("recipes", recipes);
-        return "recipeList";
+        return "recipeCard";
     }
 
     @GetMapping("/byCategory")
@@ -114,21 +124,19 @@ public class RecipeControllerui {
             Model model) {
 
         List<Recipe> recipes;
-        // Convert the category strings to Category enum
         Set<Category> categoryEnumSet = recipeService.convertToCategoryEnum(categories);
-        // Get sorted recipes based on the selected sort option and category filter
         recipes = recipeService.getSortedRecipes(sort, categoryEnumSet);
         for (Recipe recipe : recipes) {
             String formattedDate = recipeService.formatDate(recipe.getDateAdded());
-            recipe.setFormattedDate(formattedDate);  // Add formatted date to recipe
+            recipe.setFormattedDate(formattedDate);
         }
-        // Add attributes to the model
-        model.addAttribute("tags", RecipeTag.values());  // Pass all tags to the view
-        model.addAttribute("recipes", recipes);  // Add the list of recipes
-        model.addAttribute("categories", Category.values());  // Add all categories to the view
-        model.addAttribute("sort", sort);  // Keep track of the selected sort option in the model
-        model.addAttribute("selectedCategories", categories);  // Keep track of selected categories
-        return "byCategory";  // Return to the 'byCategory' template
+
+        model.addAttribute("tags", RecipeTag.values());
+        model.addAttribute("recipes", recipes);
+        model.addAttribute("categories", Category.values());
+        model.addAttribute("sort", sort);
+        model.addAttribute("selectedCategories", categories);
+        return "byCategory";
     }
 
     /**
@@ -180,6 +188,10 @@ public class RecipeControllerui {
 
         User user = (User) session.getAttribute("user");
         if (user != null) {
+            if (user.getFavourites().contains(or.get())) {
+                model.addAttribute("message", "Recipe is already in your favorites.");
+                return "redirect:/usersui/favorites";  // You can adjust this to return to the recipe page if you prefer
+            }
             user.setFavourites(or.get());
             userService.save(user);
             model.addAttribute("message", "Recipe added to favorites.");

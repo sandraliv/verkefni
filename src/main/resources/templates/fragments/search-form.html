@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en"xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="/css/search.css">
+<head>
+  <meta charset="UTF-8">
+</head>
+<body>
+<div th:fragment="searchForm">
+  <form action="#" method="get" id="search-form" class="search-form">
+    <div class="search-field">
+      <label for="query" class="search-label">Search by Title:</label>
+      <input type="text" id="query" name="query"
+             placeholder="Enter recipe title"
+             class="search-input"
+             th:value="${query}">
+    </div>
+
+    <label for="tags" class="tags-label">Tags:</label>
+    <select id="tags" name="tags" multiple="multiple" class="tags-select">
+      <option th:each="tag : ${allTags}"
+              th:value="${tag}"
+              th:text="${tag.getDisplayName()}">
+      </option>
+    </select>
+
+    <div class="selected-tags">
+      <h4>Selected Tags:</h4>
+      <div id="selected-tags-list"></div>
+    </div>
+
+    <div class="search-submit-button">
+      <button type="submit" class="search-button" id="search_submit">
+        Search
+      </button>
+    </div>
+
+    <div th:if="${noResultsMessage}" class="no-results-message">
+      <p th:text="${noResultsMessage}"></p>
+    </div>
+  </form> <!-- Close the form tag here -->
+</div> <!-- Close the main search-form container -->
+</body>
+</html>

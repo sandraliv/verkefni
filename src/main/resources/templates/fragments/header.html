@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en"xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="/css/styles.css">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<header>
+    <nav class="navigation-bar">
+        <div class="current-date">
+            <p th:text="'Current Date: ' + ${currentDate}"></p>
+        </div>
+        <ul class="nav-list">
+            <li class="home-nav">
+                <a href="/allrecipes/all" class="home-button">
+                    <i class="fa-solid fa-house-chimney"></i> Home
+                </a>
+            </li>
+            <li class="log-in-account">
+                <a th:href="${user != null ? '#accountDropdownButton' : '/login'}" class="account-button" id="accountDropdownButton" role="button" aria-expanded="false">
+                    <i class="fa-solid fa-user"></i>
+                    <span th:text="${user != null ? 'My Account' : 'Login'}"></span>
+                </a>
+                <div class="login-dropdown">
+                    <form th:action="@{/login}" method="post" class="login-dropdown">
+                        <h3>Login</h3>
+                        <div class="login-form-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" name="username" required>
+                        </div>
+                        <div class="login-form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
+                        <button type="submit" class="login-drop-btn">Log In</button>
+                    </form>
+                </div>
+                <ul class="user-dropdown-menu" th:if="${user}" aria-labelledby="accountDropdownButton">
+                    <li>
+                        <a th:href="@{/usersui/profile}" class="dropdown-item">
+                            <i class="fa-solid fa-house-chimney"></i> View Profile
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/usersui/favorites}" class="dropdown-item"></a>
+                    </li>
+                    <li>
+                        <a th:href="@{/logout}" class="dropdown-item">
+                            <i class="fa-solid fa-sign-out-alt"></i> Log Out
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="contact-menu">
+                <a th:href="@{/contact}" class="contact-dropdown-button">
+                    <i class="fa-solid fa-envelope"></i>
+                    Contact us
+                </a>
+            </li>
+
+
+            <li class="category-menu">
+                <a href="#" class="category-nav-button">Categories</a>
+                <div class="category-drop">
+                    <ul>
+                        <li th:each="category : ${categories}">
+                            <a th:href="@{/allrecipes/byCategory?category={category}(category=${category})}"
+                               class="dropdown-item category-drop-button">
+                                <button type="button" class="category-drop-button">
+                                    <span th:text="${category.getDisplayName()}">Category Name</span>
+                                </button>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+        </ul>
+    </nav>
+</header>
+
+</body>
+</html>

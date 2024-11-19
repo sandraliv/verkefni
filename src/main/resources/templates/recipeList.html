@@ -5,12 +5,15 @@
     <title>Recipes</title>
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/grunnur.css">
+    <link rel="stylesheet" href="/css/search.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 </head>
 <body>
 <div class="container">
     <h1 th:if="${user}" th:text="'Hello, ' + ${user.name}">Hello, User</h1>
     <p th:if="${message}" th:text="${message}"></p>
+
+    <div th:replace="fragments/search-form :: searchForm"></div>
 
     <form action="#" method="get" id="search-form">
         <!-- Search input for title -->
@@ -52,11 +55,11 @@
 
             <div class="rating">
                 <div class="stars">
-          <span th:each="i : ${#numbers.sequence(1, 5)}"
-                th:class="${i <= recipe.averageRating.intValue() ? 'star-filled' :
-                          (i - 0.5 <= recipe.averageRating.doubleValue() && i > recipe.averageRating.doubleValue() ? 'star-half-filled' : 'star-empty')}">
-              ★
-          </span>
+                <span th:each="i : ${#numbers.sequence(1, 5)}"
+                    th:class="${i <= recipe.averageRating.intValue() ? 'star-filled' :
+                            (i - 0.5 <= recipe.averageRating.doubleValue() && i > recipe.averageRating.doubleValue() ? 'star-half-filled' : 'star-empty')}">
+                         ★
+                </span>
                 </div>
                 <span class="rating-count"
                       th:text="${recipe.ratingCount == 0 ? 'No ratings yet' : '(' + recipe.ratingCount + ')'}"></span>
@@ -83,7 +86,7 @@
                 <span th:each="category : ${recipe.categories}"
                       th:text="${category.getDisplayName()}"
                       style="display: inline-block; padding: 5px 10px; background-color: #f0f0f0; border-radius: 15px; margin: 5px;">
-      </span>
+                </span>
             </p>
 
             <!-- Display Recipe Tags -->
@@ -92,7 +95,7 @@
                 <span th:each="tag : ${recipe.tags}"
                       th:text="${tag.getDisplayName()}"
                       style="display: inline-block; padding: 5px 10px; background-color: #d1e7f3; border-radius: 15px; margin: 5px;">
-      </span>
+                </span>
             </p>
             <form class="rating-form" action="#" th:action="@{/allrecipes/{id}/addRating(id=${recipe.id})}"
                   method="post">
@@ -107,6 +110,9 @@
 
             <form th:action="@{/allrecipes/{id}/addAsFav(id=${recipe.id})}" method="post">
                 <button type="submit">Add to Favorites</button>
+            </form>
+            <form class="see-more-button" th:action="@{/allrecipes/{id}(id=${recipe.id})}" method="get">
+                <button type="submit">See more</button>
             </form>
         </li>
     </ul>

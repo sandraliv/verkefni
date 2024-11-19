@@ -1,0 +1,147 @@
+/* Global styles */
+.search-form {
+  margin: 50px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 800px; /* Set a max-width for better control */
+  flex-direction: column;
+}
+
+.search-field {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+/* Label styling */
+.search-label {
+  font-size: 19px;
+  margin-bottom: 8px;
+}
+
+.search-input {
+  height: 40px;
+  font-size: 16px;
+  padding: 0 20px;
+  border: 2px solid #ddd;
+  border-radius: 30px;
+  outline: none;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  border-color: #aaa;
+}
+
+.search-input::placeholder {
+  color: #aaa;
+}
+
+/* Tags Dropdown Styles */
+.tags-menu {
+  position: relative;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.tags-nav-button {
+  display: inline-block;
+  padding: 10px 15px;
+  font-size: 19px;
+  border: 2px solid #ddd;
+  border-radius: 30px;
+  background-color: white;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s ease;
+  margin-bottom: 10px;
+}
+
+.tags-nav-button:hover {
+  background-color: #f8b400;
+}
+
+.tags-select {
+  display: block;
+  width: 100%;
+  padding: 8px 15px;
+  border: 2px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  background-color: white;
+  outline: none;
+  cursor: pointer;
+}
+
+.tags-select:focus {
+  border-color: #f8b400;
+}
+
+.selected-tags {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.selected-tags h4 {
+  margin-bottom: 5px;
+  font-size: 18px;
+}
+
+.selected-tag {
+  background-color: #f8b400;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  margin: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.selected-tag .remove-tag {
+  margin-left: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  color: white;
+  background-color: transparent;
+  border: none;
+}
+
+.search-submit-button {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+#search_submit {
+  height: 50px;
+  padding: 0 20px;
+  background-color: #f8b400; /* Yellow button */
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#search_submit:hover {
+  background-color: #f59e42; /* Slightly darker yellow on hover */
+}
+
+#search_submit:focus {
+  outline: none;
+}
+
+/* No results message */
+.no-results-message {
+  margin-top: 20px;
+  color: red;
+  font-size: 18px;
+  text-align: center;
+}

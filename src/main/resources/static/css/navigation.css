@@ -1,0 +1,164 @@
+/* Global reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+.nav-list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    list-style: none;
+    width: 100%;
+}
+
+.current-date {
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    margin-left: 20px;
+    padding: 5px;
+    text-align: center;
+}
+
+.navigation-bar {
+    width:100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rosybrown;
+    padding: 10px 20px;
+    position: relative;
+    z-index: 10;
+    overflow: visible;
+}
+
+.home-button {
+    display: flex;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.account-button {
+    display: flex;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    margin-left: 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    position: relative; /* For dropdown */
+    z-index: 20;
+}
+.contact-dropdown-button {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    padding: 10px 15px;
+    margin-left: 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    position: relative; /* Ensure dropdown works here too */
+    z-index: 20;
+    color:white;
+}
+.category-nav-button {
+    display: flex;
+    align-items: center;
+    color:white;
+    text-decoration: none;
+    padding: 10px 15px;
+    margin-left: 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    position: relative; /* Ensure dropdown works here too */
+    z-index: 20;
+}
+
+.login-dropdown {
+    display: none;
+    position: absolute;
+    top: 45px;
+    left:0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    width: 200px;
+    z-index: 30; /* Ensure it's above other elements */
+}
+.account-button:hover + .login-dropdown,
+.account-button:focus + .login-dropdown {
+    display: block;
+}
+
+.category-menu {
+    position: relative;
+    margin-left: 20px;
+}
+.category-drop {
+    display: none;
+    position: absolute;
+    top: 45px;
+    left: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 250px;
+    z-index: 20;
+}
+.category-drop ul li:hover {
+    background-color: #f1f1f1;
+}
+
+.category-menu:hover .category-drop {
+    display: block;
+}
+
+.contact-dropdown-button i,
+.account-button i,
+.home-button i {
+    margin-right: 8px;
+}
+.log-in-account .category-menu .home-nav .content-menu{
+justify-content:space-between;
+}
+
+.log-in-account .login-form-group{
+display:block;
+}
+
+.category-drop ul {
+    list-style: none;
+    padding: 10px;
+}
+
+.category-drop ul li {
+    padding: 10px;
+}
+
+.category-nav-button:hover .contact-dropdown-button:hover
+.home-button:hover .account-button:hover{
+    background-color:#e4d9d9c7;
+}
+.category-drop-button {
+    display: block;
+    text-decoration: none;
+    color: #333;
+    background-color: transparent;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    text-align: left;
+}
