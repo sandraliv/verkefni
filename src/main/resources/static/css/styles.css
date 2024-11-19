@@ -36,7 +36,7 @@ h2 {
     color: rosybrown;
     font-style: italic;
     }
-}
+
 
 /* Rating container - Using flexbox to align stars and rating count horizontally */
 /* Recipe List */
@@ -340,3 +340,4 @@ form {
     margin: 0 5px;
 }
 
+}

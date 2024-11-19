@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <link rel="stylesheet" href="/css/styles.css">
 <link rel="stylesheet" href="/css/grunnur.css">
+<link rel="stylesheet" href="/css/contact.css">
 <head>
     <title>Contact us</title>
 
@@ -14,31 +15,31 @@
             <p th:text="${message}"></p>
         </div>
         <form th:action="@{/contact}" method="post" th:object="${contactForm}">
-            <div>
+            <div class="labels">
                 <label for="name">Name:</label>
                 <input type="text" id="name" name="name" th:field="*{name}"/>
                 <p class="contact_error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
             </div>
-            <div>
+            <div class="labels">
                 <label for="email">Email:</label>
                 <input type="email" id="email" th:field="*{email}"/>
                 <p class="contact_error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
             </div>
 
-            <div>
+            <div class="labels">
                 <label for="subject">Subject:</label>
                 <input type="text" id="subject" th:field="*{subject}"/>
                 <p class="contact_error" th:if="${#fields.hasErrors('subject')}" th:errors="*{subject}"></p>
             </div>
 
-            <div>
+            <div class="labels">
                 <label for="message">Message:</label>
                 <textarea id="message" th:field="*{message}"></textarea>
                 <p class="contact_error" th:if="${#fields.hasErrors('message')}" th:errors="*{message}"></p>
             </div>
-            <button type="submit">Submit</button>
+            <button type="submit" class="submit_button">Submit</button>
         </form>
-        <a href="/">Back</a>
+        <a href="/" class="back_link">Back</a>
         </body>
     </div>
 </div>
