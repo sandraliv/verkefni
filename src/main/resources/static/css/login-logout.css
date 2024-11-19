@@ -13,6 +13,14 @@
     margin-top: 60px;
 }
 
+
+.favourites {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+}
+
 .tags {
     display: flex;
     flex-direction: column;
@@ -46,6 +54,20 @@
 .recipe_form {
     margin-bottom: 20px;
     margin-top: 30px;
+}
+
+.favourites button {
+    background-color: rosybrown;
+    color: #fff;
+    padding: 4px 9px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.favourites a {
+    color: rosybrown;
 }
 
 #description {

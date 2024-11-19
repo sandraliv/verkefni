@@ -56,17 +56,10 @@ public class uiContactController {
 
     @PostMapping("/contact")
     public String submitContactForm(@Valid @ModelAttribute("contactForm") ContactForm contactForm, BindingResult result, RedirectAttributes redirectAttributes, Model model) {
-        // Process form data here, e.g., save to database or send an email
-        // For this example, we'll just return a confirmation message
         if (result.hasErrors()) {
-            // Return to form with errors
             return "contact";
         }
-
-        // Add a success message to flash attributes
         redirectAttributes.addFlashAttribute("message", "Contact form submitted successfully!");
-
-        // Redirect to the contact form to show an empty form
         return "redirect:/contact";
     }
 
@@ -96,23 +89,23 @@ public class uiContactController {
      */
     @GetMapping("")
     public String getFrontPage(
-        Model model, 
-        HttpSession session,
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "5") int size
+            Model model,
+            HttpSession session,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
     ) {
         User user = (User) session.getAttribute("user");
         if (user != null) {
             model.addAttribute("user", user);
         }
-        
+
         List<Recipe> recipes = recipeService.findAllPaginated(page, size);
         model.addAttribute("recipes", recipes);
         model.addAttribute("allTags", RecipeTag.values());
         model.addAttribute("currentPage", page);
         model.addAttribute("hasNext", recipes.size() == size);
         model.addAttribute("hasPrevious", page > 0);
-        
+
         return "frontPage";
     }
 

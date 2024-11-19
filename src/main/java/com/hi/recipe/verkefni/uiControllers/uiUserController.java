@@ -24,7 +24,7 @@ public class uiUserController {
     private final ImageService imageService;
 
     @Autowired
-    public uiUserController(UserService userService,ImageService imageService) {
+    public uiUserController(UserService userService, ImageService imageService) {
         this.userService = userService;
         this.imageService = imageService;
     }
@@ -60,18 +60,21 @@ public class uiUserController {
      * @return The requested user profile if found, or 404 if not found
      */
     @GetMapping("/{id}")
-    public String getUserProfileById(@PathVariable int id, Model model) {
-        Optional<User> userProfile = userService.findById(id);
-        if (userProfile.isPresent()) {
-            if (userProfile.get().getRole().equals("admin")) {
-                System.out.println(userProfile.get().getRole());
-                return "redirect:/admin";
+    public String getUserProfileById(@PathVariable int id, Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            Optional<User> userProfile = userService.findById(id);
+            if (userProfile.isPresent()) {
+                if (userProfile.get().getRole().equals("admin")) {
+                    return "redirect:/admin";
+                }
+                model.addAttribute("user", userProfile.get());
+                return "userProfile"; // userProfile.html
             }
-            model.addAttribute("user", userProfile.get());
-            return "userProfile"; // userProfile.html
+            model.addAttribute("errorMessage", "User not found.");
+            return "error";
         }
-        model.addAttribute("errorMessage", "User not found.");
-        return "error"; // Error page
+        return "redirect:/login";
     }
 
     /**
@@ -232,6 +235,7 @@ public class uiUserController {
         model.addAttribute("currentPassword", currentPassword);
 
         if (user == null || user.getId() != id) {
+            System.out.println("halló ég er villan sem þú ert að leita af");
             model.addAttribute("errorMessage", "Unauthorized access.");
             return "404";
         }
@@ -256,7 +260,7 @@ public class uiUserController {
             return "changePassword";
         }
 
-        if (!user.getPassword().equals(newPassword)) {
+        if (user.getPassword().equals(newPassword)) {
             model.addAttribute("errorMessage", "The new password can't be the same as the old password");
             return "changePassword";
         }
@@ -271,7 +275,7 @@ public class uiUserController {
         return "redirect:/usersui/" + id; // redirect to profile page
     }
 
-        @PostMapping("/{userId}/upload-profile-picture")
+    @PostMapping("/{userId}/upload-profile-picture")
     public String uploadProfilePicture(@PathVariable int userId,
                                        @RequestParam("file") MultipartFile file,
                                        RedirectAttributes redirectAttributes) {

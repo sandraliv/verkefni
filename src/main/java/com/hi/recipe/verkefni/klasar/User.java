@@ -1,11 +1,15 @@
 package com.hi.recipe.verkefni.klasar;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @Entity
-@Table(name="users")
+@Table(name = "users")
 public class User {
     private String role;
     private String name;
@@ -20,25 +24,27 @@ public class User {
     private String profilePictureUrl;
 
     @ManyToMany(fetch = FetchType.EAGER)  // Change to EAGER loading
+    @JsonIgnore
     @JoinTable(
-        name = "user_recipes",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "recipe_id")
+            name = "user_recipes",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "recipe_id")
     )
     private Set<Recipe> favourites = new HashSet<>();
 
     // The map stores the ratings where the key is the Recipe and the value is the rating score
     @ElementCollection
+    @JsonIgnore
     @CollectionTable(name = "user_ratings", joinColumns = @JoinColumn(name = "user_id"))
     @MapKeyJoinColumn(name = "recipe_id")
     @Column(name = "score")
     private Map<Recipe, Integer> userRatings = new HashMap<>();
 
 
-    public User(){
+    public User() {
     }
 
-    public User(String role, String name, String email, String password, String username){
+    public User(String role, String name, String email, String password, String username) {
         this.role = role;
         this.name = name;
         this.email = email;
@@ -58,11 +64,17 @@ public class User {
         return id;
     }
 
-    public String getRole() {return role;}
+    public String getRole() {
+        return role;
+    }
 
-    public String getPassword(){return password;}
+    public String getPassword() {
+        return password;
+    }
 
-    public String getUsername(){return username;}
+    public String getUsername() {
+        return username;
+    }
 
     public Set<Recipe> getFavourites() {
         if (favourites == null) {
@@ -116,6 +128,7 @@ public class User {
     public boolean hasRated(Recipe recipe) {
         return this.userRatings.containsKey(recipe);
     }
+
     public void addUserRating(Recipe recipe, int score) {
         this.userRatings.put(recipe, score);
     }
@@ -123,6 +136,7 @@ public class User {
     public String getProfilePictureUrl() {
         return profilePictureUrl;
     }
+
     public void setProfilePictureUrl(String profilePictureUrl) {
         this.profilePictureUrl = profilePictureUrl;
     }

@@ -12,19 +12,18 @@
         <h1 th:text="'Hello, ' + ${user.name} + '!'">Hello, User!</h1>
 
         <div class="profile_details">
-           
-            <img class="profile_picture" 
-                 th:src="${user.profilePictureUrl != null ? user.profilePictureUrl : '/images/default-profile.png'}" 
+            <img class="profile_picture"
+                 th:src="${user.profilePictureUrl != null ? user.profilePictureUrl : '/images/default-profile.png'}"
                  alt="Profile Picture">
             <div class="details">
                 <p><strong>Username:</strong> <span th:text="${user.username}">Username</span></p>
                 <p><strong>Email:</strong> <span th:text="${user.email}">Email</span></p>
             </div>
         </div>
-      
+
         <div class="profile_actions">
             <h4>Change Your Profile Picture</h4>
-            <form th:action="@{/usersui/{userId}/upload-profile-picture(userId=${user.id})}" 
+            <form th:action="@{/usersui/{userId}/upload-profile-picture(userId=${user.id})}"
                   method="post" enctype="multipart/form-data">
                 <label for="file">Choose a profile picture:</label>
                 <input type="file" id="file" name="file" accept="image/*">
@@ -35,7 +34,6 @@
         </div>
 
         <div class="actions_list">
-           
             <ul>
                 <li><a th:href="@{'/usersui/' + ${user.id} + '/changepassword'}">Change Password</a></li>
                 <li><a th:href="@{/allrecipes/all}">All Recipes</a></li>
