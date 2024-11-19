@@ -13,14 +13,13 @@
     border: 1px solid #ddd;
     border-radius: 10px;
     background-color: #f9f9f9;
-    
 }
-
 
 .profile_details {
     display: flex;
     align-items: center;
     margin-bottom: 20px;
+    flex-direction: column;
 }
 
 .profile_picture {
@@ -28,7 +27,7 @@
     height: 150px;
     border-radius: 50%;
     border: 3px solid rgb(218, 193, 193);
-  
+
 }
 
 .details {
@@ -59,7 +58,7 @@
 }
 
 .profile_actions button:hover {
-    background-color: rgb(213, 205, 205); 
+    background-color: rgb(213, 205, 205);
 }
 
 .actions_list {
@@ -89,7 +88,7 @@
 .actions_list a {
     text-decoration: none;
     color: white;
-    background-color: rosybrown; 
+    background-color: rosybrown;
     padding: 10px 20px;
     border-radius: 8px;
     transition: background-color 0.3s ease;
@@ -97,5 +96,5 @@
 }
 
 .actions_list a:hover {
-    background-color: rgb(213, 205, 205); 
+    background-color: rgb(213, 205, 205);
 }
