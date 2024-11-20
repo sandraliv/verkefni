@@ -2,11 +2,11 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <link rel="stylesheet" href="/css/search.css">
 <head>
-  <meta charset="UTF-8">
+    <meta charset="UTF-8">
 </head>
 <body>
 <div th:fragment="searchForm">
-  <form action="#" method="get" id="search-form" class="search-form">
+    <form action="#" method="get" id="search-form" class="search-form">
 
     <div class="search-row-1">
       <div class="search-field">
@@ -14,16 +14,15 @@
           <input type="text" id="query" name="query"
                 placeholder="Enter recipe title"
                 class="search-input"
-                th:value="${query}">
+                 th:value="${query != null ? query : ''}">
       </div>
 
       <div class="tag-select-field">
         <label for="tags" class="tags-label">Tags:</label>
         <select id="tags" name="tags" multiple="multiple" class="tags-select">
           <option th:each="tag : ${allTags}"
-                  th:value="${tag.name()}"
-                  th:text="${tag.getDisplayName()}"
-                  th:selected="${tags != null && tags.contains(tag)}">
+                  th:value="${tag}"
+                  th:text="${tag.getDisplayName()}">
           </option>
         </select>
       </div>
@@ -34,7 +33,7 @@
         <h4>Selected Tags:</h4>
         <div id="selected-tags-list">
         <span th:each="selectedTag : ${tags}">
-            <span class="selected-tag" th:text="${selectedTag.getDisplayName()}"></span>
+           <div class="selected-tag" th:text="${selectedTag}"></div>
           </span>
         </div>
       </div>

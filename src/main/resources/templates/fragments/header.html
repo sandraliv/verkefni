@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <link rel="stylesheet" href="/css/styles.css">
 <head>
     <meta charset="UTF-8">
@@ -15,11 +15,12 @@
             <ul class="nav-list">
                 <li class="home-nav">
                     <a href="/" class="home-button">
-                     <i class="fa-solid fa-house-chimney"></i> Home
+                        <i class="fa-solid fa-house-chimney"></i> Home
                     </a>
                 </li>
                 <li class="log-in-account">
-                    <a th:href="${user != null ? '#accountDropdownButton' : '/login'}" class="account-button" id="accountDropdownButton" role="button" aria-expanded="false">
+                    <a th:href="${user != null ? '#accountDropdownButton' : '/login'}" class="account-button"
+                       id="accountDropdownButton" role="button" aria-expanded="false">
                         <i class="fa-solid fa-user"></i>
                         <span th:text="${user != null ? user.username : 'Login'}"></span>
 
@@ -28,8 +29,8 @@
                         <form th:action="@{/login}" method="post" class="login-dropdown">
                             <h3>Login</h3>
                             <div class="login-form-group">
-                                    <label for="username">Username</label>
-                                    <input type="text" id="username" name="username" required>
+                                <label for="username">Username</label>
+                                <input type="text" id="username" name="username" required>
                             </div>
                             <div class="login-form-group">
                                 <label for="password">Password</label>
@@ -40,7 +41,8 @@
                     </div>
                     <ul class="user-dropdown-menu" th:if="${user != null}" aria-labelledby="accountDropdownButton">
                         <li>
-                            <a th:href="@{/usersui/profile}" class="user-dropdown-item">User profile</a>
+                            <a th:href="@{/usersui/{id}(id=${user.id})}" th:method="get" class="user-dropdown-item">User
+                                profile</a>
                         </li>
                         <li>
                             <a th:href="@{/usersui/favorites}" class="user-dropdown-item">Favorites</a>
@@ -53,25 +55,9 @@
 
                 <li class="contact-menu">
                     <a th:href="@{/contact}" class="contact-dropdown-button">
-                     <i class="fa-solid fa-envelope"></i>
-                     Contact us
+                        <i class="fa-solid fa-envelope"></i>
+                        Contact us
                     </a>
-                </li>
-
-                 <li class="category-menu">
-                    <a href="#" class="category-nav-button">Categories</a>
-                    <div class="category-drop">
-                        <ul>
-                             <li th:each="category : ${categories}">
-                                <a th:href="@{/allrecipes/byCategory?category={category}(category=${category})}"
-                                    class="dropdown-item category-drop-button">
-                                    <button type="button" class="category-drop-button">
-                                        <span th:text="${category.getDisplayName()}">Category Name</span>
-                                    </button>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
                 </li>
             </ul>
         </nav>
