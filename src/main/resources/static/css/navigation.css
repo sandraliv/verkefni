@@ -35,6 +35,7 @@ body {
     position: relative;
     z-index: 10;
     overflow: visible;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .home-button {
@@ -250,4 +251,15 @@ display:block;
 
 body {
     padding-bottom: 20px;
+}
+.welcome{
+
+
+}
+
+.welcome-image {
+    width:100%;
+    border-radius: 1px;
+    box-shadow: 0 0px 0px rgba(0, 0, 0, 0);
+
 }

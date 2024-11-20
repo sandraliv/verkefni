@@ -8,38 +8,41 @@
 <div th:fragment="searchForm">
   <form action="#" method="get" id="search-form" class="search-form">
 
-    <div class="search-field">
-      <label for="query" class="search-label">Search by Title:</label>
-      <input type="text" id="query" name="query"
-             placeholder="Enter recipe title"
-             class="search-input"
-             th:value="${query}">
-    </div>
-    <div class="tag-select-field">
-      <label for="tags" class="tags-label">Tags:</label>
-      <select id="tags" name="tags" multiple="multiple" class="tags-select">
-        <option th:each="tag : ${allTags}"
-                th:value="${tag}"
-                th:text="${tag.getDisplayName()}">
-       </option>
-     </select>
-    </div>
+    <div class="search-row-1">
+      <div class="search-field">
+        <label for="query" class="search-label">Search by Title:</label>
+          <input type="text" id="query" name="query"
+                placeholder="Enter recipe title"
+                class="search-input"
+                th:value="${query}">
+      </div>
 
-
-    <div class="selected-tags">
-      <h4>Selected Tags:</h4>
-      <div id="selected-tags-list">
-        <span th:each="selectedTag : ${tag}">
-          <div class="selected-tag" th:text="${selectedTag}"></div>
-          </span>
+      <div class="tag-select-field">
+        <label for="tags" class="tags-label">Tags:</label>
+        <select id="tags" name="tags" multiple="multiple" class="tags-select">
+          <option th:each="tag : ${allTags}"
+                  th:value="${tag.name()}"
+                  th:text="${tag.getDisplayName()}"
+                  th:selected="${tags != null && tags.contains(tag)}">
+          </option>
+        </select>
       </div>
     </div>
 
+    <div class="search-row-2">
+      <div class="selected-tags">
+        <h4>Selected Tags:</h4>
+        <div id="selected-tags-list">
+        <span th:each="selectedTag : ${tags}">
+            <span class="selected-tag" th:text="${selectedTag.getDisplayName()}"></span>
+          </span>
+        </div>
+      </div>
 
-    <button type="submit" class="search-button" id="search_submit">
-      Search
-    </button>
-
+      <button type="submit" class="search-button" id="search_submit">
+        Search
+      </button>
+    </div>
 
     <div th:if="${noResultsMessage}" class="no-results-message">
       <p th:text="${noResultsMessage}"></p>
