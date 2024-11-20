@@ -83,23 +83,23 @@ body {
     position: relative; /* Ensure dropdown works here too */
     z-index: 20;
 }
-/* Ensure the parent element (li) has a relative position */
+
 .log-in-account {
-    position: relative; /* Make sure the dropdown is positioned correctly */
+    position: relative;
 }
 
 .login-dropdown {
     display: none;
-    position: absolute; /* This makes the dropdown position relative to its parent */
-    top: 100%;  /* Place the dropdown just below the account button */
-    left: 0;  /* Align the dropdown to the left of the button */
+    position: absolute;
+    top: 100%;
+    left: 0;
     background-color: #fff;
     border: 1px solid #ccc;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     padding: 10px;
-    width: 200px; /* Set the width of the dropdown */
-    z-index: 10; /* Ensure the dropdown appears on top */
+    width: 200px;
+    z-index: 10;
 }
 .account-button:hover + .login-dropdown,
 .account-button:focus + .login-dropdown {
@@ -107,32 +107,32 @@ body {
 }
 /* User account dropdown */
 .user-dropdown-menu {
-    display: none; /* Hide the dropdown by default */
-    position: absolute;
-    top: 100%; /* Position it below the account button */
-    left: 0; /* Align it with the left side of the button */
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 200px;
-    z-index: 20; /* Make sure this dropdown is above others */
-}
-
-.category-menu {
-    position: relative;
-    margin-left: 20px;
-}
-.category-drop {
     display: none;
     position: absolute;
-    top: 45px;
+    top: 100%;
     left: 0;
     background-color: #fff;
     border: 1px solid #ccc;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 250px;
+    width: 200px;
+    z-index: 20;
+}
+
+.category-menu {
+    position: relative;
+    margin-right: 20px;
+}
+.category-drop {
+    display: none;
+    position: absolute;
+    top: 40px;
+    left: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 160px;
     z-index: 20;
 }
 .category-drop ul li:hover {
@@ -191,19 +191,16 @@ display:block;
     text-align: left;
 }
 
-/* Show login dropdown when account button is hovered */
 .log-in-account:hover .login-dropdown {
     display: block;
 }
 
-/* Show user dropdown when user is logged in */
 .log-in-account:hover .user-dropdown-menu {
     display: block;
 }
 .user-dropdown-menu li:hover {
     background-color: #f1f1f1;
 }
-
 
 .pagination-button {
   background-color: #FFFFFF;
@@ -225,16 +222,13 @@ display:block;
   padding:10px 20px;
   margin: 0 5px;
 }
-
 .pagination-button:hover {
   background-color: rgb(249,250,251);
 }
-
 .pagination-button:focus {
   outline: 2px solid transparent;
   outline-offset: 2px;
 }
-
 .pagination-button:focus-visible {
   box-shadow: none;
 }
@@ -254,7 +248,6 @@ display:block;
     margin: 0 10px;
 }
 
-/* Add some space at the bottom for the pagination to not stick directly to the edge */
 body {
     padding-bottom: 20px;
 }

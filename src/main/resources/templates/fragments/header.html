@@ -58,14 +58,13 @@
                     </a>
                 </li>
 
-                <li class="category-menu">
+                 <li class="category-menu">
                     <a href="#" class="category-nav-button">Categories</a>
                     <div class="category-drop">
                         <ul>
-                            <li th:each="category : ${categories}">
-                                <!-- Correctly set the href with category as a query parameter -->
-                                <a th:href="@{/allrecipes/byCategory?category={category}(category=${category.getDisplayName()})}"
-                                   class="dropdown-item category-drop-button">
+                             <li th:each="category : ${categories}">
+                                <a th:href="@{/allrecipes/byCategory?category={category}(category=${category})}"
+                                    class="dropdown-item category-drop-button">
                                     <button type="button" class="category-drop-button">
                                         <span th:text="${category.getDisplayName()}">Category Name</span>
                                     </button>
