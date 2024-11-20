@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -82,7 +83,7 @@ public class RecipeControllerui {
     public String getRecipeById(@PathVariable int id, Model model, HttpSession session) {
         Optional<Recipe> optionalRecipe = recipeService.findById(id);
         if (optionalRecipe.isPresent()) {
-            Recipe recipe = optionalRecipe.get(); // Get the Recipe object from Optional
+            Recipe recipe = optionalRecipe.get();
             String formattedDate = recipeService.formatDate(recipe.getDateAdded());
             recipe.setFormattedDate(formattedDate);
             model.addAttribute("recipe", recipe);
@@ -92,10 +93,14 @@ public class RecipeControllerui {
                 model.addAttribute("user", user);
             }
 
+            List<String> instructionSteps = Arrays.asList(recipe.getInstructions().split("\\. "));
+
+            model.addAttribute("instructionSteps", instructionSteps);
             LocalDate currentDate = LocalDate.now();
             DateTimeFormatter formatterCurrent = DateTimeFormatter.ofPattern("dd MMMM, yyyy");
             String CurrentDate = currentDate.format(formatterCurrent);
             model.addAttribute("currentDate", CurrentDate);
+            model.addAttribute("categories", Category.values());
 
             return "recipeDetail";
         }

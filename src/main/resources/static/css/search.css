@@ -5,7 +5,7 @@
   box-sizing: border-box;
 }
 
-/* Search Form Styling */
+
 .search-form {
   background-color: #ffffff;
   padding: 20px;
@@ -16,16 +16,14 @@
   position: relative;
 }
 
-/* Flexbox for search bar and tags side by side */
 .form-fields{
   display: flex;
   justify-content: space-between;
-  gap: 20px; /* Space between the fields */
+  gap: 20px;
 }
 
-/* Search Field Styling */
 .search-field, .tag-select-field {
-  flex: 1; /* Allow fields to take up equal space */
+  flex: 1;
 }
 
 .search-label, .tags-label {
@@ -50,7 +48,7 @@
   box-shadow: 0 0 5px rgba(90, 158, 246, 0.5);
 }
 
-/* Tags Select Styling */
+
 .tags-select {
   width: 100%;
   padding: 12px;
@@ -85,7 +83,7 @@
   color: #333;
 }
 
-/* Search Button Styling */
+
 .search-button {
   position: absolute;
   right: 20px;
@@ -103,7 +101,7 @@
   background-color: #145c8a;
 }
 
-/* No Results Message Styling */
+
 .no-results-message {
   background-color: #ffebeb;
   padding: 10px;

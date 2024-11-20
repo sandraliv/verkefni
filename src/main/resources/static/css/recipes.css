@@ -52,6 +52,11 @@ margin:10px;
    margin-bottom:5px;
 }
 
+.detail-header {
+margin-bottom:10px;
+
+}
+
 .category-badge, .tag-badge {
   display: inline-block;
   padding: 0px 3px;
@@ -145,7 +150,8 @@ padding:10px 10px ;
    position:absolute;
 }
 .fav{
-text-align:right;
+    text-align:right;
+    margin:0px;
 }
 /*stjörnur*/
 .star-rating .star,
@@ -156,32 +162,30 @@ text-align:right;
      cursor: pointer;
      transition: color 0.2s ease-in-out;
  }
- .rating .stars .star-empty {
+.rating .stars .star-empty {
      color: #ddd;
  }
- .rating .stars .star-half-filled {
+.rating .stars .star-half-filled {
      color: #ffcc00;
  }
- .rating .stars .star-filled {
+.rating .stars .star-filled {
      color: gold;
  }
- .star-rating .star {
+.star-rating .star {
      color: #ddd;
  }
- .star-rating .star.selected {
+.star-rating .star.selected {
      color: gold;
  }
- .star-rating .star:hover,
- .star-rating .star:hover ~ .star {
+.star-rating .star:hover,
+.star-rating .star:hover ~ .star {
      color: #ffcc00;
  }
-.recipe-detail .stars {
 
-}
-.recipe-detail-container .star-rating .star,
-.recipe-detail-container .rating .stars .star-filled,
-.recipe-detail-container .rating .stars .star-half-filled,
-.recipe-detail-container .rating .stars .star-empty {
+.recipe-detail .star-rating .star,
+.recipe-detail .rating .stars .star-filled,
+.recipe-detail .rating .stars .star-half-filled,
+.recipe-detail .rating .stars .star-empty {
      font-size: 20px;
      cursor: pointer;
      transition: color 0.2s ease-in-out;
@@ -200,6 +204,14 @@ text-align:right;
     margin-top: 5px;
     text-align: center;
 }
+
+.recipe-detail .rating-count {
+    font-size: 16px;
+    color: #333;
+    white-space: nowrap;
+
+}
+
 .rating-count {
     font-size: 14px;
     color: #333;
@@ -231,33 +243,128 @@ text-align:right;
     background-color: #fff;
 }
 .recipe-detail {
-    padding: 20px;
-}
-.recipe-detail p {
-    font-size: 1rem;
+    padding: 55px 86px;
+    margin: 0px; /* or else it clashes with styles.css */
+ }
+
+.detail-description {
+    font-size:25px;
     color: #555;
     line-height: 1.6;
 }
 
 .column {
     margin-top: 30px;
+    display: flex;
+    flex-direction: row;
+    justify-content:space-around;
+    width:100%;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
-.recipe-d-img{
+.recipe-d-img {
     width: 100%;
     height: 500px;
     object-fit: cover;
     border-bottom: 1px solid #ddd;
-
 }
 
 .cat-tag p {
 font-size:12px
 }
-.detail-title{
+.detail-title {
     font-size:3.8rem;
     color:rosybrown;
+}
 
+.row-1 {
+display:flex;
+padding:2px;
+justify-content:space-between;
+}
+.row-2 {
+display:flex;
+justify-content:space-between;
+
+padding:2px;
+}
+.row-3 {
+padding:2px;
+}
+
+.detail-date {
+font-size:20px;
 
 }
 
+.column-row-1 {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.ingredients {
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+
+
+
+.column-row-2 {
+    margin-top: 20px;
+    padding: 20px;
+}
+
+.instructions {
+    border-collapse: separate;
+    margin-top: 20px;
+    border-spacing: 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.th, td {
+    text-align: left;
+    border: 1px solid #ddd;
+    padding: 16px;
+    font-size: 18px;
+    font-family: 'Arial', sans-serif;
+    vertical-align: top;
+    }
+}
+
+.th {
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 3px solid #2980b9;
+    background-color: #f2f2f2;
+}
+.instructions td {
+    background-color: #f9f9f9;
+    color: #333;
+    border-bottom: 1px solid #ddd;
+}
+/* Add alternating row colors */
+.instructions tr:nth-child(even) td {
+    background-color: #f2f2f2;
+}
+
+/* Hover effect on rows */
+.instructions tr:hover td {
+    background-color: #f0f0f0;
+    cursor: pointer;
+}
+
+/* Adding the step numbering style */
+.instructions span.step-number {
+    font-weight: bold;
+    color: rosybrown;
+    margin-right: 10px;
+}
 

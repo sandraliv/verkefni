@@ -6,6 +6,11 @@
     <link rel="stylesheet" href="/css/recipes.css">
     <link rel="stylesheet" href="/css/navigation.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="/images/logo.png" type="image/png">
+    <link rel="icon" href="/images/logo-16x16.png" sizes="16x16" type="image/png">
+    <link rel="icon" href="/images/logo-32x32.png" sizes="32x32" type="image/png">
+    <link rel="icon" href="/images/logo-192x192.png" sizes="192x192" type="image/png">
+
     <meta charset="UTF-8">
     <title th:text="${recipe.title}">Recipe Title></title>
 </head>
@@ -14,71 +19,93 @@
 <div class="recipe-list-container">
     <div class="recipe-detail-container">
         <div class="recipe-detail" id="recipe-detail">
-
-            <form class="fav" th:action="@{/allrecipes/{id}/addAsFav(id=${recipe.id})}" method="post">
-                <button class="heart-icon-detail toggle-fav-button" type="submit">
-                    <i class="fa-regular fa-heart"></i> <!-- Default empty heart -->
-                </button>
-            </form>
-
-            <h3 class="detail-title" th:text="${recipe.title}">Recipe Title</h3>
-
-            <img class="recipe-d-img" th:src="${recipe.image_url}" alt="Recipe Image"/>
-
-            <p class="detail-description" th:text="${recipe.description}">Recipe Description</p>
-
-            <p><strong></strong>
-                <i class="fa-regular fa-calendar"></i>
-                <span th:text="${recipe.formattedDate}">Date Added</span>
-            </p>
-
-            <div class="rating">
-                <div class="stars">
-                <span th:each="i : ${#numbers.sequence(1, 5)}"
-                    th:class="${i <= recipe.averageRating.intValue() ? 'star-filled' :
-                            (i - 0.5 <= recipe.averageRating.doubleValue() && i > recipe.averageRating.doubleValue() ? 'star-half-filled' : 'star-empty')}">
-                     ★
-                </span>
+            <div class="detail-header" >
+                <div class="row-1" >
+                    <h3 class="detail-title" th:text="${recipe.title}">Recipe Title</h3>
+                    <form class="fav" th:action="@{/allrecipes/{id}/addAsFav(id=${recipe.id})}" method="post">
+                        <button class="heart-icon-detail toggle-fav-button" type="submit">
+                            <i class="fa-regular fa-heart"></i> <!-- Default empty heart -->
+                        </button>
+                    </form>
                 </div>
-                <span class="rating-count"
-                      th:text="${recipe.ratingCount == 0 ? 'No ratings yet' : '(' + recipe.ratingCount + ')'}">
-                </span>
+                <img class="recipe-d-img" th:src="${recipe.image_url}" alt="Recipe Image"/>
             </div>
 
-            <div class="column">
-                <table class="ingredients">
-                    <tr>
-                        <th>Ingredient</th>
-                        <th>Quantity</th>
-                    </tr>
-                    <tr th:each="ingredient : ${recipe.ingredients}">
-                        <td th:text="${#strings.replace(ingredient.key, '_', ' ')}">Ingredient Name</td>
-                        <td th:text="${ingredient.value}">Ingredient Quantity</td>
-                    </tr>
-                </table>
+            <div class="row-2">
+                <p class="detail-date"><strong></strong>
+                    <i class="fa-regular fa-calendar"></i>
+                    <span th:text="${recipe.formattedDate}">Date Added</span>
+                </p>
 
-                <p class="instructions"><strong>Instructions:</strong>
-                    <span th:text="${recipe.instructions}">Recipe Instructions</span>
+                <div class="rating">
+                    <div class="stars">
+                        <span th:each="i : ${#numbers.sequence(1, 5)}"
+                              th:class="${i <= recipe.averageRating.intValue() ? 'star-filled' :
+                              (i - 0.5 <= recipe.averageRating.doubleValue() && i > recipe.averageRating.doubleValue() ? 'star-half-filled' : 'star-empty')}">
+                            ★
+                        </span>
+                    </div>
+                    <span class="rating-count"
+                          th:text="${recipe.ratingCount == 0 ? 'No ratings yet' : '(' + recipe.ratingCount + ')'}">
+                    </span>
+                </div>
+            </div>
+            <div class="row-5">
+                <p class="detail-description" th:text="${recipe.description}">Recipe Description</p>
+            </div>
+            <div class="column">
+                <div class="column-row-1">
+                    <table class="ingredients">
+                        <tr>
+                            <th>Ingredient</th>
+                            <th>Quantity</th>
+                        </tr>
+                        <tr th:each="ingredient : ${recipe.ingredients}">
+                            <td th:text="${#strings.replace(ingredient.key, '_', ' ')}">Ingredient Name</td>
+                            <td th:text="${ingredient.value}">Ingredient Quantity</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="column-row-2">
+                    <table class="instructions">
+                        <thead>
+                            <tr>
+                                <th>Instructions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="instruction, iterStat : ${instructionSteps}">
+                                <td>
+                                    <span class="step-number" th:text="'Step ' + ${iterStat.index + 1} + ':'"></span>
+                                    <span th:text="${instruction}">Step 1: Preheat oven to 350°F</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+            <div class="row-3">
+                <p><strong>Categories:</strong>
+                    <span th:if="${#lists.isEmpty(recipe.categories)}">No categories assigned</span>
+                    <span th:each="category : ${recipe.categories}"
+                          th:text="${category.getDisplayName()}"
+                          style="display: inline-block; padding: 5px 10px; background-color: #f0f0f0; border-radius: 15px; margin: 5px;">
+                    </span>
+                </p>
+                <p><strong>Tags:</strong>
+                    <span th:if="${#lists.isEmpty(recipe.tags)}">No tags assigned</span>
+                    <span th:each="tag : ${recipe.tags}"
+                          th:text="${tag.getDisplayName()}"
+                          style="display: inline-block; padding: 5px 10px; background-color: #d1e7f3; border-radius: 15px; margin: 5px;">
+                    </span>
                 </p>
             </div>
 
-            <p><strong>Categories:</strong>
-                <span th:if="${#lists.isEmpty(recipe.categories)}">No categories assigned</span>
-                <span th:each="category : ${recipe.categories}"
-                      th:text="${category.getDisplayName()}"
-                      style="display: inline-block; padding: 5px 10px; background-color: #f0f0f0; border-radius: 15px; margin: 5px;">
-                </span>
-            </p>
-            <p><strong>Tags:</strong>
-                <span th:if="${#lists.isEmpty(recipe.tags)}">No tags assigned</span>
-                <span th:each="tag : ${recipe.tags}"
-                      th:text="${tag.getDisplayName()}"
-                      style="display: inline-block; padding: 5px 10px; background-color: #d1e7f3; border-radius: 15px; margin: 5px;">
-                </span>
-            </p>
+            <div class="rating-form">
 
-
-            <div>
                 <button type="button" id="rateButton" onclick="toggleRatingForm()">Rate this recipe</button>
 
                 <div th:if="${user != null}">
@@ -90,12 +117,10 @@
                         <button type="submit">Submit Rating</button>
                     </form>
                 </div>
-
                 <div th:if="${user == null}">
                     <p>You are not logged in. Please log in to rate this recipe.</p>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
