@@ -46,6 +46,7 @@ public class Recipe {
     @CollectionTable(name = "recipe_categories", joinColumns = @JoinColumn(name = "recipe_id"), uniqueConstraints = @UniqueConstraint(columnNames = {"recipe_id", "categories"}))
     @Column(name = "category")
     private Set<Category> categories = new HashSet<>();  // Multiple categories
+
     @PreRemove
     public void preRemove() {
         categories.clear();
@@ -91,7 +92,6 @@ public class Recipe {
         this.tags = tags;
         this.instructions = instructions;
         this.categories = categories;
-
     }
 
     public Recipe() {

@@ -20,7 +20,7 @@
             <li class="favourites" th:each="recipe : ${favorites}">
                 <p th:text="${recipe.title}"><strong>Recipe Name</strong></p>
                 <p th:text="${recipe.description}">Recipe Description</p>
-                <a th:href="@{/recipes/{id}(id=${recipe.id})}">View Recipe</a>
+                <a th:href="@{/allrecipes/{id}(id=${recipe.id})}">View Recipe</a>
                 <form th:action="@{/usersui/favorites/{id}/remove(id=${recipe.id})}" method="post"
                       style="display:inline;">
                     <button type="submit">Remove</button>

@@ -9,8 +9,10 @@
 <body>
 <div class="container">
     <div class="contains">
-        <h1>Recipes:</h1>
-        <a href="../admin">Back</a>
+        <div class="admin-rec">
+            <h1>Recipes:</h1>
+            <a href="../admin">Back</a>
+        </div>
         <ul class="admin-recipes" id="admin-recipes">
             <li th:each="recipe : ${recipes}" class="lis">
                 <p>

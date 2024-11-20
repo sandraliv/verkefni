@@ -35,7 +35,7 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
     Page<Recipe> findByDate(Pageable pageable);
 
     @Query("SELECT r FROM Recipe r")
-    @EntityGraph(attributePaths = {"ingredients", "tags"})
+    @EntityGraph(attributePaths = {"ingredients", "tags", "categories"})
     Page<Recipe> findAllPaginated(Pageable pageable);
 
     @NonNull

@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="/css/grunnur.css">
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/login-logout.css">
+    <link rel="stylesheet" href="/css/user-profile.css">
     <script>
         function addIngredientRow() {
     const ingredientContainer = document.getElementById("ingredients-container");
@@ -45,6 +46,13 @@
 
 
 
+
+
+
+
+
+
+
     </script>
 </head>
 <body>
@@ -70,6 +78,12 @@
                 <div id="ingredients-container">
                     <label>Ingredients:</label>
                     <button type="button" onclick="addIngredientRow()">Add Ingredient</button>
+                </div>
+                <div class="ingredients-container">
+                    <label for="description">Description:</label>
+                    <textarea id="instructions" name="instructions" th:field="*{instructions}"></textarea>
+                    <p class="contact_error" th:if="${#fields.hasErrors('instructions')}"
+                       th:errors="*{instructions}"></p>
                 </div>
                 <div class="tags_cat">
                     <div class="tags">

@@ -41,7 +41,8 @@
                     </div>
                     <ul class="user-dropdown-menu" th:if="${user != null}" aria-labelledby="accountDropdownButton">
                         <li>
-                            <a th:href="@{/usersui/profile}" class="user-dropdown-item">User profile</a>
+                            <a th:href="@{/usersui/{id}(id=${user.id})}" th:method="get" class="user-dropdown-item">User
+                                profile</a>
                         </li>
                         <li>
                             <a th:href="@{/usersui/favorites}" class="user-dropdown-item">Favorites</a>

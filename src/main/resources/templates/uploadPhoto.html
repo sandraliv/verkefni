@@ -6,14 +6,15 @@
     <title>Favorite Recipes</title>
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/grunnur.css">
+    <link rel="stylesheet" href="/css/user-profile.css">
 </head>
+<body>
 <div class="container">
     <div class="contains">
-        <body>
         <h1>Add a Photo?</h1>
         <form id="photo-upload-form" th:action="@{/recipesui/{id}/upload(id=${id})}" method="post"
               enctype="multipart/form-data">
-            <h2>Upload a Photo for Your Recipe</h2>
+            <p>Upload a Photo for Your Recipe</p>
             <div>
                 <label for="photo">Choose a photo:</label>
                 <input type="file" id="photo" name="file" accept="image/*"/>
@@ -21,7 +22,7 @@
             <button type="submit">Upload Photo</button>
         </form>
         <button href="/">SKIP</button>
-        </body>
     </div>
 </div>
+</body>
 </html>
