@@ -3,12 +3,79 @@
     flex-direction: column;
     justify-content: center;
     width: 400px;
+    margin-top: 30px
 }
 
 .login_page {
     display: flex;
     align-items: center;
     flex-direction: column;
+    margin-top: 60px;
+}
+
+
+.favourites {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+}
+
+.tags {
+    display: flex;
+    flex-direction: column;
+}
+
+.tags_cat {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+.tag_cat {
+    margin-bottom: 10px;
+}
+
+#title {
+    width: 400px;  /* Set the width to your desired size */
+    padding: 10px;  /* Optional: Add padding to make the text more readable */
+    font-size: 16px;  /* Optional: Adjust font size for better visibility */
+}
+
+#ingredients-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 30px;
+    gap: 30px;
+}
+
+.recipe_form {
+    margin-bottom: 20px;
+    margin-top: 30px;
+}
+
+.favourites button {
+    background-color: rosybrown;
+    color: #fff;
+    padding: 4px 9px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.favourites a {
+    color: rosybrown;
+}
+
+#description {
+    max-width: 400px;
+    min-height: 100px;
+    max-height: 300px;
+    min-width: 400px;
+    padding: 10px;
 }
 
 .contains {

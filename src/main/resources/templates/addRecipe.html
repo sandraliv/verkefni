@@ -2,8 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Add recipe</title>
-    <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/grunnur.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/login-logout.css">
     <script>
         function addIngredientRow() {
     const ingredientContainer = document.getElementById("ingredients-container");
@@ -38,6 +39,12 @@
 }
 
 
+
+
+
+
+
+
     </script>
 </head>
 <body>
@@ -48,44 +55,46 @@
         <div th:if="${message}">
             <p th:text="${message}"></p>
         </div>
-        <form th:action="@{/admin/newRecipe}" method="post" th:object="${newRecipe}">
-            <div>
-                <label for="title">Recipe title:</label>
-                <input type="text" id="title" name="title" th:field="*{title}"/>
-                <p class="contact_error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></p>
-            </div>
-
-            <div>
-                <label for="description">Description:</label>
-                <textarea id="description" name="description" th:field="*{description}"></textarea>
-                <p class="contact_error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></p>
-            </div>
-            <div>
-                <label>Ingredients:</label>
+        <div class="recipe_form">
+            <form th:action="@{/admin/newRecipe}" method="post" th:object="${newRecipe}">
+                <div class="ingredients-container">
+                    <label for="title">Recipe title:</label>
+                    <input type="text" id="title" name="title" th:field="*{title}"/>
+                    <p class="contact_error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></p>
+                </div>
+                <div class="ingredients-container">
+                    <label for="description">Description:</label>
+                    <textarea id="description" name="description" th:field="*{description}"></textarea>
+                    <p class="contact_error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></p>
+                </div>
                 <div id="ingredients-container">
+                    <label>Ingredients:</label>
+                    <button type="button" onclick="addIngredientRow()">Add Ingredient</button>
                 </div>
-                <button type="button" onclick="addIngredientRow()">Add Ingredient</button>
-            </div>
-            <div>
-                <label>Tags:</label>
-                <div th:each="tag : ${allTags}">
-                    <input type="checkbox" th:field="*{tags}" th:value="${tag}" th:attr="id='tag_' + ${tag}"/>
-                    <label th:attr="for='tag_' + ${tag}" th:text="${tag}"></label>
+                <div class="tags_cat">
+                    <div class="tags">
+                        <label class="tag_cat">Tags:</label>
+                        <div th:each="tag : ${allTags}">
+                            <input type="checkbox" th:field="*{tags}" th:value="${tag}" th:attr="id='tag_' + ${tag}"/>
+                            <label th:attr="for='tag_' + ${tag}" th:text="${tag}"></label>
+                        </div>
+                        <p class="contact_error" th:if="${#fields.hasErrors('tags')}" th:errors="*{tags}"></p>
+                    </div>
+                    <div class="tags">
+                        <label class="tag_cat">Category:</label>
+                        <div th:each="category : ${allCategories}">
+                            <input type="checkbox" th:field="*{categories}" th:value="${category}"
+                                   th:attr="id='category_' + ${category}"/>
+                            <label th:attr="for='category_' + ${category}" th:text="${category}"></label>
+                        </div>
+                        <p class="contact_error" th:if="${#fields.hasErrors('categories')}"
+                           th:errors="*{categories}"></p>
+                    </div>
                 </div>
-                <p class="contact_error" th:if="${#fields.hasErrors('tags')}" th:errors="*{tags}"></p>
-            </div>
-            <div>
-                <label>Category:</label>
-                <div th:each="category : ${allCategories}">
-                    <input type="checkbox" th:field="*{categories}" th:value="${category}"
-                           th:attr="id='category_' + ${category}"/>
-                    <label th:attr="for='category_' + ${category}" th:text="${category}"></label>
-                </div>
-                <p class="contact_error" th:if="${#fields.hasErrors('categories')}" th:errors="*{categories}"></p>
-            </div>
-            <p class="contact_error" th:if="${message}" th:text="${message}"></p>
-            <button type="submit">Submit recipe</button>
-        </form>
+                <p class="contact_error" th:if="${message}" th:text="${message}"></p>
+                <button type="submit">Submit recipe</button>
+            </form>
+        </div>
         <a href="/admin">Back</a>
     </div>
 </div>

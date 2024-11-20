@@ -36,8 +36,10 @@ h2 {
     color: rosybrown;
     font-style: italic;
     }
-}
 
+
+/* Rating container - Using flexbox to align stars and rating count horizontally */
+/* Recipe List */
 .recipe-list {
     list-style-type: none;
     padding: 0;
@@ -46,9 +48,12 @@ h2 {
     display: flex;
     flex: 1;
 }
+
+
 ul {
   list-style-type: none;
 }
+
 .li {
     background-color: #fff;
     padding: 40px;
@@ -58,6 +63,7 @@ ul {
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+
 .admin-recipes {
     display: flex;
     flex-wrap: wrap;
@@ -83,7 +89,7 @@ ul {
 }
 
 .lis p {
-    overflow-wrap: anywhere;
+    overflow-wrap: anywhere; /* Break lines anywhere if needed */
 }
 
 h3 {
@@ -168,6 +174,25 @@ p {
     border-color: red;
 }
 /* General category list styling */
+
+ /* Style for the heart icon */
+ .heart-icon i {
+     font-size: 24px;
+     color: gray;  /* Default empty heart color */
+     transition: color 0.3s ease;
+ }
+
+ /* Filled heart (favorited) */
+ .heart-icon i.fa-heart {
+     color: red;  /* Color when the recipe is favorited */
+ }
+
+ /* Hover effect */
+ .heart-icon i:hover {
+     color: #ff4d4d;  /* Change color when hovered */
+ }
+
+/* General Styling for Category List */
 .category-list {
     list-style: none;
     padding: 0;
@@ -267,6 +292,8 @@ form {
 .current-page {
     padding: 8px 16px;
     margin: 0 5px;
+}
+
 }
 
 .dropdown {

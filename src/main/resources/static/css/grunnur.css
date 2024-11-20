@@ -45,15 +45,12 @@ html {
 }
 
 body {
-  font-size: var(--font-base-body-px);
-  line-height: 1.5;
-  font-family: var(--font-family-base);
-  max-width: var(--max-width);
+  display: flex;
+  justify-content: center;
 }
 
 .container {
   display: flex;
   justify-content: center;
-  max-width: var(--max-width);
-  min-width: 500px
+  flex-direction: column;
 }
