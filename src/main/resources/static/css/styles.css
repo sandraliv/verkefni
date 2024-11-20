@@ -97,50 +97,6 @@ p {
     line-height: 1.6;
 }
 
-.star-rating .star,
-.rating .stars .star-filled,
-.rating .stars .star-half-filled,
-.rating .stars .star-empty {
-    font-size: 30px;
-    cursor: pointer;
-    transition: color 0.2s ease-in-out;
-}
-
-
-.rating .stars .star-empty {
-    color: #ddd;
-}
-
-
-.rating .stars .star-half-filled {
-    color: #ffcc00;
-}
-
-
-.rating .stars .star-filled {
-    color: gold;
-}
-
-
-.star-rating .star {
-    color: #ddd;
-}
-
-.star-rating .star.selected {
-    color: gold;
-}
-
-.star-rating .star:hover,
-.star-rating .star:hover ~ .star {
-    color: #ffcc00;
-}
-
-.rating-count {
-    margin-left: 8px;
-    font-size: 1rem;
-    color: #555;
-}
-
 .rating-form {
     width: 100%;
     max-width: 450px;
@@ -201,7 +157,6 @@ p {
     margin-bottom: 20px;
 }
 
-
 .rating-form .contact_error {
     color: red;
     font-size: 1em;
@@ -209,27 +164,10 @@ p {
     text-align: center;
 }
 
-
 .rating-form input:invalid {
     border-color: red;
 }
-
- .heart-icon i {
-     font-size: 24px;
-     color: gray;
-     transition: color 0.3s ease;
- }
-
- .heart-icon i.fa-heart {
-     color: red;
- }
-
-
- .heart-icon i:hover {
-     color: #ff4d4d;
- }
-
-
+/* General category list styling */
 .category-list {
     list-style: none;
     padding: 0;
@@ -237,47 +175,52 @@ p {
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: 35px;
+    gap: 25px; /* Spacing between category buttons */
     margin-top: 20px;
-    height: 30vh;
 }
-
-
-.category-list li {
-    margin: 0;
-    display: flex;
-    align-items: center;
-}
-
 
 .category-buttons {
-    background-color: rosybrown;
-    color: white;
+    background-color: #fdfaf9;
+    color: #333;
     font-size: 1.6em;
-    font-weight: bold;
-    border: none;
-    border-radius: 12px;
-    padding: 18px 40px;
-    cursor: pointer;
+    padding: 15px 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     text-decoration: none;
     transition: all 0.3s ease;
     display: inline-block;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     text-align: center;
+    position: relative;
 }
-
 
 .category-buttons:hover {
-    background-color: #3498db;
-    transform: scale(1.1);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    color: #bc8f8f;
+    transform: scale(1.05);
+}
+.category-buttons.selected {
+    color: #bc8f8f;
+    border-color: #2980b9;
+    transform: scale(1.05);
+}
+.category-buttons:focus {
+    outline: none;
+    box-shadow: 0 0 12px rgba(41, 128, 185, 0.7); /* Blue outline when focused */
+}
+
+.category-buttons.selected:hover {
+    transform: scale(1.1); /* Hover enlarge effect */
 }
 
 
-.category-buttons:focus {
-    outline: none;
-    box-shadow: 0 0 12px rgba(41, 128, 185, 0.7);
+@media (max-width: 768px) {
+    .category-list {
+        gap: 15px;
+    }
 
+    .category-buttons {
+        font-size: 1.4em;
+        padding: 12px 25px;
+    }
+}
 
 form {
     text-align: center;
@@ -325,28 +268,6 @@ form {
     padding: 8px 16px;
     margin: 0 5px;
 }
-.see-more-button{
-  position: absolute;
-  bottom: -20px;
-  right: -20px;
-  border: none;
-  outline: none;
-  display: flex;
-  align-items: center;
-  background-color: #fc9400;
-  color: $primary-color;
-  padding: 22px 45px;
-  font-size: 1rem;
-  text-transform: uppercase;
-  border-radius: $border-radius;
-  cursor: pointer;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.294);
-  i {
-   margin-left: 20px;
-   font-size: 1.5rem;
-  }
-}
-
 
 .dropdown {
     position: relative;
@@ -391,51 +312,6 @@ form {
 }
 
 
-#search-form {
-  margin: 50px auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  max-width: 600px; /* Set a max-width for better control */
-}
-
-.search-field {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 20px;
-  width: 100%;
-}
-
-.search-label {
-  font-size: 16px;
-  margin-bottom: 8px;
-}
-
-.search-input {
-  height: 40px;
-  font-size: 16px;
-  padding: 0 20px;
-  border: 2px solid #ddd;
-  border-radius: 30px;
-  outline: none;
-  width: 100%;
-  transition: all 0.3s ease;
-}
-
-.search-input:focus {
-  width: 100%;
-  border-color: #aaa;
-}
-
-.search-input::placeholder {
-  color: #aaa;
-}
-
-.multi-select-tag {
-  margin-bottom: 20px;
-}
-
 .tags-select {
   width: 100%;
   padding: 10px;
@@ -443,11 +319,6 @@ form {
   border: 2px solid #ddd;
 }
 
-.search-submit-button {
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-}
 
 #search_submit {
   height: 50px;
@@ -470,4 +341,9 @@ form {
 
 #search_submit:focus {
   outline: none;
+}
+.home-container {
+  justify-content: center;
+  max-width: var(--max-width);
+  min-width: 500px
 }

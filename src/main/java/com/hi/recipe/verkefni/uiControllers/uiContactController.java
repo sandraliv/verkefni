@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Controller
 public class uiContactController {
@@ -97,19 +98,40 @@ public class uiContactController {
      * @return to login after invalidating a session
      */
     @GetMapping("")
-    public String getFrontPage(Model model, HttpSession session, @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "5") int size) {
+    public String getFrontPage(Model model, HttpSession session, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "12") int size,
+                               @RequestParam(value = "query", required = false) String query,
+                               @RequestParam(value = "tags", required = false) Set<RecipeTag> tags) {
         User user = (User) session.getAttribute("user");
         if (user != null) {
             model.addAttribute("user", user);
         }
-        List<Recipe> recipes = recipeService.findAllPaginated(page, size);
+        List<Recipe> recipes;
+
+        if ((query == null || query.isEmpty()) && (tags == null || tags.isEmpty())) {
+            recipes = recipeService.findAllPaginated(page, size);
+            System.out.println("halló nr 1");
+        } else if (tags == null || tags.isEmpty()) {
+            recipes = recipeService.findByTitleContainingIgnoreCase(query);
+            System.out.println("halló nr 2");
+        } else if (query == null || query.isEmpty()) {
+            System.out.println("halló nr 3");
+            recipes = recipeService.findByTagsIn(tags);
+        } else {
+            System.out.println("halló er að reyna með query og tags");
+            recipes = recipeService.findByTitleAndTags(query, tags);
+        }
+
+        for (Recipe recipe : recipes) {
+            String formattedDate = recipeService.formatDate(recipe.getDateAdded());
+            recipe.setFormattedDate(formattedDate);  // Add formatted date to recipe
+        }
         LocalDate currentDate = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM, yyyy");
-        String formattedDate = currentDate.format(formatter);
+        DateTimeFormatter formatterCurrent = DateTimeFormatter.ofPattern("dd MMMM, yyyy");
+        String CurrentDate = currentDate.format(formatterCurrent);
 
 
-        model.addAttribute("currentDate", formattedDate);
+        model.addAttribute("query", query);
+        model.addAttribute("currentDate", CurrentDate);
         model.addAttribute("categories", Category.values());
         model.addAttribute("recipes", recipes);
         model.addAttribute("allTags", RecipeTag.values());

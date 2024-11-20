@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface RecipeService {
-    
+
     List<Recipe> findAll();
 
     List<Recipe> findAllPaginated();
@@ -38,17 +38,17 @@ public interface RecipeService {
 
     List<Recipe> findByTitleAndTags(String title, Set<RecipeTag> tags);
 
-    List<Recipe> findByDate();
+    List<Recipe> findByDate(int page, int size);
 
     String formatDate(LocalDateTime date);
 
     // Paginated recipes sorted by average rating
-    List<Recipe> findAllByAverageRatingDesc();
+    List<Recipe> findAllByAverageRatingDesc(int page, int size);
 
     @Transactional
     void addRating(int recipeId, User user, int score);
 
-    List<Recipe> getSortedRecipes(String sort, Set<Category> categories);
+    List<Recipe> getSortedRecipes(String sort, Set<Category> categories,int page, int size);
 
     // Method to convert a set of category strings to Set<Category> enum
     Set<Category> convertToCategoryEnum(Set<String> categoryStrings);

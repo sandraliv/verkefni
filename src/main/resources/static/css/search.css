@@ -1,147 +1,140 @@
-/* Global styles */
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Search Form Styling */
 .search-form {
-  margin: 50px auto;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* Flexbox for search bar and tags side by side */
+.form-fields{
   display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  max-width: 800px; /* Set a max-width for better control */
-  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px; /* Space between the fields */
 }
 
-.search-field {
-  margin-bottom: 20px;
-  width: 100%;
+/* Search Field Styling */
+.search-field, .tag-select-field {
+  flex: 1; /* Allow fields to take up equal space */
 }
 
-/* Label styling */
-.search-label {
-  font-size: 19px;
-  margin-bottom: 8px;
+.search-label, .tags-label {
+  display: block;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 5px;
+  font-weight: bold;
 }
 
 .search-input {
-  height: 40px;
-  font-size: 16px;
-  padding: 0 20px;
-  border: 2px solid #ddd;
-  border-radius: 30px;
-  outline: none;
   width: 100%;
-  transition: all 0.3s ease;
+  padding: 12px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  outline: none;
 }
 
 .search-input:focus {
-  border-color: #aaa;
+  border-color: #5a9ef6;
+  box-shadow: 0 0 5px rgba(90, 158, 246, 0.5);
 }
 
-.search-input::placeholder {
-  color: #aaa;
-}
-
-/* Tags Dropdown Styles */
-.tags-menu {
-  position: relative;
-  width: 100%;
-  margin-top: 20px;
-}
-
-.tags-nav-button {
-  display: inline-block;
-  padding: 10px 15px;
-  font-size: 19px;
-  border: 2px solid #ddd;
-  border-radius: 30px;
-  background-color: white;
-  cursor: pointer;
-  width: 100%;
-  transition: background-color 0.3s ease;
-  margin-bottom: 10px;
-}
-
-.tags-nav-button:hover {
-  background-color: #f8b400;
-}
-
+/* Tags Select Styling */
 .tags-select {
-  display: block;
   width: 100%;
-  padding: 8px 15px;
-  border: 2px solid #ddd;
+  padding: 12px;
+  font-size: 14px;
+  border: 1px solid #ddd;
   border-radius: 5px;
-  font-size: 16px;
-  background-color: white;
   outline: none;
-  cursor: pointer;
 }
 
 .tags-select:focus {
-  border-color: #f8b400;
+  border-color: #5a9ef6;
+  box-shadow: 0 0 5px rgba(90, 158, 246, 0.5);
 }
 
 .selected-tags {
-  margin-top: 10px;
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.selected-tags h4 {
-  margin-bottom: 5px;
-  font-size: 18px;
+  margin-top: 20px;
 }
 
 .selected-tag {
-  background-color: #f8b400;
-  color: white;
-  padding: 5px 10px;
-  border-radius: 5px;
+  background-color: #e1f0ff;
+  color: #1e70b9;
+  border-radius: 20px;
+  padding: 5px 12px;
   margin: 5px;
-  display: flex;
-  align-items: center;
+  display: inline-block;
+  font-size: 12px;
 }
 
-.selected-tag .remove-tag {
-  margin-left: 5px;
-  cursor: pointer;
-  font-size: 14px;
-  color: white;
-  background-color: transparent;
-  border: none;
-}
-
-.search-submit-button {
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-}
-
-#search_submit {
-  height: 50px;
-  padding: 0 20px;
-  background-color: #f8b400; /* Yellow button */
-  color: white;
-  border: none;
-  border-radius: 30px;
+.selected-tags h4 {
   font-size: 16px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+/* Search Button Styling */
+.search-button {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  background-color: #1e70b9;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  font-size: 14px;
+  border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-#search_submit:hover {
-  background-color: #f59e42; /* Slightly darker yellow on hover */
+.search-button:hover {
+  background-color: #145c8a;
 }
 
-#search_submit:focus {
-  outline: none;
-}
-
-/* No results message */
+/* No Results Message Styling */
 .no-results-message {
+  background-color: #ffebeb;
+  padding: 10px;
+  border: 1px solid #ff4d4d;
+  color: #ff4d4d;
+  border-radius: 5px;
   margin-top: 20px;
-  color: red;
-  font-size: 18px;
   text-align: center;
+  font-size: 14px;
 }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .search-form {
+    padding: 15px;
+  }
+
+.form-fields {
+    flex-direction: column;
+  }
+
+.search-input, .tags-select {
+    font-size: 16px;
+  }
+
+.search-button {
+    right: 10px;
+    bottom: 10px;
+    padding: 10px 18px;
+  }
+}
+
+
+

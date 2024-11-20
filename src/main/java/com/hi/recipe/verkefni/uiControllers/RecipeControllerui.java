@@ -14,6 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -82,21 +84,27 @@ public class RecipeControllerui {
      */
     @GetMapping("/{id}")
     public String getRecipeById(@PathVariable int id, Model model, HttpSession session) {
-        Optional<Recipe> recipe = recipeService.findById(id);
-        if (recipe.isPresent()) {
-            model.addAttribute("recipe", recipe.get());
+        Optional<Recipe> optionalRecipe = recipeService.findById(id);
+        if (optionalRecipe.isPresent()) {
+            Recipe recipe = optionalRecipe.get(); // Get the Recipe object from Optional
+            String formattedDate = recipeService.formatDate(recipe.getDateAdded());
+            recipe.setFormattedDate(formattedDate);
+            model.addAttribute("recipe", recipe);
 
-
-            User sessionUser = (User) session.getAttribute("user");
-            if (sessionUser == null) {
-                Optional<User> user = userService.findById(id);
+            User user = (User) session.getAttribute("user");
+            if (user != null) {
                 model.addAttribute("user", user);
             }
+
+            LocalDate currentDate = LocalDate.now();
+            DateTimeFormatter formatterCurrent = DateTimeFormatter.ofPattern("dd MMMM, yyyy");
+            String CurrentDate = currentDate.format(formatterCurrent);
+            model.addAttribute("currentDate", CurrentDate);
+
             return "recipeDetail";
         }
-
-
         model.addAttribute("errorMessage", "Recipe not found.");
+
         return "error";
     }
 
@@ -106,36 +114,50 @@ public class RecipeControllerui {
      * @return List of recipes ordered by date, newest first
      */
     @GetMapping("/byDate")
-    public String getRecipesByDate(Model model) {
-        List<Recipe> recipes = recipeService.findByDate();
+    public String getRecipesByDate(Model model,
+                                   @RequestParam(defaultValue = "0") int page,
+                                   @RequestParam(defaultValue = "12") int size) {
+        List<Recipe> recipes = recipeService.findByDate(page, size);
         for (Recipe recipe : recipes) {
             String formattedDate = recipeService.formatDate(recipe.getDateAdded());
             recipe.setFormattedDate(formattedDate);  // Add formatted date to recipe
         }
-
         model.addAttribute("recipes", recipes);
-        return "recipeCard";
+        return "recipeList";
     }
 
     @GetMapping("/byCategory")
-    public String getRecipesByCategory(
-            @RequestParam(value = "categories", required = false) Set<String> categories,
-            @RequestParam(value = "sort", required = false, defaultValue = "byDate") String sort, // Default sort is "byDate"
-            Model model) {
+    public String getRecipesByCategory(@RequestParam(value = "categories", required = false) Set<String> categories,
+                                       @RequestParam(value = "sort", required = false, defaultValue = "byDate") String sort,
+                                       @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "12") int size,
+                                       @RequestParam(value = "query", required = false) String query,
+                                       @RequestParam(value = "tags", required = false) Set<RecipeTag> tags,
+                                       Model model,HttpSession session) {
 
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            model.addAttribute("user", user);
+        }
         List<Recipe> recipes;
         Set<Category> categoryEnumSet = recipeService.convertToCategoryEnum(categories);
-        recipes = recipeService.getSortedRecipes(sort, categoryEnumSet);
+        recipes = recipeService.getSortedRecipes(sort, categoryEnumSet,page,size);
         for (Recipe recipe : recipes) {
             String formattedDate = recipeService.formatDate(recipe.getDateAdded());
             recipe.setFormattedDate(formattedDate);
         }
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter formatterCurrent = DateTimeFormatter.ofPattern("dd MMMM, yyyy");
+        String CurrentDate = currentDate.format(formatterCurrent);
 
-        model.addAttribute("tags", RecipeTag.values());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("currentDate", CurrentDate);
+        model.addAttribute("hasNext", recipes.size() == size);
+        model.addAttribute("hasPrevious", page > 0);
         model.addAttribute("recipes", recipes);
         model.addAttribute("categories", Category.values());
         model.addAttribute("sort", sort);
         model.addAttribute("selectedCategories", categories);
+        model.addAttribute("allTags", RecipeTag.values());
         return "byCategory";
     }
 
@@ -156,9 +178,10 @@ public class RecipeControllerui {
     }
 
     @GetMapping("/highestRated")
-    public String getRecipesByHighestRating(Model model) {
-        List<Recipe> recipes = recipeService.findAllByAverageRatingDesc();
-        // Format the date before adding it to the model
+    public String getRecipesByHighestRating(Model model,
+                                            @RequestParam(defaultValue = "0") int page,
+                                            @RequestParam(defaultValue = "12") int size) {
+        List<Recipe> recipes = recipeService.findAllByAverageRatingDesc(page, size);
         for (Recipe recipe : recipes) {
             String formattedDate = recipeService.formatDate(recipe.getDateAdded());
             recipe.setFormattedDate(formattedDate);  // Add formatted date to recipe

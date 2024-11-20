@@ -4,17 +4,15 @@
     padding: 0;
     box-sizing: border-box;
 }
-
 .recipe-card-container {
     width: 100%;
     display: flex;
     justify-content: center; /* Center the card */
     padding: 20px; /* Space around the card */
 }
-
 .recipe-item {
-    width: 520px;
-    height: 650px;
+    width: 330px;
+    height: 580px;
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -26,15 +24,21 @@
     flex-direction: column;
     transition: transform 0.3s ease;
     background-color: #f9f9f9;
-}
+    margin:21px;
 
+}
 .recipe-list {
   list-style-type: none;
-  padding: 0;
-}
+  display:inline-flex;
+  flex-wrap:wrap;
+  padding: 15px;
+  margin:20px;
+  flex: 1 1 100%;
+  justify-content:space-around;
 
+}
 .recipe-title{
-font-size:2rem;
+font-size:27px;
 color:saddlebrown;
 margin:10px;
 }
@@ -44,58 +48,26 @@ margin:10px;
    display: flex;
    justify-content: center;
    width: 100%;
-   height: 300px;
+   height: 255px;
    margin-bottom:5px;
-}
-
-.heart-icon {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    color: #ff0000;
-    font-size: 2em;
-    cursor: pointer;
-    padding: 5px;
-    z-index: 10;
-}
-
-.rating {
-  display: flex;
-  align-items: center;
-  margin-right:8px;
-}
-
-.stars {
-  margin-right: 10px;
-}
-
-.star-filled {
-  color: #f39c12;
-}
-
-.star-half-filled {
-  color: #f1c40f;
-}
-
-.star-empty {
-  color: #ccc;
-}
-
-.rating-count {
-  font-size: 1rem;
-  color: #888;
 }
 
 .category-badge, .tag-badge {
   display: inline-block;
-  padding: 2px 9px;
+  padding: 0px 3px;
   background-color: #d1e7f3;
   border-radius: 5px;
-  margin: 5px;
-  font-size: 0.9rem;
+  margin: 3px;
+  font-size:10px;
   color: #333;
+}
+.format-date .span{
+font-size:10px
+}
+.see-more{
+text-align:right;
+margin-top:40px
+margin-right:9px;
 }
 
 .category-badge {
@@ -104,17 +76,9 @@ margin:10px;
 
 .recipe-image {
     width: 100%;
-    height: 300px;
+    height: 255px;
     object-fit: cover;
     border-bottom: 1px solid #ddd;
-}
-
-.recipe-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
-  justify-content:flex-end;
-  margin-right:2px;
 }
 
 .format-date{
@@ -122,7 +86,7 @@ margin:10px;
 }
 .see-more-button {
   padding: 10px 20px;
-  background-color: #0c3d36;
+  background-color:rosybrown;
   color: #fff;
   border: none;
   border-radius: 2px;
@@ -137,12 +101,10 @@ margin:10px;
 }
 
 .description{
-padding:10px;
-font-size:1.2rem;
+padding:5px;
+font-size:16px;
 }
 .recipe-row{
-display:flex;
-align item:center;
 justify-content:space-between;
 }
 .cat-tag{
@@ -151,4 +113,151 @@ justify-content:space-between;
 padding:10px 10px ;
 
 }
+/*hjarta*/
+.heart-icon i {
+     font-size: 24px;
+     color: gray;
+     transition: color 0.3s ease;
+ }
+
+.heart-icon i.fa-heart {
+     color: red;
+}
+
+.heart-icon i:hover {
+     color: #ff4d4d;
+}
+.heart-icon,
+.heart-icon-detail{
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: #ff0000;
+    font-size: 2em;
+    cursor: pointer;
+    padding: 5px;
+    transition: background-color 0.3s ease;
+    background-color: rgba(255, 255, 255, 0.5);
+    z-index: 10;
+}
+.heart-icon{
+   position:absolute;
+}
+.fav{
+text-align:right;
+}
+/*stjörnur*/
+.star-rating .star,
+.rating .stars .star-filled,
+.rating .stars .star-half-filled,
+.rating .stars .star-empty {
+     font-size: 15px;
+     cursor: pointer;
+     transition: color 0.2s ease-in-out;
+ }
+ .rating .stars .star-empty {
+     color: #ddd;
+ }
+ .rating .stars .star-half-filled {
+     color: #ffcc00;
+ }
+ .rating .stars .star-filled {
+     color: gold;
+ }
+ .star-rating .star {
+     color: #ddd;
+ }
+ .star-rating .star.selected {
+     color: gold;
+ }
+ .star-rating .star:hover,
+ .star-rating .star:hover ~ .star {
+     color: #ffcc00;
+ }
+.recipe-detail .stars {
+
+}
+.recipe-detail-container .star-rating .star,
+.recipe-detail-container .rating .stars .star-filled,
+.recipe-detail-container .rating .stars .star-half-filled,
+.recipe-detail-container .rating .stars .star-empty {
+     font-size: 20px;
+     cursor: pointer;
+     transition: color 0.2s ease-in-out;
+ }
+.rating {
+   display: flex;
+   align-items: center;
+   margin-right:8px;
+   flex-wrap:wrap;
+   justify-content:flex-end;
+   gap:2px;
+
+ }
+.rating-count .no-ratings {
+    display: block;
+    margin-top: 5px;
+    text-align: center;
+}
+.rating-count {
+    font-size: 14px;
+    color: #333;
+    white-space: nowrap;
+}
+
+.rating .no-ratings {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    text-align: right;
+}
+
+.rating-form input:invalid {
+    border-color: red;
+}
+
+.recipe-list-container {
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 20px auto;
+    max-width: 1300px;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+.recipe-detail-container {
+    background-color: #fff;
+}
+.recipe-detail {
+    padding: 20px;
+}
+.recipe-detail p {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.6;
+}
+
+.column {
+    margin-top: 30px;
+}
+.recipe-d-img{
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+    border-bottom: 1px solid #ddd;
+
+}
+
+.cat-tag p {
+font-size:12px
+}
+.detail-title{
+    font-size:3.8rem;
+    color:rosybrown;
+
+
+}
+
 

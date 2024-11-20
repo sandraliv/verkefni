@@ -5,48 +5,21 @@
 <link rel="stylesheet" href="/css/grunnur.css">
 <link rel="stylesheet" href="/css/navigation.css">
 <link rel="stylesheet" href="/css/recipes.css">
+<link rel="stylesheet" href="/css/search.css">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 <head>
-    <title>Front Page</title>
+    <title>Home</title>
 </head>
 <body>
 <div th:replace="fragments/header :: header"></div>
-
-
-<div class="container">
-    <div class="around">
-        <div class="login_page">
-            <h1>Anna's Recipes</h1>
-            <div>
-                <a th:if="${user}" th:href="@{/usersui/{id}(id=${user.id})}" th:text="'My Profile'"></a>
-                <a th:unless="${user}" th:href="@{/login}" th:text="'Login'"></a>
-                <a th:href="@{/contact}">Contact us</a>
-            </div>
-        </div>
-
-            <div class="contains">
-                <h1 th:if="${user}" th:text="'Hello, ' + ${user.name}">Hello, User</h1>
-                <p th:if="${message}" th:text="${message}"></p>
-
-
-            <h2>Recipes:</h2>
-                <div th:replace="fragments/recipeCard :: recipeCard">
-
-                </div>
-
-            <div class="pagination-controls">
-                <a th:if="${hasPrevious}"
-                   th:href="@{/(page=${currentPage - 1})}"
-                   class="pagination-button">&laquo; Previous
-                </a>
-                <span th:text="${currentPage + 1}" class="current-page"></span>
-                <a th:if="${hasNext}"
-                   th:href="@{/(page=${currentPage + 1})}"
-                   class="pagination-button">Next &raquo;
-                </a>
-            </div>
-        </div>
+<div th:replace="fragments/search-form :: searchForm"></div>
+<div class="recipe-list-container">
+    <div class="welcome">
     </div>
+    <h2>Recipes:</h2>
+    <div th:replace="fragments/recipeCard :: recipeCard"></div>
+
 </div>
+<div th:replace="fragments/pagination :: paginationControls(${currentPage}, ${hasPrevious}, ${hasNext})"></div>
 </body>
 </html>

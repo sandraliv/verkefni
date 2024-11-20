@@ -88,8 +88,10 @@ public class RecipeController {
      * @return List of recipes ordered by date, newest first
      */
     @GetMapping("/byDate")
-    public ResponseEntity<List<Recipe>> getRecipesByDate() {
-        return ResponseEntity.ok(recipeService.findByDate());
+    public ResponseEntity<List<Recipe>> getRecipesByDate(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size) {
+        return ResponseEntity.ok(recipeService.findByDate( page, size));
     }
 
     /**
@@ -109,8 +111,10 @@ public class RecipeController {
      * @return List of recipes ordered by rating, highest first
      */
     @GetMapping("/highestRated")
-    public ResponseEntity<List<Recipe>> getRecipesByHighestRating() {
-        return ResponseEntity.ok(recipeService.findAllByAverageRatingDesc());
+    public ResponseEntity<List<Recipe>> getRecipesByHighestRating(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size) {
+        return ResponseEntity.ok(recipeService.findAllByAverageRatingDesc(page, size));
     }
 
     @GetMapping("/{id}")

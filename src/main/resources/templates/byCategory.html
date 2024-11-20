@@ -4,121 +4,44 @@
     <title>Recipe List</title>
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/grunnur.css">
-    <link rel="stylesheet" href="/css/search.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="/css/navigation.css">
+    <link rel="stylesheet" href="/css/recipes.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 </head>
 <body>
+<div th:replace="fragments/header :: header"></div>
+
 <h1>Categories</h1>
 
-<div th:replace="fragments/search-form :: searchForm"></div>
+<div class="recipe-list-container">
+    <ul class="category-list">
+        <li th:each="category : ${categories}">
+            <a class="category-buttons"
+               th:href="@{/allrecipes/byCategory?categories={category}(category=${category})}"
+               th:text="${category.getDisplayName()}"
+               th:classappend="${selectedCategories != null && selectedCategories.contains(category.name()) ? ' selected' : ''}">
+                Category Name
+            </a>
+        </li>
+    </ul>
 
-<ul class="category-list">
-    <li th:each="category : ${categories}">
-        <a class="category-buttons"
-           th:href="@{/allrecipes/byCategory?categories={category}(category=${category})}"
-           th:text="${category.getDisplayName()}"
-           style="background-color: rosybrown; color: white; font-size: 1.6em; font-weight: bold; padding: 15px 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); text-decoration: none; transition: background-color 0.3s ease, transform 0.2s ease;"
-           th:classappend="${selectedCategories != null && selectedCategories.contains(category.name()) ? ' selected' : ''}">
-            Category Name
-        </a>
-    </li>
-</ul>
+    <h2>Recipes</h2>
 
+    <form action="#" method="get">
+        <label for="sortOptions">Sort by: </label>
+        <select id="sortOptions" name="sort">
+            <option value="byDate" th:selected="${sort == 'byDate'}">Newest</option>
+            <option value="highestRated" th:selected="${sort == 'highestRated'}">Highest Rating</option>
+        </select>
+        <button type="submit" style="display: none;">Submit</button>
+    </form>
 
-<h2>Recipes</h2>
-<!-- Dropdown to select sorting option -->
-<form action="#" method="get">
-    <label for="sortOptions">Sort by: </label>
-    <select id="sortOptions" name="sort" onchange="updateSortOption(this)">
-        <option value="highestRated" th:selected="${sort == 'highestRated'}">Highest Rating</option>
-        <option value="byDate" th:selected="${sort == 'byDate'}">Newest</option>
-    </select>
-</form>
+    <div th:replace="fragments/recipeCard :: recipeCard"></div>
 
-<!-- Recipe List -->
-<ul class="recipe-list" id="recipe-list">
-    <li th:each="recipe : ${recipes}" class="li">
-        <h3 th:text="${recipe.title}">Recipe Title</h3>
-        <p th:text="${recipe.description}">Recipe Description</p>
-        <p><strong>Date:</strong>
-            <span th:text="${recipe.formattedDate}">Date Added</span>
-        </p>
+</div>
 
-        <div class="rating">
-            <div class="stars">
-          <span th:each="i : ${#numbers.sequence(1, 5)}"
-                th:class="${i <= recipe.averageRating.intValue() ? 'star-filled' :
-                          (i - 0.5 <= recipe.averageRating.doubleValue() && i > recipe.averageRating.doubleValue() ? 'star-half-filled' : 'star-empty')}">
-              ★
-          </span>
-            </div>
-            <span class="rating-count"
-                  th:text="${recipe.ratingCount == 0 ? 'No ratings yet' : '(' + recipe.ratingCount + ')'}"></span>
-        </div>
-
-        <!-- Ingredients Table -->
-        <table>
-            <tr>
-                <th>Ingredient</th>
-                <th>Quantity</th>
-            </tr>
-            <tr th:each="ingredient : ${recipe.ingredients}">
-                <td th:text="${#strings.replace(ingredient.key, '_', ' ')}">Ingredient Name</td>
-                <td th:text="${ingredient.value}">Ingredient Quantity</td>
-            </tr>
-        </table>
-
-        <!-- Display Recipe Categories -->
-        <p><strong>Categories:</strong>
-            <!-- Check if categories is empty -->
-            <span th:if="${#lists.isEmpty(recipe.categories)}">No categories assigned</span>
-
-            <!-- Display each category if it exists -->
-            <span th:each="category : ${recipe.categories}"
-                  th:text="${category.getDisplayName()}"
-                  style="display: inline-block; padding: 5px 10px; background-color: #f0f0f0; border-radius: 15px; margin: 5px;">
-      </span>
-        </p>
-
-        <!-- Display Recipe Tags -->
-        <p><strong>Tags:</strong>
-            <span th:if="${#lists.isEmpty(recipe.tags)}">No tags assigned</span>
-            <span th:each="tag : ${recipe.tags}"
-                  th:text="${tag.getDisplayName()}"
-                  style="display: inline-block; padding: 5px 10px; background-color: #d1e7f3; border-radius: 15px; margin: 5px;">
-      </span>
-        </p>
-
-
-        <img th:src="${recipe.image_url}" alt="Recipe Image"/>
-
-        <form th:action="@{/allrecipes/{id}/addAsFav(id=${recipe.id})}" method="post">
-            <button type="submit">Add to Favorites</button>
-        </form>
-    </li>
-</ul>
-<!-- JavaScript to Update the URL with Sort Parameter -->
-<script type="text/javascript">
-  function updateSortOption(select) {
-    // Get the current URL
-    let url = new URL(window.location.href);
-
-    // Get the selected sort option
-    let sort = select.value;
-
-    // Check if the categories parameter exists in the URL
-    let categories = new URLSearchParams(window.location.search).get('categories');
-
-    // If categories exist, append sort to the URL, otherwise just set it
-    if (categories) {
-      url.searchParams.set('categories', categories); // Ensure categories are present
-    }
-    url.searchParams.set('sort', sort); // Set the selected sort option
-
-    // Redirect to the new URL with the updated sort parameter
-    window.location.href = url.toString();
-  }
-
-</script>
+<footer>
+    <div th:replace="fragments/pagination :: paginationControls(${currentPage}, ${hasPrevious}, ${hasNext})"></div>
+</footer>
 </body>
 </html>

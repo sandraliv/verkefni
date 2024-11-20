@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <link rel="stylesheet" href="/css/search.css">
 <head>
   <meta charset="UTF-8">
@@ -7,6 +7,7 @@
 <body>
 <div th:fragment="searchForm">
   <form action="#" method="get" id="search-form" class="search-form">
+
     <div class="search-field">
       <label for="query" class="search-label">Search by Title:</label>
       <input type="text" id="query" name="query"
@@ -14,30 +15,36 @@
              class="search-input"
              th:value="${query}">
     </div>
+    <div class="tag-select-field">
+      <label for="tags" class="tags-label">Tags:</label>
+      <select id="tags" name="tags" multiple="multiple" class="tags-select">
+        <option th:each="tag : ${allTags}"
+                th:value="${tag}"
+                th:text="${tag.getDisplayName()}">
+       </option>
+     </select>
+    </div>
 
-    <label for="tags" class="tags-label">Tags:</label>
-    <select id="tags" name="tags" multiple="multiple" class="tags-select">
-      <option th:each="tag : ${allTags}"
-              th:value="${tag}"
-              th:text="${tag.getDisplayName()}">
-      </option>
-    </select>
 
     <div class="selected-tags">
       <h4>Selected Tags:</h4>
-      <div id="selected-tags-list"></div>
+      <div id="selected-tags-list">
+        <span th:each="selectedTag : ${tag}">
+          <div class="selected-tag" th:text="${selectedTag}"></div>
+          </span>
+      </div>
     </div>
 
-    <div class="search-submit-button">
-      <button type="submit" class="search-button" id="search_submit">
-        Search
-      </button>
-    </div>
+
+    <button type="submit" class="search-button" id="search_submit">
+      Search
+    </button>
+
 
     <div th:if="${noResultsMessage}" class="no-results-message">
       <p th:text="${noResultsMessage}"></p>
     </div>
-  </form> <!-- Close the form tag here -->
-</div> <!-- Close the main search-form container -->
+  </form>
+</div>
 </body>
 </html>

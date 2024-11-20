@@ -13,16 +13,16 @@ body {
     justify-content: center;
     align-items: center;
     list-style: none;
-    width: 100%;
 }
 
 .current-date {
     color: white;
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 18px;
     margin-left: 20px;
     padding: 5px;
     text-align: center;
+    align-item:center;
+    display:inline-flex;
 }
 
 .navigation-bar {
@@ -31,7 +31,7 @@ body {
     justify-content: space-between;
     align-items: center;
     background-color: rosybrown;
-    padding: 10px 20px;
+    padding: 2px 15px;
     position: relative;
     z-index: 10;
     overflow: visible;
@@ -44,7 +44,7 @@ body {
     text-decoration: none;
     padding: 10px 15px;
     border-radius: 5px;
-    font-size: 16px;
+    font-size: 18px;
 }
 
 .account-button {
@@ -55,7 +55,7 @@ body {
     padding: 10px 15px;
     margin-left: 20px;
     border-radius: 5px;
-    font-size: 16px;
+    font-size: 18px;
     position: relative; /* For dropdown */
     z-index: 20;
 }
@@ -66,7 +66,7 @@ body {
     padding: 10px 15px;
     margin-left: 20px;
     border-radius: 5px;
-    font-size: 16px;
+    font-size: 18px;
     position: relative; /* Ensure dropdown works here too */
     z-index: 20;
     color:white;
@@ -83,23 +83,40 @@ body {
     position: relative; /* Ensure dropdown works here too */
     z-index: 20;
 }
+/* Ensure the parent element (li) has a relative position */
+.log-in-account {
+    position: relative; /* Make sure the dropdown is positioned correctly */
+}
 
 .login-dropdown {
     display: none;
-    position: absolute;
-    top: 45px;
-    left:0;
+    position: absolute; /* This makes the dropdown position relative to its parent */
+    top: 100%;  /* Place the dropdown just below the account button */
+    left: 0;  /* Align the dropdown to the left of the button */
     background-color: #fff;
     border: 1px solid #ccc;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     padding: 10px;
-    width: 200px;
-    z-index: 30; /* Ensure it's above other elements */
+    width: 200px; /* Set the width of the dropdown */
+    z-index: 10; /* Ensure the dropdown appears on top */
 }
 .account-button:hover + .login-dropdown,
 .account-button:focus + .login-dropdown {
     display: block;
+}
+/* User account dropdown */
+.user-dropdown-menu {
+    display: none; /* Hide the dropdown by default */
+    position: absolute;
+    top: 100%; /* Position it below the account button */
+    left: 0; /* Align it with the left side of the button */
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 200px;
+    z-index: 20; /* Make sure this dropdown is above others */
 }
 
 .category-menu {
@@ -127,6 +144,7 @@ body {
 }
 
 .contact-dropdown-button i,
+.current-date i,
 .account-button i,
 .home-button i {
     margin-right: 8px;
@@ -161,4 +179,82 @@ display:block;
     width: 100%;
     border: none;
     text-align: left;
+}
+.user-dropdown-item {
+    display: block;
+    text-decoration: none;
+    color: #333;
+    background-color: transparent;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    text-align: left;
+}
+
+/* Show login dropdown when account button is hovered */
+.log-in-account:hover .login-dropdown {
+    display: block;
+}
+
+/* Show user dropdown when user is logged in */
+.log-in-account:hover .user-dropdown-menu {
+    display: block;
+}
+.user-dropdown-menu li:hover {
+    background-color: #f1f1f1;
+}
+
+
+.pagination-button {
+  background-color: #FFFFFF;
+  border: 0;
+  border-radius: .5rem;
+  box-sizing: border-box;
+  color: #111827;
+  font-size: .875rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  text-align: center;
+  text-decoration: none #D1D5DB solid;
+  text-decoration-thickness: auto;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  padding:10px 20px;
+  margin: 0 5px;
+}
+
+.pagination-button:hover {
+  background-color: rgb(249,250,251);
+}
+
+.pagination-button:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.pagination-button:focus-visible {
+  box-shadow: none;
+}
+
+/* Pagination controls container */
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    bottom: 0; /* Stick to the bottom of the page */
+    padding: 10px;
+}
+
+.current-page {
+    font-size: 18px;
+    margin: 0 10px;
+}
+
+/* Add some space at the bottom for the pagination to not stick directly to the edge */
+body {
+    padding-bottom: 20px;
 }

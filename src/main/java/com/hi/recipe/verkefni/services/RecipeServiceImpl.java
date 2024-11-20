@@ -81,7 +81,6 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public Recipe save(Recipe recipe) {
-        // Simply save the Recipe without modifying categories or subcategories
         return recipeRepository.save(recipe);
     }
 
@@ -123,10 +122,7 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public List<Recipe> findByDate() {
-
-        int page = 0;
-        int size = 10;
+    public List<Recipe> findByDate(int page, int size) {
 
         Pageable pageable = PageRequest.of(page, size);
         Page<Recipe> recipes = recipeRepository.findByDate(pageable);
@@ -137,19 +133,11 @@ public class RecipeServiceImpl implements RecipeService {
 
     // Paginated recipes sorted by average rating
     @Override
-    public List<Recipe> findAllByAverageRatingDesc() {
-
-        int page = 0;
-        int size = 10;
-
+    public List<Recipe> findAllByAverageRatingDesc(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Recipe> recipes = recipeRepository.findAllByAverageRatingDesc(pageable);
         List<Recipe> recipeList = recipes.getContent();
         return recipeList;
-    }
-
-    public Set<String> getDistinctCategoryNames() {
-        return Set.of();
     }
 
     // Helper method to format date
@@ -194,9 +182,7 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public List<Recipe> getSortedRecipes(String sort, Set<Category> categories) {
-        int page = 0; // starting page
-        int size = 10; // page size
+    public List<Recipe> getSortedRecipes(String sort, Set<Category> categories,int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         if (sort == null || sort.isEmpty()) {
             sort = "byDate";
@@ -239,7 +225,6 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public void removeRatingFromRecipe(int recipeId) {
-        // Find the recipe by ID
         Recipe recipe = recipeRepository.findById(recipeId)
                 .orElseThrow(() -> new NoSuchElementException("Recipe not found"));
         recipe.clearRatings();
