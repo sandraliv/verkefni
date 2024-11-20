@@ -3,6 +3,7 @@ package com.hi.recipe.verkefni.uiControllers;
 import com.hi.recipe.verkefni.klasar.*;
 import com.hi.recipe.verkefni.services.RecipeService;
 import com.hi.recipe.verkefni.services.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -24,6 +25,17 @@ import java.util.Set;
 public class uiContactController {
     private final UserService userService;
     private final RecipeService recipeService;
+
+    enum SearchCriteria {
+        NONE,
+        QUERY_ONLY,
+        TAGS_ONLY,
+        CATEGORIES_ONLY,
+        QUERY_AND_TAGS,
+        QUERY_AND_CATEGORIES,
+        TAGS_AND_CATEGORIES,
+        ALL
+    }
 
     public uiContactController(UserService userService, RecipeService recipeService) {
         this.userService = userService;
@@ -98,20 +110,37 @@ public class uiContactController {
      * @return to login after invalidating a session
      */
     @GetMapping("")
-    public String getFrontPage(Model model, HttpSession session, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "12") int size,
-                               @RequestParam(value = "query", required = false) String query,
-                               @RequestParam(value = "tags", required = false) Set<RecipeTag> tags) {
+    public String getFrontPage(Model model, HttpSession session, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "9") int size,
+                               @RequestParam(value = "query", required = false, defaultValue = "") String query,
+                               @RequestParam(value = "categories", required = false) Set<Category> categories,
+                               @RequestParam(value = "tags", required = false, defaultValue = "") Set<RecipeTag> tags,
+                               HttpServletRequest request
+    ) {
+        SearchCriteria criteria;
         User user = (User) session.getAttribute("user");
         if (user != null) {
             model.addAttribute("user", user);
         }
-        List<Recipe> recipes;
 
+        if (query == null || query.isEmpty()) {
+            query = null;
+        }
+        if (tags == null || tags.isEmpty()) {
+            tags = null;
+        }
+        if (categories == null || categories.isEmpty()) {
+            categories = null;
+        }
+
+        List<Recipe> recipes;
+        /*
         if ((query == null || query.isEmpty()) && (tags == null || tags.isEmpty())) {
             recipes = recipeService.findAllPaginated(page, size);
-            System.out.println("halló nr 1");
         } else if (tags == null || tags.isEmpty()) {
+
             recipes = recipeService.findByTitleContainingIgnoreCase(query);
+
+            recipes = recipeService.findByTitleAndCategories(query, categories);
             System.out.println("halló nr 2");
         } else if (query == null || query.isEmpty()) {
             System.out.println("halló nr 3");
@@ -120,6 +149,41 @@ public class uiContactController {
             System.out.println("halló er að reyna með query og tags");
             recipes = recipeService.findByTitleAndTags(query, tags);
         }
+        */
+
+        if ((query == null || query.isEmpty()) && (tags == null || tags.isEmpty()) && (categories == null || categories.isEmpty())) {
+
+            criteria = SearchCriteria.NONE;
+        } else if (tags == null || tags.isEmpty()) {
+            if (categories == null || categories.isEmpty()) {
+                criteria = SearchCriteria.QUERY_ONLY;
+            } else if (query == null || query.isEmpty()) {
+                criteria = SearchCriteria.CATEGORIES_ONLY;
+            } else criteria = SearchCriteria.QUERY_AND_CATEGORIES;
+        } else if (query == null || query.isEmpty()) {
+            if (categories == null || categories.isEmpty()) {
+                criteria = SearchCriteria.TAGS_ONLY;
+            } else {
+                criteria = SearchCriteria.TAGS_AND_CATEGORIES;
+            }
+        } else {
+            if (categories == null || categories.isEmpty()) {
+                criteria = SearchCriteria.QUERY_AND_TAGS;
+            } else {
+                criteria = SearchCriteria.ALL;
+            }
+        }
+        System.out.println(criteria);
+        recipes = switch (criteria) {
+            case NONE -> recipeService.findAllPaginated(page, size);
+            case QUERY_ONLY -> recipeService.findByTitleContainingIgnoreCase(query);
+            case TAGS_ONLY -> recipeService.findByTagsIn(tags, page, size);
+            case CATEGORIES_ONLY -> recipeService.findByCategoriesIn(categories, page, size);
+            case QUERY_AND_TAGS -> recipeService.findByTitleAndTags(query, tags);
+            case QUERY_AND_CATEGORIES -> recipeService.findByTitleAndCategories(query, categories);
+            case ALL -> recipeService.findAllPaginated();
+            default -> throw new IllegalStateException("Unexpected value: " + criteria);
+        };
 
         for (Recipe recipe : recipes) {
             String formattedDate = recipeService.formatDate(recipe.getDateAdded());
@@ -129,8 +193,9 @@ public class uiContactController {
         DateTimeFormatter formatterCurrent = DateTimeFormatter.ofPattern("dd MMMM, yyyy");
         String CurrentDate = currentDate.format(formatterCurrent);
 
-
+        model.addAttribute("categorie", categories);
         model.addAttribute("query", query);
+        model.addAttribute("tags", tags);
         model.addAttribute("currentDate", CurrentDate);
         model.addAttribute("categories", Category.values());
         model.addAttribute("recipes", recipes);
@@ -138,6 +203,7 @@ public class uiContactController {
         model.addAttribute("currentPage", page);
         model.addAttribute("hasNext", recipes.size() == size);
         model.addAttribute("hasPrevious", page > 0);
+        model.addAttribute("request", request);
 
         return "frontPage";
     }

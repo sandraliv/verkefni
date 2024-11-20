@@ -4,7 +4,6 @@ import com.hi.recipe.verkefni.klasar.Recipe;
 import com.hi.recipe.verkefni.repository.RecipeRepository;
 import com.hi.recipe.verkefni.services.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -30,9 +29,8 @@ public class uiImageController {
     //================================================================================
 
     /**
-     *
      * @param recipeId Id of the recipe which picture is missing
-     * @param model the model
+     * @param model    the model
      * @return uploadImage.html
      */
     @GetMapping("/{recipeId}/upload")
@@ -47,8 +45,8 @@ public class uiImageController {
 
     /**
      * @param recipeId Id of the recipe to which the image should be added
-     * @param file the image to upload to the recipe (jpeg/jpg)
-     * @param model the model
+     * @param file     the image to upload to the recipe (jpeg/jpg)
+     * @param model    the model
      * @return uploadImage.html
      */
     @PostMapping("/{recipeId}/upload")
@@ -82,8 +80,8 @@ public class uiImageController {
 
     /**
      * @param recipeId Id of the recipe to be modified
-     * @param file the image to be set on the recipe jpeg/jpg
-     * @param model the model
+     * @param file     the image to be set on the recipe jpeg/jpg
+     * @param model    the model
      * @return uploadImage.html
      */
     @PatchMapping("/{recipeId}/replaceImg")

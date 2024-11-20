@@ -43,36 +43,6 @@ public class RecipeControllerui {
     }
 
     /**
-     * Retrieves recipes with optional search and tag filtering
-     *
-     * @param query Optional search term to filter recipes by title
-     * @param tags  Optional set of RecipeTags to filter recipes
-     * @return Filtered list of recipes, or all recipes if no filters applied
-     */
-    @GetMapping("/all")
-    public String getAllRecipes(
-            @RequestParam(value = "query", required = false) String query,
-            @RequestParam(value = "tags", required = false) Set<RecipeTag> tags,
-            HttpSession session,
-            Model model) {
-        List<Recipe> recipes;
-        if ((query == null || query.isEmpty()) && (tags == null || tags.isEmpty())) {
-            recipes = recipeService.findAllPaginated();
-        } else if (tags == null || tags.isEmpty()) {
-            recipes = recipeService.findByTitleContainingIgnoreCase(query);
-        } else if (query == null || query.isEmpty()) {
-            recipes = recipeService.findByTagsIn(tags);
-        } else {
-            recipes = recipeService.findByTitleAndTags(query, tags);
-        }
-
-        model.addAttribute("allTags", RecipeTag.values());
-        model.addAttribute("recipes", recipes);
-        model.addAttribute("query", query);
-        return "recipeList"; //recipeList.html
-    }
-
-    /**
      * Retrieves a specific recipe by its identifier
      *
      * @param id The unique identifier of the recipe
@@ -100,7 +70,6 @@ public class RecipeControllerui {
             return "recipeDetail";
         }
         model.addAttribute("errorMessage", "Recipe not found.");
-
         return "error";
     }
 
@@ -128,7 +97,7 @@ public class RecipeControllerui {
                                        @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "12") int size,
                                        @RequestParam(value = "query", required = false) String query,
                                        @RequestParam(value = "tags", required = false) Set<RecipeTag> tags,
-                                       Model model,HttpSession session) {
+                                       Model model, HttpSession session) {
 
         User user = (User) session.getAttribute("user");
         if (user != null) {
@@ -136,7 +105,7 @@ public class RecipeControllerui {
         }
         List<Recipe> recipes;
         Set<Category> categoryEnumSet = recipeService.convertToCategoryEnum(categories);
-        recipes = recipeService.getSortedRecipes(sort, categoryEnumSet,page,size);
+        recipes = recipeService.getSortedRecipes(sort, categoryEnumSet, page, size);
         for (Recipe recipe : recipes) {
             String formattedDate = recipeService.formatDate(recipe.getDateAdded());
             recipe.setFormattedDate(formattedDate);

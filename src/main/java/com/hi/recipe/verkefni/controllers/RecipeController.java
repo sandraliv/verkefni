@@ -50,7 +50,7 @@ public class RecipeController {
         } else if (tags == null || tags.isEmpty()) {
             return ResponseEntity.ok(recipeService.findByTitleContainingIgnoreCase(query));
         } else if (query == null || query.isEmpty()) {
-            return ResponseEntity.ok(recipeService.findByTagsIn(tags));
+            return ResponseEntity.ok(recipeService.findByTagsIn(tags, 0, 10));
         }
 
         return ResponseEntity.ok(recipeService.findByTitleAndTags(query, tags));
@@ -78,7 +78,7 @@ public class RecipeController {
         }
 
         // Fetch recipes by the selected category
-        List<Recipe> recipes = recipeService.findByCategoriesIn(categories);
+        List<Recipe> recipes = recipeService.findByCategoriesIn(categories, 0, 10);
         return ResponseEntity.ok(recipes);
     }
 
@@ -91,7 +91,7 @@ public class RecipeController {
     public ResponseEntity<List<Recipe>> getRecipesByDate(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size) {
-        return ResponseEntity.ok(recipeService.findByDate( page, size));
+        return ResponseEntity.ok(recipeService.findByDate(page, size));
     }
 
     /**

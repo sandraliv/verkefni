@@ -28,9 +28,11 @@ public interface RecipeService {
 
     void deleteById(int id);
 
-    List<Recipe> findByTagsIn(Set<RecipeTag> tags);
+    List<Recipe> findByTagsIn(Set<RecipeTag> tags, int page, int size);
 
-    List<Recipe> findByCategoriesIn(Set<Category> categories);
+    List<Recipe> findByTitleAndCategories(String title, Set<Category> categories);
+
+    List<Recipe> findByCategoriesIn(Set<Category> categories, int page, int size);
 
     Optional<Recipe> findRecipeById(int id);
 
@@ -48,7 +50,7 @@ public interface RecipeService {
     @Transactional
     void addRating(int recipeId, User user, int score);
 
-    List<Recipe> getSortedRecipes(String sort, Set<Category> categories,int page, int size);
+    List<Recipe> getSortedRecipes(String sort, Set<Category> categories, int page, int size);
 
     // Method to convert a set of category strings to Set<Category> enum
     Set<Category> convertToCategoryEnum(Set<String> categoryStrings);

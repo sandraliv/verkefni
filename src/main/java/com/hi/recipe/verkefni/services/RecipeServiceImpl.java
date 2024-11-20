@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -54,15 +55,18 @@ public class RecipeServiceImpl implements RecipeService {
         }
     }
 
+    public List<Recipe> findByTagsIn(Set<RecipeTag> tags, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Recipe> recipes = recipeRepository.findByTagsIn(tags, pageable);
+        return recipes.getContent();
+    }
+
     @Override
     public List<Recipe> findAllPaginated() {
         int page = 0;
         int size = 10;
-
         Pageable pageable = PageRequest.of(page, size);
         Page<Recipe> recipes = recipeRepository.findAllPaginated(pageable);
-        System.out.println("Total elements: " + recipes.getTotalElements());  // Total number of records
-        System.out.println("Total pages: " + recipes.getTotalPages());
         return recipes.getContent();
     }
 
@@ -101,13 +105,15 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public List<Recipe> findByTagsIn(Set<RecipeTag> tags) {
-        return recipeRepository.findByTagsIn(tags);
+    public List<Recipe> findByTitleAndCategories(String title, Set<Category> categories) {
+        return recipeRepository.findByTitleContainingIgnoreCaseAndCategoriesIn(title, categories);
     }
 
     @Override
-    public List<Recipe> findByCategoriesIn(Set<Category> categories) {
-        return recipeRepository.findByCategoriesIn(categories);
+    public List<Recipe> findByCategoriesIn(Set<Category> categories, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("averageRating")));
+        Page<Recipe> recipes = recipeRepository.findByCategoriesIn(categories, pageable);
+        return recipes.getContent();
     }
 
     // Search by title (case-insensitive)
@@ -169,6 +175,10 @@ public class RecipeServiceImpl implements RecipeService {
 
     }
 
+    public List<Recipe> getSortedRecipes(String sort, Set<Category> categories, int page, int size) {
+        return null;
+    }
+
     // Find Tags by their names (optional, if tags are needed)
     private Set<RecipeTag> findTags(List<String> tagNames) {
         Set<RecipeTag> tags = new HashSet<>();
@@ -181,32 +191,6 @@ public class RecipeServiceImpl implements RecipeService {
         return tags;
     }
 
-    @Override
-    public List<Recipe> getSortedRecipes(String sort, Set<Category> categories,int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        if (sort == null || sort.isEmpty()) {
-            sort = "byDate";
-        }
-        if (categories != null && !categories.isEmpty()) {
-            switch (sort) {
-                case "highestRated":
-                    return recipeRepository.findByCategoriesInOrderByAverageRatingDesc(categories, pageable).getContent();
-                case "byDate":
-                    return recipeRepository.findByCategoriesInOrderByDateAddedDesc(categories, pageable).getContent();
-                default:
-                    return recipeRepository.findByCategoriesIn(categories);
-            }
-        } else {
-            switch (sort) {
-                case "highestRated":
-                    return recipeRepository.findAllByAverageRatingDesc(pageable).getContent();
-                case "byDate":
-                    return recipeRepository.findByDate(pageable).getContent();
-                default:
-                    return recipeRepository.findAllPaginated(pageable).getContent();
-            }
-        }
-    }
     @Override
     public Set<Category> convertToCategoryEnum(Set<String> categoryStrings) {
         Set<Category> categoryEnumSet = new HashSet<>();

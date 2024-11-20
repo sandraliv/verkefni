@@ -15,10 +15,22 @@
 <div class="recipe-list-container">
     <div class="welcome">
     </div>
+    <div>
+        <ul class="category-list">
+            <li th:each="category : ${categories}">
+                <a class="category-buttons"
+                   th:href="@{/(categories=${category})}"
+                   th:text="${category.getDisplayName()}"
+                   th:classappend="${selectedCategories != null && selectedCategories.contains(category.name()) ? ' selected' : ''}">
+                    Category Name
+                </a>
+            </li>
+        </ul>
+    </div>
     <h2>Recipes:</h2>
     <div th:replace="fragments/recipeCard :: recipeCard"></div>
 
 </div>
-<div th:replace="fragments/pagination :: paginationControls(${currentPage}, ${hasPrevious}, ${hasNext})"></div>
+<div th:replace="fragments/pagination :: paginationControls(${currentPage}, ${hasPrevious}, ${hasNext}, ${query}, ${tags}, ${categorie})"></div>
 </body>
 </html>
