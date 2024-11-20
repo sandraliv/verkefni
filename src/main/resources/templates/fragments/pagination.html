@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en"xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/navigation.css">
+<head>
+  <meta charset="UTF-8">
+</head>
+<body>
+<!-- fragments/pagination.html -->
+<footer th:fragment="paginationControls(currentPage, hasPrevious, hasNext)">
+  <div class="pagination-controls">
+    <a th:if="${hasPrevious}"
+       th:href="@{/(page=${currentPage - 1})}"
+       class="pagination-button">&laquo; Previous
+    </a>
+    <span th:text="${currentPage + 1}" class="current-page"></span>
+    <a th:if="${hasNext}"
+       th:href="@{/(page=${currentPage + 1})}"
+       class="pagination-button">Next &raquo;
+    </a>
+  </div>
+</footer>
+</body>
+</html>
