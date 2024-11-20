@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <link rel="stylesheet" href="/css/styles.css">
 <link rel="stylesheet" href="/css/grunnur.css">
-<link rel="stylesheet" href="/css/contact.css">
+<link rel="stylesheet" href="/css/contact-password.css">
 <head>
     <title>Contact us</title>
 
@@ -11,7 +11,7 @@
     <div class="contains">
         <body>
         <h1>Contact us</h1>
-        <div th:if="${message}">
+        <div th:if="${message}" class="success_message">
             <p th:text="${message}"></p>
         </div>
         <form th:action="@{/contact}" method="post" th:object="${contactForm}">
