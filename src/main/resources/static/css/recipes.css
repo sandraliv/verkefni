@@ -90,19 +90,21 @@ margin-right:9px;
     margin-left:8px;
 }
 .see-more-button {
-  padding: 10px 20px;
-  background-color:rosybrown;
-  color: #fff;
-  border: none;
-  border-radius: 2px;
-  font-size: 1rem;
-  cursor: pointer;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s;
+    right: 20px;
+    bottom: 20px;
+    height: 40px;
+    padding: 0 20px;
+    background-color: rosybrown; /* Yellow button */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .see-more-button:hover {
-  background-color: #0c3d3691;
+  background-color: #a37c7c;
 }
 
 .description{
@@ -311,8 +313,6 @@ font-size:20px;
 }
 
 
-
-
 .column-row-2 {
     margin-top: 20px;
     padding: 20px;
@@ -350,18 +350,16 @@ font-size:20px;
     color: #333;
     border-bottom: 1px solid #ddd;
 }
-/* Add alternating row colors */
+
 .instructions tr:nth-child(even) td {
     background-color: #f2f2f2;
 }
 
-/* Hover effect on rows */
 .instructions tr:hover td {
     background-color: #f0f0f0;
     cursor: pointer;
 }
 
-/* Adding the step numbering style */
 .instructions span.step-number {
     font-weight: bold;
     color: rosybrown;

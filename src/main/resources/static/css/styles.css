@@ -195,7 +195,7 @@ p {
 .category-buttons {
     background-color: #fdfaf9;
     color: #333;
-    font-size: 1.6em;
+    font-size: 20px;
     padding: 15px 30px;
     box-shadow: 0 1px 6px rgba(188, 143, 143, 0.9);
     border-radius: 3px;
@@ -327,37 +327,6 @@ form {
     margin-right: 8px;
 }
 
-
-.tags-select {
-  width: 100%;
-  padding: 10px;
-  border-radius: 30px;
-  border: 2px solid #ddd;
-}
-
-
-#search_submit {
-  height: 50px;
-  padding: 0 20px;
-  background-color: #f8b400; /* Yellow button */
-  color: white;
-  border: none;
-  border-radius: 50px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-#search_submit:hover {
-  background-color: #f59e42; /* Slightly darker yellow on hover */
-}
-
-#search_submit:focus {
-  outline: none;
-}
 .home-container {
   justify-content: center;
   max-width: var(--max-width);

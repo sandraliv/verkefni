@@ -14,12 +14,17 @@
   position: relative;
 }
 
-.search-row-1{
-    padding:5px
+.search-row-1 {
+    display:flex;
+    padding:5px;
 }
 
-.search-row-2{
-    padding:5px
+.search-row-2 {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 5px;
+    align-items:center;
+    justify-content: space-around;
 }
 
 .form-fields{
@@ -32,16 +37,17 @@
   flex: 1;
 }
 
-.search-label {
+.search-label, .tags-label {
   display: block;
-  font-size: 14px;
+  font-size: 16px;
   color: #333;
   margin-bottom: 5px;
   font-weight: bold;
 }
+
 .tags-label {
   display: block;
-  font-size: 14px;
+  font-size: 16px;
   color: #333;
   margin-bottom: 5px;
   font-weight: bold;
@@ -49,13 +55,13 @@
 }
 
 .tag-select-field {
-  flex:0.3;
+  flex:0.5;
 }
 
 .search-input {
-  width: 100%;
+  width: 75%;
   padding: 12px;
-  font-size: 14px;
+  font-size: 16px;
   border: 1px solid #ddd;
   border-radius: 5px;
   outline: none;
@@ -69,11 +75,12 @@
 
 .tags-select {
   width: 100%;
-  padding: 12px;
+  padding: 9px;
   font-size: 14px;
   border: 1px solid #ddd;
   border-radius: 5px;
   outline: none;
+  height: 66px;
 }
 
 .tags-select:focus {
@@ -101,23 +108,26 @@
   color: #333;
 }
 
-
-.search-button {
-  position: absolute;
+#search_submit {
   right: 20px;
   bottom: 20px;
-  background-color: #1e70b9;
+  height: 40px;
+  padding: 0 20px;
+  background-color: rosybrown; /* Yellow button */
   color: white;
   border: none;
-  padding: 12px 20px;
-  font-size: 14px;
   border-radius: 5px;
+  font-size: 16px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
+#search_submit:hover {
+  background-color: #a37c7c;
+}
 
-.search-button:hover {
-  background-color: #145c8a;
+#search_submit:focus {
+  outline: none;
 }
 
 
