@@ -13,6 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -87,9 +89,15 @@ public class uiUserController {
     public String getUserFavorites(HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
         if (user != null) {
+            model.addAttribute("user", user);
             model.addAttribute("favorites", user.getFavourites());
             return "favorites"; // favorites.html
         }
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter formatterCurrent = DateTimeFormatter.ofPattern("dd MMMM, yyyy");
+        String CurrentDate = currentDate.format(formatterCurrent);
+
+        model.addAttribute("currentDate", CurrentDate);
         model.addAttribute("errorMessage", "User not logged in.");
         return "error";
     }

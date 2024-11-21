@@ -129,13 +129,12 @@ p {
 
 
 .rating-form input[type="number"] {
-    width: 100%;
+    width: 65%;
     padding: 10px;
     font-size: 1.1em;
     border: 1px solid #ddd;
     border-radius: 4px;
     box-sizing: border-box;
-    margin-bottom: 20px;
 }
 
 .rating-form input[type="number"]:focus {
@@ -143,25 +142,31 @@ p {
     border-color: #4caf50;
 }
 
+.rating-form-action {
+    padding:5px;
+
+}
+
 
 .rating-form button {
     background-color: rosybrown;
     color: white;
     border: none;
-    padding: 12px 20px;
+    padding: 8px 12px;
     font-size: 1em;
+    margin:7px;
     cursor: pointer;
     border-radius: 4px;
-    width: 100%;
+    width: 50%%;
     transition: background-color 0.3s ease;
 }
 
 .rating-form button:hover {
-    background-color: #45a049;
+    background-color: #a37c7c;
 }
 
 .rating-form button:active {
-    background-color: #388e3c;
+    background-color: #a37c7c;
 }
 
 

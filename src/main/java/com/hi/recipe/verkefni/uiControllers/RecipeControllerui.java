@@ -183,7 +183,7 @@ public class RecipeControllerui {
         if (user != null) {
             if (user.getFavourites().contains(or.get())) {
                 model.addAttribute("message", "Recipe is already in your favorites.");
-                return "redirect:/usersui/favorites";  // You can adjust this to return to the recipe page if you prefer
+                return "redirect:/usersui/favorites";
             }
             user.setFavourites(or.get());
             userService.save(user);
