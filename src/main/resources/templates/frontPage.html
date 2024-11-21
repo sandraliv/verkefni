@@ -12,10 +12,12 @@
 </head>
 <body>
 <div th:replace="fragments/header :: header"></div>
+<div class="welcome">
+    <img src="/images/welcome.png" alt="Welcome to our site!" class="welcome-image">
+</div>
 <div th:replace="fragments/search-form :: searchForm"></div>
+
 <div class="recipe-list-container">
-    <div class="welcome">
-    </div>
     <div>
         <ul class="category-list">
             <li th:each="category : ${categories}">
