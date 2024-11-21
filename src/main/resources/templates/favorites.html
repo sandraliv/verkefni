@@ -11,27 +11,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Favorite Recipes</title>
 </head>
+<body>
 <div th:replace="fragments/header :: header"></div>
-<div class="container">
-    <body>
-    <h1>Favorite Recipes</h1>
+    <div class="home-container">
 
-    <div class="recipe_form">
-        <div th:if="${#lists.isEmpty(favorites)}">
-            <p>You have no favorite recipes yet.</p>
+        <h1>Favorite Recipes</h1>
+
+        <div class="recipe_form">
+            <div th:if="${#lists.isEmpty(favorites)}">
+                <p>You have no favorite recipes yet.</p>
+            </div>
+            <ul th:if="${!#lists.isEmpty(favorites)}">
+                <li class="favourites" th:each="recipe : ${favorites}">
+                    <p th:text="${recipe.title}"><strong>Recipe Name</strong></p>
+                    <p th:text="${recipe.description}">Recipe Description</p>
+                    <a th:href="@{/allrecipes/{id}(id=${recipe.id})}">View Recipe</a>
+                    <form th:action="@{/usersui/favorites/{id}/remove(id=${recipe.id})}" method="post"
+                        style="display:inline;">
+                        <button type="submit">Remove</button>
+                    </form>
+                </li>
+            </ul>
         </div>
-        <ul th:if="${!#lists.isEmpty(favorites)}">
-            <li class="favourites" th:each="recipe : ${favorites}">
-                <p th:text="${recipe.title}"><strong>Recipe Name</strong></p>
-                <p th:text="${recipe.description}">Recipe Description</p>
-                <a th:href="@{/allrecipes/{id}(id=${recipe.id})}">View Recipe</a>
-                <form th:action="@{/usersui/favorites/{id}/remove(id=${recipe.id})}" method="post"
-                      style="display:inline;">
-                    <button type="submit">Remove</button>
-                </form>
-            </li>
-        </ul>
     </div>
-    </body>
-</div>
+</body>
+
 </html>

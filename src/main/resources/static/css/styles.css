@@ -288,8 +288,6 @@ form {
     margin: 0 5px;
 }
 
-}
-
 .dropdown {
     position: relative;
     display: inline-block;
@@ -337,4 +335,5 @@ form {
   max-width: var(--max-width);
   min-width: 500px
 }
+
 
