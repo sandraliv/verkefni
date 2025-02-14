@@ -2,6 +2,7 @@ package com.hi.recipe.verkefni;
 
 import com.cloudinary.Cloudinary;
 import io.github.cdimascio.dotenv.Dotenv;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -14,10 +15,11 @@ public class VerkefniApplication {
         SpringApplication.run(VerkefniApplication.class, args);
     }
 
-    // Configure Cloudinary Bean with dotenv
+    @Value("${CLOUDINARY_URL}")
+    private String cloudinaryUrl;
+
     @Bean
     public Cloudinary cloudinary() {
-        Dotenv dotenv = Dotenv.load();
-        return new Cloudinary(dotenv.get("CLOUDINARY_URL"));
+        return new Cloudinary(cloudinaryUrl);
     }
 }
