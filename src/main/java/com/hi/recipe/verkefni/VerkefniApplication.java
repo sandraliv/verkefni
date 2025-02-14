@@ -27,13 +27,23 @@ public class VerkefniApplication {
 //        // Initialize Cloudinary with CLOUDINARY_URL
 //        return new Cloudinary(dotenv.get("CLOUDINARY_URL"));
 //    }
-
     @Bean
-    public Cloudinary cloudinary(@Value("${CLOUDINARY_URL}") String cloudinaryUrl) {
+    public Cloudinary cloudinary(@Value("${CLOUDINARY_URL:}") String cloudinaryUrlFromEnv) {
+        String cloudinaryUrl = cloudinaryUrlFromEnv;
+        if (cloudinaryUrl == null || cloudinaryUrl.isEmpty()) {
+            // Fallback to Dotenv for local development
+            Dotenv dotenv = Dotenv.configure()
+                    .directory(System.getProperty("user.dir"))
+                    .ignoreIfMissing()
+                    .load();
+            cloudinaryUrl = dotenv.get("CLOUDINARY_URL");
+        }
+
         if (cloudinaryUrl == null || cloudinaryUrl.isEmpty()) {
             throw new IllegalStateException("CLOUDINARY_URL is not set");
         }
         return new Cloudinary(cloudinaryUrl);
     }
+
 
 }
