@@ -28,7 +28,7 @@ public class VerkefniApplication {
 //        return new Cloudinary(dotenv.get("CLOUDINARY_URL"));
 //    }
     @Bean
-    public Cloudinary cloudinary(@Value("${CLOUDINARY_URL:}") String cloudinaryUrlFromEnv) {
+    public Cloudinary cloudinary(@Value("${CLOUDINARY_URL}") String cloudinaryUrlFromEnv) {
         String cloudinaryUrl = cloudinaryUrlFromEnv;
         if (cloudinaryUrl == null || cloudinaryUrl.isEmpty()) {
             // Fallback to Dotenv for local development
