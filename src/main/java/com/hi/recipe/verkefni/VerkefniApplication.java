@@ -17,13 +17,7 @@ public class VerkefniApplication {
     // Configure Cloudinary Bean with dotenv
     @Bean
     public Cloudinary cloudinary() {
-        // Load environment variables from .env
-        String currentDir = System.getProperty("user.dir");
-        System.out.println("Current Working Directory: " + currentDir);
         Dotenv dotenv = Dotenv.load();
-
-
-        // Initialize Cloudinary with CLOUDINARY_URL
         return new Cloudinary(dotenv.get("CLOUDINARY_URL"));
     }
 }
