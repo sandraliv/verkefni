@@ -104,17 +104,26 @@ public class UserController {
      * @return Success message if login successful, error if credentials invalid or user not found
      */
     @PostMapping("Login")
-    public ResponseEntity<String> login(HttpSession session, @RequestBody User user){
-        Optional<User> ou = userService.findByUsername(user.getUsername());
-        if(ou.isPresent()){
-            User u = ou.get();
-            if(u.getPassword().equals(user.getPassword())) {
-                session.setAttribute("user", u);
-                return ResponseEntity.status(HttpStatus.FOUND).body("Login successful");
-            }
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad credentials");
+    public ResponseEntity<?> login(@RequestBody User user) {
+        Optional<User> optionalUser = userService.findByUsername(user.getUsername());
+    
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", "User not found."));
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+    
+        User foundUser = optionalUser.get();
+        if (!foundUser.getPassword().equals(user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("error", "Invalid credentials."));
+        }
+    
+        return ResponseEntity.ok().body(Map.of(
+            "id", foundUser.getId(),
+            "username", foundUser.getUsername(),
+            "email", foundUser.getEmail(),
+            "role", foundUser.getRole()
+        ));
     }
 
     //================================================================================
