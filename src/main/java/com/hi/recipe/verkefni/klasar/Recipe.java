@@ -67,10 +67,6 @@ public class Recipe {
     @Column(name = "score")
     private Map<User, Integer> recipeRatings = new HashMap<>();
 
-    // Method to clear all ratings from the recipe
-    public void clearRatings() {
-        this.recipeRatings.clear();
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -109,7 +105,10 @@ public class Recipe {
         this.image_url = image_url;
     }
 
-
+    // Method to clear all ratings from the recipe
+    public void clearRatings() {
+        this.recipeRatings.clear();
+    }
     public Integer getRatingCount() {
         if (recipeRatings != null) {
             return recipeRatings.size();
