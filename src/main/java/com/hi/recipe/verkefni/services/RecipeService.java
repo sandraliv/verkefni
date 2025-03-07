@@ -60,5 +60,3 @@ public interface RecipeService {
 
     int getTotalPages(int staerd);
 }
-
-

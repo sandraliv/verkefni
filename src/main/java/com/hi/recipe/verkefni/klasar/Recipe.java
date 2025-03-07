@@ -2,7 +2,6 @@ package com.hi.recipe.verkefni.klasar;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -14,13 +13,17 @@ import java.util.*;
 @Entity
 @Table(name = "recipes")
 public class Recipe {
-    @NotBlank(message = "Title is required")
+    @Column(name = "title")
     private String title;
+
+
     private String image_url;
-    @NotBlank(message = "Description is required")
+    @Column(name = "description")
     private String description;
-    @NotBlank(message = "Please add instructions")
+
+    @Column(name = "instructions") // Allow null temporarily
     private String instructions;
+
     private String formattedDate;
 
 

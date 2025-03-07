@@ -26,7 +26,7 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER)  // Change to EAGER loading
     @JsonIgnore
     @JoinTable(
-            name = "user_recipes",
+            name = "user_favorites",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "recipe_id")
     )
@@ -39,6 +39,12 @@ public class User {
     @MapKeyJoinColumn(name = "recipe_id")
     @Column(name = "score")
     private Map<Recipe, Integer> userRatings = new HashMap<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Set<UserRecipe> userRecipes = new HashSet<>();
+
+
 
 
     public User() {
@@ -74,6 +80,12 @@ public class User {
 
     public String getUsername() {
         return username;
+    }
+    public Set<UserRecipe> getUserRecipes() {
+        return userRecipes;
+    }
+    public void setUserRecipes(Set<UserRecipe> userRecipes) {
+        this.userRecipes = userRecipes;
     }
 
     public Set<Recipe> getFavourites() {

@@ -7,13 +7,10 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 @RestController
@@ -58,18 +55,18 @@ public class UserController {
 
     /**
      * Retrieves favorite recipes for the currently logged-in user
-     * @param session The current HTTP session containing user information
+     *  The current HTTP session containing user information
      * @return List of favorite recipes if user is logged in, or 401 if not authenticated
      */
-    @GetMapping("/getUserFav")
-    @Transactional(readOnly = true)  // Add this
-    public ResponseEntity<User> getUser(HttpSession session) {
-        User user = (User) session.getAttribute("LoggedInUser");
-        if (user != null) {
-            // Get a fresh copy from the database
-            User freshUser = userService.findById(user.getId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-            return ResponseEntity.ok(freshUser);
+    @GetMapping("/{id}/getUserFav")
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<Recipe>> getUser(@PathVariable int id) {
+        Optional<User> userOptional = userService.findById(id);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            Set<Recipe> favoriteRecipes = user.getFavourites();
+            List<Recipe> favoriteRecipesList = new ArrayList<>(favoriteRecipes);
+            return ResponseEntity.ok(favoriteRecipesList);
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
@@ -106,18 +103,18 @@ public class UserController {
     @PostMapping("Login")
     public ResponseEntity<?> login(@RequestBody User user) {
         Optional<User> optionalUser = userService.findByUsername(user.getUsername());
-    
+
         if (optionalUser.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Map.of("error", "User not found."));
         }
-    
+
         User foundUser = optionalUser.get();
         if (!foundUser.getPassword().equals(user.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("error", "Invalid credentials."));
         }
-    
+
         return ResponseEntity.ok().body(Map.of(
             "id", foundUser.getId(),
             "username", foundUser.getUsername(),
@@ -171,14 +168,14 @@ public class UserController {
     }
     /**
  * Updates the password of a logged in user
- * 
+ *
  * @param session Checks if the user is logged in.
  * @param updates A Map containing "currentPassword", "newPassword", and "confirmNewPassword" keys.
  * @return A success message if the password is changed, or an error messages.
  */
 @PatchMapping("/updatePassword")
 public ResponseEntity<String> updatePassword(HttpSession session, @RequestBody Map<String, String> updates) {
-    
+
     User user = (User) session.getAttribute("user");
     if (user == null) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in.");
