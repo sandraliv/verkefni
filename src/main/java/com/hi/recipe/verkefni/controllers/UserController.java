@@ -2,14 +2,23 @@ package com.hi.recipe.verkefni.controllers;
 
 import com.hi.recipe.verkefni.klasar.Recipe;
 import com.hi.recipe.verkefni.klasar.User;
+import com.hi.recipe.verkefni.services.ImageService;
 import com.hi.recipe.verkefni.services.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.*;
 
 
@@ -17,10 +26,12 @@ import java.util.*;
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
+    private final ImageService imageService;
 
     @Autowired
-    public UserController(UserService userService){
+    public UserController(UserService userService, ImageService imageService){
         this.userService = userService;
+        this.imageService = imageService;
     }
 
     //================================================================================
@@ -94,6 +105,31 @@ public class UserController {
     }
 
 
+    @PostMapping("/{id}/add_profile_pic")
+    public ResponseEntity<Map<String, String>> addPic(@PathVariable int id,
+                                                      @RequestParam("file") MultipartFile file) throws IOException {
+        Optional<User> userOptional = userService.findById(id);
+
+        if (userOptional.isPresent()) {
+            User existingUser = userOptional.get();
+
+            // Upload image to Cloudinary and get the URL
+            String imageUrl = imageService.uploadImage(file);
+
+            // Update the existing user's profile picture URL
+            existingUser.setProfilePictureUrl(imageUrl);
+            userService.save(existingUser); // Save the updated user
+
+            // Return only the updated profile picture URL as JSON
+            return ResponseEntity.ok(Collections.singletonMap("profilePictureUrl", imageUrl));
+        }
+        // If user is not found, return a JSON error response
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Collections.singletonMap("error", "User not found"));
+    }
+
+
+
     /**
      * Authenticates a user and creates a session
      * @param session The HTTP session to store user information
@@ -115,12 +151,7 @@ public class UserController {
                 .body(Map.of("error", "Invalid credentials."));
         }
 
-        return ResponseEntity.ok().body(Map.of(
-            "id", foundUser.getId(),
-            "username", foundUser.getUsername(),
-            "email", foundUser.getEmail(),
-            "role", foundUser.getRole()
-        ));
+        return ResponseEntity.ok(optionalUser);
     }
 
     //================================================================================

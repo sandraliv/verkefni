@@ -155,7 +155,7 @@ public class uiUserController {
      * @param id The ID of the user to delete
      * @return Redirects to users list with success message
      */
-    @PostMapping("/{id}/delete")
+    @DeleteMapping("/{id}/delete")  // ✅ Change from @PostMapping to @DeleteMapping
     public String deleteUser(@PathVariable int id, Model model) {
         userService.deleteById(id);
         model.addAttribute("message", "User deleted successfully");
