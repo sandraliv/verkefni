@@ -8,17 +8,11 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.*;
 
 
@@ -82,6 +76,8 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
+
+
     //================================================================================
     // POST Methods
     //================================================================================
@@ -129,7 +125,6 @@ public class UserController {
     }
 
 
-
     /**
      * Authenticates a user and creates a session
      * @param session The HTTP session to store user information
@@ -169,43 +164,19 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body("User deleted successfully");
     }
 
+    //================================================================================
+    // PATCH Methods
+    //================================================================================
+
     /**
-     * Removes a recipe from the current user's favorites list.
-     * @param recipeId The ID of the recipe to remove from favorites
-     * @param session The HTTP session to identify the logged-in user
-     * @return Success message if removed, 404 if recipe or user not found, or 401 if not logged in
-     */
-    @DeleteMapping("/removeFavorite/{recipeId}")
-    public ResponseEntity<String> removeFavoriteRecipe(@PathVariable int recipeId, HttpSession session) {
-        // Get the current logged-in user from the session
-        User user = (User) session.getAttribute("user");
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in.");
-        }
-
-        // Find the recipe to remove
-        Optional<Recipe> recipeToRemove = user.getFavourites().stream()
-                .filter(recipe -> recipe.getId() == recipeId)
-                .findFirst();
-
-        // Check if recipe exists in user's favorites
-        if (recipeToRemove.isPresent()) {
-            user.getFavourites().remove(recipeToRemove.get());
-            userService.save(user);  // Persist changes to the database
-            return ResponseEntity.ok("Recipe removed from favorites.");
-        }
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Recipe not found in favorites.");
-    }
-    /**
- * Updates the password of a logged in user
- *
- * @param session Checks if the user is logged in.
- * @param updates A Map containing "currentPassword", "newPassword", and "confirmNewPassword" keys.
- * @return A success message if the password is changed, or an error messages.
- */
-@PatchMapping("/updatePassword")
-public ResponseEntity<String> updatePassword(HttpSession session, @RequestBody Map<String, String> updates) {
+    * Updates the password of a logged in user
+     *
+     * @param session Checks if the user is logged in.
+     * @param updates A Map containing "currentPassword", "newPassword", and "confirmNewPassword" keys.
+    * @return A success message if the password is changed, or an error messages.
+    */
+    @PatchMapping("/updatePassword")
+    public ResponseEntity<String> updatePassword(HttpSession session, @RequestBody Map<String, String> updates) {
 
     User user = (User) session.getAttribute("user");
     if (user == null) {

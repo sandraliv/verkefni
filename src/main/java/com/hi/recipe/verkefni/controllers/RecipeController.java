@@ -36,7 +36,6 @@ public class RecipeController {
 
     /**
      * Retrieves recipes with optional search and tag filtering
-     *
      * @param query Optional search term to filter recipes by title
      * @param tags  Optional set of RecipeTags to filter recipes
      * @return Filtered list of recipes, or all recipes if no filters applied
@@ -65,7 +64,6 @@ public class RecipeController {
 
     /**
      * Retrieves recipes with optional category filtering
-     *
      * @param categories search term to filter recipes by category
      * @return Filtered list of recipes, or all recipes if no filters applied
      */
@@ -76,15 +74,12 @@ public class RecipeController {
         if (categories == null) {
             return ResponseEntity.ok(recipeService.findAll());
         }
-
-        // Fetch recipes by the selected category
         List<Recipe> recipes = recipeService.findByCategoriesIn(categories, 0, 10);
         return ResponseEntity.ok(recipes);
     }
 
     /**
      * Retrieves all recipes sorted by their creation date
-     *
      * @return List of recipes ordered by date, newest first
      */
     @GetMapping("/byDate")
@@ -149,38 +144,42 @@ public class RecipeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedRecipe);
     }
 
-    /**
-     * Adds a recipe to the current user's favorites list
-     *
-     * @param id      The ID of the recipe to be added to favorites
-     * @param session The current HTTP session containing user information
-     * @return Success message if added, error if user not found or recipe doesn't exist
-     */
     @PostMapping("/{id}/addAsFav")
     @Transactional
-    public ResponseEntity<String> addRecipeToFav(@PathVariable int id, HttpSession session) {
-        Optional<Recipe> or = recipeService.findById(id);
-        Recipe recipe;
-        if (or.isPresent()) {
-            recipe = or.get();
-        } else {
+    public ResponseEntity<String> addRecipeToFav(@PathVariable int id, @RequestParam int userId) {
+        // Find the recipe by ID
+        Optional<Recipe> recipeOptional = recipeService.findById(id);
+        if (recipeOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Recipe not found");
         }
-        User sessionUser = (User) session.getAttribute("user");
-        if (sessionUser != null) {
-            // Get fresh copy of user from database
-            Optional<User> userOpt = userService.findById(sessionUser.getId());
-            if (userOpt.isPresent()) {
-                User user = userOpt.get();
-                user.setFavourites(recipe);
-                userService.save(user);
-                // Update the session with the new user state
-                session.setAttribute("user", user);
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body("Favourite added to logged in user");
-            }
+        Recipe recipe = recipeOptional.get();
+
+        // Find the user by userId
+        Optional<User> userOptional = userService.findById(userId);
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Could not update user");
+        User user = userOptional.get();
+
+        // Check if the recipe is already in the user's favorites
+        if (user.getFavourites().contains(recipe)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Recipe is already in favorites");
+        }
+
+        // Use the service method to add the recipe to the user's favorites
+        try {
+            boolean success = recipeService.addRecipeToFavorites(recipe, user);
+            if (success) {
+                return ResponseEntity.status(HttpStatus.CREATED).body("Recipe added to favorites");
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add recipe to favorites");
+            }
+        } catch (Exception e) {
+            // Log the error and return a generic error message if something goes wrong
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred while adding to favorites");
+        }
     }
+
 
 
     @PostMapping("/auli/contact_us")
@@ -343,7 +342,6 @@ public class RecipeController {
 
     /**
      * Removes a recipe from the system
-     *
      * @param id The ID of the recipe to delete
      * @return Success message if deleted
      */
@@ -352,4 +350,39 @@ public class RecipeController {
         recipeService.deleteById(id);
         return ResponseEntity.status(200).body("Deleted recipe");
     }
+
+    /**
+     * Removes a recipe from the current user's favorites list.
+     * @param recipeId The ID of the recipe to remove from favorites
+     * @param userId The ID of the logged-in user
+     * @return Success message if removed, 404 if recipe or user not found
+     */
+    @DeleteMapping("/removeFavorite/{recipeId}")
+    public ResponseEntity<String> removeFavoriteRecipe(@PathVariable int recipeId, @RequestParam int userId) {
+        // Find the user by userId (the ID of the logged-in user)
+        Optional<User> userOptional = userService.findById(userId);
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+
+        User user = userOptional.get();
+
+        // Find the recipe by ID
+        Optional<Recipe> recipeOptional = recipeService.findById(recipeId);
+        if (recipeOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Recipe not found.");
+        }
+
+        Recipe recipe = recipeOptional.get();
+
+        // Use the service method to remove the recipe from the user's favorites
+        boolean success = recipeService.removeRecipeFromFavorites(recipe, user);
+
+        if (success) {
+            return ResponseEntity.ok("Recipe removed from favorites.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Recipe not found in favorites.");
+        }
+    }
+
 }

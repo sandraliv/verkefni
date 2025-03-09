@@ -216,7 +216,35 @@ public class RecipeServiceImpl implements RecipeService {
         recipeRepository.save(recipe);
     }
 
+    @Override
+    public boolean addRecipeToFavorites(Recipe recipe, User user) {
+        // Fetch the user from the repository (this will be the logged-in user)
+        Optional<User> existingUserOptional = userRepository.findById(user.getId());
 
+        if (existingUserOptional.isEmpty()) {
+            return false; // Return false if the user doesn't exist
+        }
+        User existingUser = existingUserOptional.get();
+        if (!existingUser.getFavourites().contains(recipe)) {
+            existingUser.getFavourites().add(recipe);
+            userRepository.save(existingUser);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean removeRecipeFromFavorites(Recipe recipe, User user) {
+        // Check if the recipe is in the user's favorites
+        if (user.getFavourites().contains(recipe)) {
+            user.removeFavourite(recipe);
+            recipe.getUserFavorites().remove(user);
+            userRepository.save(user); // Save the updated user
+            recipeRepository.save(recipe); // Save the updated recipe
+            return true;
+        }
+        return false;
+    }
 }
 
 

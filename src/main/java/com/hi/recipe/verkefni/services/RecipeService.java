@@ -59,4 +59,8 @@ public interface RecipeService {
     void removeRatingFromRecipe(int recipeId);
 
     int getTotalPages(int staerd);
+
+    boolean addRecipeToFavorites(Recipe recipe, User user);
+
+    boolean removeRecipeFromFavorites(Recipe recipe, User user);
 }
