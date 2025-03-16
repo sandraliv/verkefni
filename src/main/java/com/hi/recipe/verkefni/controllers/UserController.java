@@ -4,7 +4,6 @@ import com.hi.recipe.verkefni.klasar.Recipe;
 import com.hi.recipe.verkefni.klasar.User;
 import com.hi.recipe.verkefni.services.ImageService;
 import com.hi.recipe.verkefni.services.UserService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +22,7 @@ public class UserController {
     private final ImageService imageService;
 
     @Autowired
-    public UserController(UserService userService, ImageService imageService){
+    public UserController(UserService userService, ImageService imageService) {
         this.userService = userService;
         this.imageService = imageService;
     }
@@ -34,6 +33,7 @@ public class UserController {
 
     /**
      * Retrieves all users in the system
+     *
      * @return List of all users or empty list if none exist
      */
     @GetMapping("")
@@ -47,6 +47,7 @@ public class UserController {
 
     /**
      * Retrieves a specific user's profile by their ID
+     *
      * @param id The unique identifier of the user
      * @return The requested user profile if found, or 404 if not found
      */
@@ -54,13 +55,14 @@ public class UserController {
     public ResponseEntity<Optional<User>> getUserProfileById(@PathVariable int id) {
         Optional<User> userProfile = userService.findById(id);
         return userProfile.isPresent()
-            ? ResponseEntity.ok(userProfile)
-            : ResponseEntity.notFound().build();
+                ? ResponseEntity.ok(userProfile)
+                : ResponseEntity.notFound().build();
     }
 
     /**
      * Retrieves favorite recipes for the currently logged-in user
-     *  The current HTTP session containing user information
+     * The current HTTP session containing user information
+     *
      * @return List of favorite recipes if user is logged in, or 401 if not authenticated
      */
     @GetMapping("/{id}/getUserFav")
@@ -77,13 +79,13 @@ public class UserController {
     }
 
 
-
     //================================================================================
     // POST Methods
     //================================================================================
 
     /**
      * Registers a new user in the system
+     *
      * @param user The user object containing registration details
      * @return Success message if user created, error if user already exists
      */
@@ -127,7 +129,7 @@ public class UserController {
 
     /**
      * Authenticates a user and creates a session
-     * @param session The HTTP session to store user information
+     *
      * @param user The user credentials for authentication
      * @return Success message if login successful, error if credentials invalid or user not found
      */
@@ -137,13 +139,13 @@ public class UserController {
 
         if (optionalUser.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of("error", "User not found."));
+                    .body(Map.of("error", "User not found."));
         }
 
         User foundUser = optionalUser.get();
         if (!foundUser.getPassword().equals(user.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(Map.of("error", "Invalid credentials."));
+                    .body(Map.of("error", "Invalid credentials."));
         }
 
         return ResponseEntity.ok(optionalUser);
@@ -155,11 +157,12 @@ public class UserController {
 
     /**
      * Removes a user from the system
+     *
      * @param id The ID of the user to delete
      * @return Success message if deleted
      */
     @DeleteMapping("{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable int id){
+    public ResponseEntity<String> deleteUser(@PathVariable int id) {
         userService.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body("User deleted successfully");
     }
@@ -169,37 +172,33 @@ public class UserController {
     //================================================================================
 
     /**
-    * Updates the password of a logged in user
+     * Updates the password of a logged in user
      *
-     * @param session Checks if the user is logged in.
      * @param updates A Map containing "currentPassword", "newPassword", and "confirmNewPassword" keys.
-    * @return A success message if the password is changed, or an error messages.
-    */
-    @PatchMapping("/updatePassword")
-    public ResponseEntity<String> updatePassword(HttpSession session, @RequestBody Map<String, String> updates) {
+     * @return A success message if the password is changed, or an error messages.
+     */
+    @PatchMapping("/{id}/updatePassword")
+    public ResponseEntity<String> updatePassword(@PathVariable int id, @RequestBody Map<String, String> updates) {
+        Optional<User> user = userService.findById(id);
+        if (user.isPresent()) {
+            User userFound = user.get();
+            String currentPassword = updates.get("currentPassword");
+            if (currentPassword.isEmpty() || !userFound.getPassword().equals(currentPassword)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Current password is incorrect.");
+            }
+            String newPassword = updates.get("newPassword");
+            String confirmNewPassword = updates.get("confirmNewPassword");
+            if (newPassword == null || !newPassword.equals(confirmNewPassword)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("New passwords do not match.");
+            }
 
-    User user = (User) session.getAttribute("user");
-    if (user == null) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in.");
+            userFound.setPassword(newPassword);
+            userService.save(userFound);
+
+            return ResponseEntity.status(HttpStatus.OK).body("Password successfully changed");
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
     }
-
-
-    String currentPassword = updates.get("currentPassword");
-    if (currentPassword == null || !user.getPassword().equals(currentPassword)) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Current password is incorrect.");
-    }
-
-    String newPassword = updates.get("newPassword");
-    String confirmNewPassword = updates.get("confirmNewPassword");
-    if (newPassword == null || !newPassword.equals(confirmNewPassword)) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("New passwords do not match.");
-    }
-
-
-    user.setPassword(newPassword);
-    userService.save(user);
-
-    return ResponseEntity.ok("Password changed successfully");
-}
 }
 
