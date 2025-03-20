@@ -147,26 +147,21 @@ public class RecipeController {
     @PostMapping("/{id}/addAsFav")
     @Transactional
     public ResponseEntity<String> addRecipeToFav(@PathVariable int id, @RequestParam int userId) {
-        // Find the recipe by ID
         Optional<Recipe> recipeOptional = recipeService.findById(id);
         if (recipeOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Recipe not found");
         }
         Recipe recipe = recipeOptional.get();
-
-        // Find the user by userId
         Optional<User> userOptional = userService.findById(userId);
         if (userOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
         User user = userOptional.get();
 
-        // Check if the recipe is already in the user's favorites
         if (user.getFavourites().contains(recipe)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Recipe is already in favorites");
         }
 
-        // Use the service method to add the recipe to the user's favorites
         try {
             boolean success = recipeService.addRecipeToFavorites(recipe, user);
             if (success) {
@@ -175,7 +170,6 @@ public class RecipeController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add recipe to favorites");
             }
         } catch (Exception e) {
-            // Log the error and return a generic error message if something goes wrong
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred while adding to favorites");
         }
     }
