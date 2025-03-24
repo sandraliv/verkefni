@@ -35,6 +35,7 @@ public class RecipeController {
 
     /**
      * Retrieves recipes with optional search and tag filtering
+     *
      * @param query Optional search term to filter recipes by title
      * @param tags  Optional set of RecipeTags to filter recipes
      * @return Filtered list of recipes, or all recipes if no filters applied
@@ -61,18 +62,24 @@ public class RecipeController {
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size) {
 
+        long startTime = System.currentTimeMillis();
         // Parse the sort parameter to SortType enum
         SortType sortType = SortType.valueOf(sort.toUpperCase());
 
         // Fetch recipes with pagination and sorting
         List<Recipe> recipes = recipeService.findAllPaginated(page, size, sortType);
 
+        long endTime = System.currentTimeMillis();
+        long elapsedTime = endTime - startTime;
+
+        System.out.println("⏱️ Time taken to fetch recipes: " + elapsedTime + " ms");
         return ResponseEntity.ok(recipes);
 
     }
 
     /**
      * Retrieves recipes with optional category filtering
+     *
      * @param categories search term to filter recipes by category
      * @return Filtered list of recipes, or all recipes if no filters applied
      */
@@ -89,10 +96,11 @@ public class RecipeController {
 
     /**
      * Retrieves recipes filtered by category with optional sorting (rating or date).
+     *
      * @param categories The categories to filter the recipes by.
-     * @param sort The sorting parameter (either "rating" or "date").
-     * @param page The page number for pagination.
-     * @param size The number of items per page.
+     * @param sort       The sorting parameter (either "rating" or "date").
+     * @param page       The page number for pagination.
+     * @param size       The number of items per page.
      * @return A filtered and sorted list of recipes.
      */
     @GetMapping("/byCategory")
@@ -114,6 +122,7 @@ public class RecipeController {
 
     /**
      * Retrieves all recipes sorted by their creation date
+     *
      * @return List of recipes ordered by date, newest first
      */
     @GetMapping("/byDate")
@@ -209,7 +218,6 @@ public class RecipeController {
     }
 
 
-
     @PostMapping("/auli/contact_us")
     public ResponseEntity<String> submitContactForm(@Valid @RequestBody ContactForm contactForm) {
         // Process form data here, e.g., save to database or send an email
@@ -221,9 +229,9 @@ public class RecipeController {
     /**
      * Adds a rating to an existing recipe.
      *
-     * @param recipeId      The ID of the recipe to rate
-     * @param userId  The ID of the user submitting the rating
-     * @param score   The score to add to the recipe (between 1 and 5)
+     * @param recipeId The ID of the recipe to rate
+     * @param userId   The ID of the user submitting the rating
+     * @param score    The score to add to the recipe (between 1 and 5)
      * @return Success message if the rating is added, error message if the recipe or user not found, or if there's an internal error
      */
 
@@ -263,8 +271,6 @@ public class RecipeController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while submitting your rating");
         }
     }
-
-
 
 
     // Endpoint to remove a rating from a recipe
@@ -373,6 +379,7 @@ public class RecipeController {
 
     /**
      * Removes a recipe from the system
+     *
      * @param id The ID of the recipe to delete
      * @return Success message if deleted
      */
@@ -384,8 +391,9 @@ public class RecipeController {
 
     /**
      * Removes a recipe from the current user's favorites list.
+     *
      * @param recipeId The ID of the recipe to remove from favorites
-     * @param userId The ID of the logged-in user
+     * @param userId   The ID of the logged-in user
      * @return Success message if removed, 404 if recipe or user not found
      */
     @DeleteMapping("/removeFavorite/{recipeId}")

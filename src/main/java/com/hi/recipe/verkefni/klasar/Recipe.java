@@ -3,6 +3,7 @@ package com.hi.recipe.verkefni.klasar;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
@@ -29,27 +30,30 @@ public class Recipe {
     private String formattedDate;
 
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY
+    )
     @CollectionTable(name = "recipe_ingredients", joinColumns = @JoinColumn(name = "recipe_id"))
     @MapKeyColumn(name = "ingredient_name")
     @Column(name = "ingredient_quantity")
     @NotEmpty
     private Map<String, String> ingredients = new HashMap<>();
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(
             name = "recipe_tags",
             joinColumns = @JoinColumn(name = "recipe_id")
     )
+    @BatchSize(size = 30)
     @Column(name = "tag")
     @Enumerated(EnumType.STRING)  // Make sure this is STRING, not ORDINAL
     private Set<RecipeTag> tags = new HashSet<>();
 
 
-    @ElementCollection(targetClass = Category.class, fetch = FetchType.EAGER)  // To store multiple categories
+    @ElementCollection(targetClass = Category.class, fetch = FetchType.LAZY)  // To store multiple categories
     @Enumerated(EnumType.STRING)  // Store enums as strings in the database
     @CollectionTable(name = "recipe_categories", joinColumns = @JoinColumn(name = "recipe_id"), uniqueConstraints = @UniqueConstraint(columnNames = {"recipe_id", "category"}))
     @Column(name = "category")
+    @BatchSize(size = 30)
     private Set<Category> categories = new HashSet<>();  // Multiple categories
 
     @PreRemove
@@ -114,6 +118,7 @@ public class Recipe {
     public void clearRatings() {
         this.recipeRatings.clear();
     }
+
     public Integer getRatingCount() {
         if (recipeRatings != null) {
             return recipeRatings.size();
