@@ -3,7 +3,6 @@ package com.hi.recipe.verkefni.controllers;
 import com.hi.recipe.verkefni.klasar.*;
 import com.hi.recipe.verkefni.services.RecipeService;
 import com.hi.recipe.verkefni.services.UserService;
-import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -52,14 +51,24 @@ public class RecipeController {
             return ResponseEntity.ok(recipeService.findByTagsIn(tags, 0, 10));
         }
 
+
         return ResponseEntity.ok(recipeService.findByTitleAndTags(query, tags));
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Recipe>> getAll() {
-        List<Recipe> recipes = recipeService.findAll();
+    public ResponseEntity<List<Recipe>> getAllRecipes(
+            @RequestParam(value = "sort", required = false, defaultValue = "RATING") String sort,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+
+        // Parse the sort parameter to SortType enum
+        SortType sortType = SortType.valueOf(sort.toUpperCase());
+
+        // Fetch recipes with pagination and sorting
+        List<Recipe> recipes = recipeService.findAllPaginated(page, size, sortType);
 
         return ResponseEntity.ok(recipes);
+
     }
 
     /**
@@ -67,7 +76,7 @@ public class RecipeController {
      * @param categories search term to filter recipes by category
      * @return Filtered list of recipes, or all recipes if no filters applied
      */
-    @GetMapping("/byCategory")
+    @GetMapping("/byCategoryOLD")
     public ResponseEntity<List<Recipe>> getRecipesByCategory(
             @RequestParam(value = "categories", required = false) Set<Category> categories) {
         // If no category is provided, return all recipes
@@ -77,6 +86,31 @@ public class RecipeController {
         List<Recipe> recipes = recipeService.findByCategoriesIn(categories, 0, 10);
         return ResponseEntity.ok(recipes);
     }
+
+    /**
+     * Retrieves recipes filtered by category with optional sorting (rating or date).
+     * @param categories The categories to filter the recipes by.
+     * @param sort The sorting parameter (either "rating" or "date").
+     * @param page The page number for pagination.
+     * @param size The number of items per page.
+     * @return A filtered and sorted list of recipes.
+     */
+    @GetMapping("/byCategory")
+    public ResponseEntity<List<Recipe>> getRecipesByCategory(
+            @RequestParam(value = "categories") Set<Category> categories,
+            @RequestParam(value = "sort", required = false, defaultValue = "averageRating") String sort,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+
+        // Parse the sort parameter and convert it to SortType enum
+        SortType sortType = SortType.valueOf(sort.toUpperCase());
+
+        // Fetch recipes by categories with sorting and pagination
+        List<Recipe> recipes = recipeService.findByCategoriesIn(categories, page, size, sortType);
+
+        return ResponseEntity.ok(recipes);
+    }
+
 
     /**
      * Retrieves all recipes sorted by their creation date
@@ -185,49 +219,52 @@ public class RecipeController {
     }
 
     /**
-     * Adds a temporary rating to an existing recipe.
+     * Adds a rating to an existing recipe.
      *
-     * @param id      The ID of the recipe to modify
+     * @param recipeId      The ID of the recipe to rate
+     * @param userId  The ID of the user submitting the rating
      * @param score   The score to add to the recipe (between 1 and 5)
-     * @param session The HTTP session to check for the logged-in user
-     * @return Success message if the rating is added, error if the recipe not found or user is not logged in
+     * @return Success message if the rating is added, error message if the recipe or user not found, or if there's an internal error
      */
+
     @PostMapping("/{id}/addRating")
     public ResponseEntity<String> addRatingToRecipeRest(
-            @PathVariable("id") int id,
-            @RequestParam("score") @Min(1) @Max(5) int score,
-            HttpSession session) {
+            @PathVariable("id") int recipeId,
+            @RequestParam("userId") int userId,
+            @RequestParam("score") @Min(1) @Max(5) int score) {
 
-        System.out.println("Looking for recipe with ID: " + id);
-        Optional<Recipe> recipeOptional = recipeService.findById(id);
+        System.out.println("Looking for recipe with ID: " + recipeId);
+
+        // Find the recipe by ID
+        Optional<Recipe> recipeOptional = recipeService.findById(recipeId);
         if (recipeOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Recipe not found");
         }
-        User sessionUser = (User) session.getAttribute("user");
-        if (sessionUser == null) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You must be logged in to rate a recipe");
-        }
 
-        Optional<User> userOpt = userService.findById(sessionUser.getId());
+        // Find the user by ID
+        Optional<User> userOpt = userService.findById(userId);
         if (userOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
 
         User user = userOpt.get();
+
+        // Check if the user has already rated this recipe
+        if (user.getUserRatings().containsKey(recipeOptional.get())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("User has already rated this recipe");
+        }
+
         // Add the rating through the service layer
         try {
-            recipeService.addRating(id, user, score); // This calls your service layer method
-
-            // Update the session with the latest user object (optional, if user object changes)
-            session.setAttribute("user", user);
-
+            recipeService.addRating(recipeId, user, score); // This calls your service layer method
             return ResponseEntity.status(HttpStatus.ACCEPTED).body("Rating submitted by " + user.getUsername());
-        } catch (NoSuchElementException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Recipe not found");
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while submitting your rating");
         }
     }
+
+
 
 
     // Endpoint to remove a rating from a recipe

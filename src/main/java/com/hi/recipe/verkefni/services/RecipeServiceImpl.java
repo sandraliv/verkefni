@@ -3,6 +3,7 @@ package com.hi.recipe.verkefni.services;
 import com.hi.recipe.verkefni.klasar.Category;
 import com.hi.recipe.verkefni.klasar.Recipe;
 import com.hi.recipe.verkefni.klasar.RecipeTag;
+import com.hi.recipe.verkefni.klasar.SortType;
 import com.hi.recipe.verkefni.klasar.User;
 import com.hi.recipe.verkefni.repository.RecipeRepository;
 import com.hi.recipe.verkefni.repository.UserRepository;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+
 
 @Service
 public class RecipeServiceImpl implements RecipeService {
@@ -70,17 +72,33 @@ public class RecipeServiceImpl implements RecipeService {
         return recipes.getContent();
     }
 
-    @Override
     public List<Recipe> findAllPaginated(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Recipe> recipes = recipeRepository.findAllPaginated(pageable);
-        return recipes.getContent();
+        return List.of();
+    }
+
+    @Override
+    public List<Recipe> findAllPaginated(int page, int size, SortType sortType) {
+        Pageable pageable = getPageable(sortType, page, size);
+        Page<Recipe> recipePage = recipeRepository.findAll(pageable);
+        return recipePage.getContent();
     }
 
     public int getTotalPages(int size) {
         Pageable pageable = PageRequest.of(0, size); // Use page 0 since we're only interested in total pages
         Page<Recipe> recipes = recipeRepository.findAllPaginated(pageable);
         return recipes.getTotalPages();
+    }
+
+    // Helper method to determine the sort order based on SortType
+    private Sort getSort(SortType sortType) {
+        switch (sortType) {
+            case RATING:
+                return Sort.by(Sort.Order.desc("averageRating"));
+            case DATE:
+                return Sort.by(Sort.Order.desc("dateAdded"));
+            default:
+                return Sort.unsorted();  // Default to no sorting if no match
+        }
     }
 
     @Override
@@ -109,11 +127,24 @@ public class RecipeServiceImpl implements RecipeService {
         return recipeRepository.findByTitleContainingIgnoreCaseAndCategoriesIn(title, categories);
     }
 
-    @Override
     public List<Recipe> findByCategoriesIn(Set<Category> categories, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("averageRating")));
-        Page<Recipe> recipes = recipeRepository.findByCategoriesIn(categories, pageable);
-        return recipes.getContent();
+        return List.of();
+    }
+
+    @Override
+    public List<Recipe> findByCategoriesIn(Set<Category> categories, int page, int size, SortType sortType) {
+        Pageable pageable = getPageable(sortType, page, size);
+        return recipeRepository.findByCategoriesIn(categories, pageable).getContent();
+    }
+
+    private Pageable getPageable(SortType sortType, int page, int size) {
+        switch (sortType) {
+            case DATE:
+                return PageRequest.of(page, size, Sort.by("dateAdded").descending());
+            case RATING:
+            default:
+                return PageRequest.of(page, size, Sort.by("averageRating").descending());
+        }
     }
 
     // Search by title (case-insensitive)
@@ -133,17 +164,16 @@ public class RecipeServiceImpl implements RecipeService {
         Pageable pageable = PageRequest.of(page, size);
         Page<Recipe> recipes = recipeRepository.findByDate(pageable);
 
-        List<Recipe> recipeList = recipes.getContent();
-        return recipeList;
+        return recipes.getContent();
     }
+
 
     // Paginated recipes sorted by average rating
     @Override
     public List<Recipe> findAllByAverageRatingDesc(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Recipe> recipes = recipeRepository.findAllByAverageRatingDesc(pageable);
-        List<Recipe> recipeList = recipes.getContent();
-        return recipeList;
+        return recipes.getContent();
     }
 
     // Helper method to format date
@@ -245,6 +275,7 @@ public class RecipeServiceImpl implements RecipeService {
         }
         return false;
     }
+
 }
 
 

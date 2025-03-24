@@ -51,6 +51,7 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
     @EntityGraph(attributePaths = {"ingredients", "tags", "categories"})
     Page<Recipe> findByCategoriesIn(Collection<Category> categories, Pageable pageable);
 
+
     // Retrieve recipes by categories, ordered by average rating
     @Query("SELECT r FROM Recipe r JOIN r.categories c WHERE c IN :categories ORDER BY r.averageRating DESC")
     Page<Recipe> findByCategoriesInOrderByAverageRatingDesc(@Param("categories") Set<Category> categories, Pageable pageable);
@@ -61,6 +62,7 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
     List<Recipe> findByTitleContainingIgnoreCaseAndTagsIn(String title, Collection<RecipeTag> tags);
 
     List<Recipe> findByTitleContainingIgnoreCaseAndCategoriesIn(String title, Set<Category> categories);
+
 }
 
 

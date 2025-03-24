@@ -18,6 +18,8 @@ public class Recipe {
 
 
     private String image_url;
+
+
     @Column(name = "description")
     private String description;
 

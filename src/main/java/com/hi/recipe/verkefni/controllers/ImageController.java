@@ -101,7 +101,7 @@ public class ImageController {
             String imageUrl = imageService.uploadImage(file);
             recipe.setImage_url(imageUrl);
             recipeRepository.save(recipe);
-            return ResponseEntity.ok("Image changed and added to recipe successfully. Image URL: " + imageUrl);
+            return ResponseEntity.ok("Image changed and added to recipe with ID " + recipeId + " successfully. Image URL: " + imageUrl);
         } catch (IOException e) {
             return  ResponseEntity.status(500).body("Error uploading image: " + e.getMessage());
         } catch (IllegalArgumentException e) {

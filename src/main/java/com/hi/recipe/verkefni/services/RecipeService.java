@@ -1,10 +1,7 @@
 package com.hi.recipe.verkefni.services;
 
 
-import com.hi.recipe.verkefni.klasar.Category;
-import com.hi.recipe.verkefni.klasar.Recipe;
-import com.hi.recipe.verkefni.klasar.RecipeTag;
-import com.hi.recipe.verkefni.klasar.User;
+import com.hi.recipe.verkefni.klasar.*;
 import jakarta.transaction.Transactional;
 
 import java.time.LocalDateTime;
@@ -36,6 +33,9 @@ public interface RecipeService {
 
     Optional<Recipe> findRecipeById(int id);
 
+    // Method to fetch recipes by category with pagination and sorting
+    List<Recipe> findByCategoriesIn(Set<Category> categories, int page, int size, SortType sortType);
+
     List<Recipe> findByTitleContainingIgnoreCase(String keyword);
 
     List<Recipe> findByTitleAndTags(String title, Set<RecipeTag> tags);
@@ -58,9 +58,14 @@ public interface RecipeService {
     // Method to remove rating from a recipe
     void removeRatingFromRecipe(int recipeId);
 
+    // Fetch all recipes with pagination and sorting
+    List<Recipe> findAllPaginated(int page, int size, SortType sortType);
+
     int getTotalPages(int staerd);
 
     boolean addRecipeToFavorites(Recipe recipe, User user);
 
     boolean removeRecipeFromFavorites(Recipe recipe, User user);
+
+
 }
