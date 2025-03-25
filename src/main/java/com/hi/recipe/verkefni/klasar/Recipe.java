@@ -12,23 +12,20 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
-@Table(name = "recipes")
+@Table(name = "recipes",
+        indexes = {
+                @Index(name = "idx_avg_rating", columnList = "averageRating DESC"),
+                @Index(name = "idx_date_added", columnList = "dateAdded DESC")
+        })
 public class Recipe {
     @Column(name = "title")
     private String title;
-
-
     private String image_url;
-
-
     @Column(name = "description")
     private String description;
-
     @Column(name = "instructions", length = 500)
     private String instructions;
-
     private String formattedDate;
-
 
     @ElementCollection(fetch = FetchType.LAZY
     )
