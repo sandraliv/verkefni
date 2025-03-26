@@ -69,6 +69,25 @@ public class RecipeController {
         // Fetch recipes with pagination and sorting
         List<Recipe> recipes = recipeService.findAllPaginated(page, size, sortType);
 
+        // Log the image URLs for each recipe
+        for (Recipe recipe : recipes) {
+            // Assuming Recipe has a method getImageUrls() that returns a List<String>
+            List<String> imageUrls = recipe.getImageUrls();
+
+            if (imageUrls == null || imageUrls.isEmpty()) {
+                System.out.println("Recipe ID: " + recipe.getId() + " has no image URLs.");
+            } else {
+                // Log each image URL in the list
+                for (String url : imageUrls) {
+                    if (url == null || url.isEmpty()) {
+                        System.out.println("Recipe ID: " + recipe.getId() + " has an empty image URL.");
+                    } else {
+                        System.out.println("Recipe ID: " + recipe.getId() + " has image URL: " + url);
+                    }
+                }
+            }
+        }
+
         long endTime = System.currentTimeMillis();
         long elapsedTime = endTime - startTime;
 

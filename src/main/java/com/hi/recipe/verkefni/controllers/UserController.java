@@ -73,10 +73,30 @@ public class UserController {
             User user = userOptional.get();
             Set<Recipe> favoriteRecipes = user.getFavourites();
             List<Recipe> favoriteRecipesList = new ArrayList<>(favoriteRecipes);
+
+            // Log the image URLs for each recipe
+            for (Recipe recipe : favoriteRecipesList) {
+                // Assuming Recipe has a method getImageUrls() that returns a List<String>
+                List<String> imageUrls = recipe.getImageUrls();
+
+                if (imageUrls == null || imageUrls.isEmpty()) {
+                    System.out.println("Recipe ID: " + recipe.getId() + " has no image URLs.");
+                } else {
+                    // Log each image URL in the list
+                    for (String url : imageUrls) {
+                        if (url == null || url.isEmpty()) {
+                            System.out.println("Recipe ID: " + recipe.getId() + " has an empty image URL.");
+                        } else {
+                            System.out.println("Recipe ID: " + recipe.getId() + " has image URL: " + url);
+                        }
+                    }
+                }
+            }
             return ResponseEntity.ok(favoriteRecipesList);
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
+
 
 
     //================================================================================

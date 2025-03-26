@@ -3,6 +3,8 @@ package com.hi.recipe.verkefni.klasar;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Entity
@@ -16,7 +18,8 @@ public class UserRecipe {
     @NotBlank(message = "Title is required")
     private String title;
 
-    private String image_url;
+    // New field to store multiple image URLs
+    private List<String> imageUrls;
 
     @NotBlank(message = "Description is required")
     @Column(length = 500) // This will map the description to VARCHAR(500)
@@ -65,12 +68,20 @@ public class UserRecipe {
         this.title = title;
     }
 
-    public String getImage_url() {
-        return image_url;
+    // Getter and setter for imageUrls
+    public List<String> getImageUrls() {
+        return imageUrls;
     }
 
-    public void setImage_url(String image_url) {
-        this.image_url = image_url;
+    public void setImageUrls(List<String> imageUrls) {
+        this.imageUrls = imageUrls;
+    }
+
+    public void addImageUrl(String imageUrl) {
+        if (this.imageUrls == null) {
+            this.imageUrls = new ArrayList<>();
+        }
+        this.imageUrls.add(imageUrl);
     }
 
     public String getDescription() {
