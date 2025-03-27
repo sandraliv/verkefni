@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("recipesui")
@@ -45,34 +47,56 @@ public class uiImageController {
 
     /**
      * @param recipeId Id of the recipe to which the image should be added
-     * @param file     the image to upload to the recipe (jpeg/jpg)
+     * @param files     the image to upload to the recipe (jpeg/jpg)
      * @param model    the model
      * @return uploadImage.html
      */
     @PostMapping("/{recipeId}/upload")
-    public String uploadImageToRecipe(@PathVariable int recipeId, @RequestParam("file") MultipartFile file, Model model) {
+    public String uploadImagesToRecipe(@PathVariable int recipeId,
+                                       @RequestParam("files") List<MultipartFile> files,
+                                       Model model) {
         try {
-            // Step 1: Find the Recipe by ID
             Recipe recipe = recipeRepository.findById(recipeId)
                     .orElseThrow(() -> new IllegalArgumentException("Recipe not found"));
 
-            if (file == null || file.isEmpty()) {
-                model.addAttribute("message", "No image uploaded, but recipe was found successfully.");
-                return "redirect:/recipeList"; // You may want to redirect or display a different message here
+            if (files == null || files.isEmpty()) {
+                model.addAttribute("message", "No images uploaded, but recipe was found successfully.");
+                return "redirect:/recipeList";
             }
-            String imageUrl = imageService.uploadImage(file);
-            recipe.setImage_url(imageUrl);
+
+            // Change from Set to List to allow duplicates and preserve order
+            List<String> imageUrls = new ArrayList<>();
+
+            for (MultipartFile file : files) {
+                if (!file.isEmpty()) {
+                    String imageUrl = imageService.uploadImage(file);
+                    imageUrls.add(imageUrl); // Add URL to list
+                }
+            }
+
+            // Append the new image URLs to the existing ones
+            if (recipe.getImageUrls() == null) {
+                recipe.setImageUrls(imageUrls);
+            } else {
+                recipe.getImageUrls().addAll(imageUrls); // Append new URLs to the existing list
+            }
+
             recipeRepository.save(recipe);
-            model.addAttribute("message", "Image uploaded and added to recipe successfully");
-            return "redirect:/";
+
+            model.addAttribute("message", "Images uploaded and added to recipe successfully");
+
+            return "redirect:/recipeList";
         } catch (IOException e) {
-            model.addAttribute("errorMessage", "Error uploading image: " + e.getMessage());
+            model.addAttribute("errorMessage", "Error uploading images: " + e.getMessage());
             return "uploadPhoto";
         } catch (IllegalArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());
             return "uploadPhoto";
         }
+
     }
+
+
 
     //================================================================================
     // PATCH Methods
@@ -80,22 +104,39 @@ public class uiImageController {
 
     /**
      * @param recipeId Id of the recipe to be modified
-     * @param file     the image to be set on the recipe jpeg/jpg
+     * @param files     the image to be set on the recipe jpeg/jpg
      * @param model    the model
      * @return uploadImage.html
      */
-    @PatchMapping("/{recipeId}/replaceImg")
-    public String replaceRecipeImage(@PathVariable int recipeId, @RequestParam("file") MultipartFile file, Model model) {
+    @PatchMapping("/{recipeId}/replaceImgs")
+    public String replaceRecipeImages(@PathVariable int recipeId,
+                                      @RequestParam("files") List<MultipartFile> files,
+                                      Model model) {
         try {
-            Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(() -> new IllegalArgumentException("Recipe not found"));
-            String imageUrl = imageService.uploadImage(file);
-            recipe.setImage_url(imageUrl);
+            Recipe recipe = recipeRepository.findById(recipeId)
+                    .orElseThrow(() -> new IllegalArgumentException("Recipe not found"));
+
+            // Change from Set to List to allow duplicates and preserve order
+            List<String> imageUrls = new ArrayList<>();
+
+            for (MultipartFile file : files) {
+                String imageUrl = imageService.uploadImage(file);
+                imageUrls.add(imageUrl); // Add URL to list
+            }
+
+            // Replace the image URLs in the recipe (clear existing ones first)
+            recipe.setImageUrls(imageUrls); // Set the new list of image URLs
+
+            // Save the updated recipe
             recipeRepository.save(recipe);
-            model.addAttribute("message", "Image changed, uploaded and added to recipe successfully");
-            model.addAttribute("imageUrl", imageUrl);
+
+            model.addAttribute("message", "Images uploaded and added to recipe successfully.");
+            model.addAttribute("imageUrls", imageUrls);
+
             return "uploadImage";
+
         } catch (IOException e) {
-            model.addAttribute("errorMessage", "Error uploading image: " + e.getMessage());
+            model.addAttribute("errorMessage", "Error uploading images: " + e.getMessage());
             return "uploadImage";
         } catch (IllegalArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());

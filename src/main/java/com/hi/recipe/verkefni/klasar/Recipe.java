@@ -20,7 +20,14 @@ import java.util.*;
 public class Recipe {
     @Column(name = "title")
     private String title;
-    private String image_url;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "recipe_images", joinColumns = @JoinColumn(name = "recipe_id"))
+    @Column(name = "image_url")
+    private List<String> imageUrls = new ArrayList<>();
+
+
+
     @Column(name = "description")
     private String description;
     @Column(name = "instructions", length = 500)
@@ -103,13 +110,15 @@ public class Recipe {
         return title;
     }
 
-    public String getImage_url() {
-        return image_url;
+    // Getter and setter for imageUrls
+    public List<String> getImageUrls() {
+        return imageUrls;
     }
 
-    public void setImage_url(String image_url) {
-        this.image_url = image_url;
+    public void setImageUrls(List<String> imageUrls) {
+        this.imageUrls = imageUrls;
     }
+
 
     // Method to clear all ratings from the recipe
     public void clearRatings() {
