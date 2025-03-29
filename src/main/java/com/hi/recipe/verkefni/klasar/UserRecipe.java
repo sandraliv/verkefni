@@ -2,7 +2,10 @@ package com.hi.recipe.verkefni.klasar;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,15 +21,18 @@ public class UserRecipe {
     @NotBlank(message = "Title is required")
     private String title;
 
-    // New field to store multiple image URLs
-    private List<String> imageUrls;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_recipe_images", joinColumns = @JoinColumn(name = "user_recipe_id"))
+    @Column(name = "image_url")
+    private List<String> imageUrls = new ArrayList<>();
+
 
     @NotBlank(message = "Description is required")
-    @Column(length = 500) // This will map the description to VARCHAR(500)
+    @Column(length = 500)
     private String description;
 
     @NotBlank(message = "Please add instructions")
-    @Column(length = 500) // This will map the instructions to VARCHAR(500)
+    @Column(length = 500)
     private String instructions;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -34,6 +40,11 @@ public class UserRecipe {
     @MapKeyColumn(name = "ingredient_name")
     @Column(name = "ingredient_quantity")
     private Map<String, String> ingredients;
+
+    @CreationTimestamp
+    private LocalDateTime dateAdded;
+    @Transient
+    private String formattedDate;
 
     // Many-to-One relation with the User (user who uploaded the recipe)
     @ManyToOne
@@ -114,5 +125,29 @@ public class UserRecipe {
 
     public void setUser(User user) {
         this.user = user;
+    }
+    public LocalDateTime getDateAdded() {
+        return dateAdded;
+    }
+
+    public void setDateAdded(LocalDateTime dateAdded) {
+        this.dateAdded = dateAdded;
+        // Format the date whenever it's set
+        this.formattedDate = formatDate(dateAdded);
+    }
+
+    // Format LocalDateTime to a readable string
+    private String formatDate(LocalDateTime date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm:ss");
+        return date.format(formatter);
+    }
+
+    public String getFormattedDate() {
+        return formattedDate;
+    }
+
+    // This ensures that if we want to override the formattedDate field, we can do so here
+    public void setFormattedDate(String formattedDate) {
+        this.formattedDate = formattedDate;
     }
 }

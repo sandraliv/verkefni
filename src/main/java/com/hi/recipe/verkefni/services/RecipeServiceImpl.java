@@ -76,13 +76,6 @@ public class RecipeServiceImpl implements RecipeService {
         return List.of();
     }
 
-    @Override
-    public List<Recipe> findAllPaginated(int page, int size, SortType sortType) {
-        Pageable pageable = getPageable(sortType, page, size);
-        Page<Recipe> recipePage = recipeRepository.findAll(pageable);
-        return recipePage.getContent();
-    }
-
     public int getTotalPages(int size) {
         Pageable pageable = PageRequest.of(0, size); // Use page 0 since we're only interested in total pages
         Page<Recipe> recipes = recipeRepository.findAllPaginated(pageable);
@@ -127,6 +120,7 @@ public class RecipeServiceImpl implements RecipeService {
         return recipeRepository.findByTitleContainingIgnoreCaseAndCategoriesIn(title, categories);
     }
 
+
     public List<Recipe> findByCategoriesIn(Set<Category> categories, int page, int size) {
         return List.of();
     }
@@ -137,15 +131,6 @@ public class RecipeServiceImpl implements RecipeService {
         return recipeRepository.findByCategoriesIn(categories, pageable).getContent();
     }
 
-    private Pageable getPageable(SortType sortType, int page, int size) {
-        switch (sortType) {
-            case DATE:
-                return PageRequest.of(page, size, Sort.by("dateAdded").descending());
-            case RATING:
-            default:
-                return PageRequest.of(page, size, Sort.by("averageRating").descending());
-        }
-    }
 
     // Search by title (case-insensitive)
     @Override
@@ -157,6 +142,47 @@ public class RecipeServiceImpl implements RecipeService {
     public List<Recipe> findByTitleAndTags(String title, Set<RecipeTag> tags) {
         return recipeRepository.findByTitleContainingIgnoreCaseAndTagsIn(title, tags);
     }
+
+
+    @Override
+    public List<Recipe> findAllPaginated(int page, int size, SortType sortType) {
+        Pageable pageable = getPageable(sortType, page, size);
+        Page<Recipe> recipePage = recipeRepository.findAll(pageable);
+        return recipePage.getContent();
+    }
+
+    @Override
+    public List<Recipe> findByTagsIn(Set<RecipeTag> tags, int page, int size, SortType sortType) {
+        Pageable pageable = getPageable(sortType, page, size);
+        return recipeRepository.findByTagsIn(tags, pageable).getContent();
+    }
+    @Override
+    public List<Recipe> findByTitleContainingIgnoreCase(String keyword, int page, int size, SortType sortType) {
+        Pageable pageable = getPageable(sortType, page, size);
+        return recipeRepository.findByTitleContainingIgnoreCase(keyword, pageable).getContent();
+    }
+
+    @Override
+    public List<Recipe> findByTitleAndTags(String title, Set<RecipeTag> tags, int page, int size, SortType sortType) {
+        Pageable pageable = getPageable(sortType, page, size);
+        return recipeRepository.findByTitleContainingIgnoreCaseAndTagsIn(title, tags, pageable).getContent();
+    }
+
+    private Pageable getPageable(SortType sortType, int page, int size) {
+        // Define a map for sorting fields for better scalability
+        Map<SortType, String> sortFieldMap = Map.of(
+                SortType.DATE, "dateAdded",
+                SortType.RATING, "averageRating"
+                // Add more SortTypes and fields as needed
+        );
+
+        String sortField = sortFieldMap.getOrDefault(sortType, "averageRating");  // Default to "averageRating" if no match found
+
+        return PageRequest.of(page, size, Sort.by(sortField).descending());
+    }
+
+
+
 
     @Override
     public List<Recipe> findByDate(int page, int size) {

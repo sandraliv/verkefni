@@ -38,7 +38,13 @@ public interface RecipeService {
 
     List<Recipe> findByTitleContainingIgnoreCase(String keyword);
 
+    List<Recipe> findByTagsIn(Set<RecipeTag> tags, int page, int size, SortType sortType);
+
+    List<Recipe> findByTitleContainingIgnoreCase(String keyword, int page, int size, SortType sortType);
+
     List<Recipe> findByTitleAndTags(String title, Set<RecipeTag> tags);
+
+    List<Recipe> findByTitleAndTags(String title, Set<RecipeTag> tags, int page, int size, SortType sortType);
 
     List<Recipe> findByDate(int page, int size);
 

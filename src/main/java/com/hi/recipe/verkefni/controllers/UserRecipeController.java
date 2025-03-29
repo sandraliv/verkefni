@@ -19,18 +19,11 @@ public class UserRecipeController {
 
     @PostMapping("/{userId}/upload")
     public ResponseEntity<UserRecipe> uploadRecipe(@RequestBody UserRecipe userRecipe, @PathVariable int userId) {
-        // Log the received data before saving
-        System.out.println("Uploading Recipe for User with ID: " + userId);
-        System.out.println("Title: " + userRecipe.getTitle());
-        System.out.println("Description: " + userRecipe.getDescription());
-        System.out.println("Ingredients: " + userRecipe.getIngredients());
-        System.out.println("Instructions: " + userRecipe.getInstructions());
-
         // Associate the recipe with the user by userId and save the UserRecipe
         UserRecipe uploadedUserRecipe = userRecipeService.uploadUserRecipe(userRecipe, userId);
 
         // Log the details of the uploaded UserRecipe, including the generated userRecipeId
-        System.out.println("Uploaded UserRecipe with ID: " + uploadedUserRecipe.getId());
+        System.out.println("Uploaded UserRecipe with ID: " + uploadedUserRecipe.getId() + "By userId" + userId);
         System.out.println("Title: " + uploadedUserRecipe.getTitle());
         System.out.println("Description: " + uploadedUserRecipe.getDescription());
         System.out.println("Ingredients: " + uploadedUserRecipe.getIngredients());
@@ -41,18 +34,18 @@ public class UserRecipeController {
     }
 
 
+
+
     @GetMapping("/{userId}/getUserRecipes")
-    public ResponseEntity<List<UserRecipe>> getUserRecipes(@PathVariable int userId,  // Use PathVariable instead of RequestParam
+    public ResponseEntity<List<UserRecipe>> getUserRecipes(@PathVariable int userId,
                                                            @RequestParam(defaultValue = "0") int page,
                                                            @RequestParam(defaultValue = "10") int size) {
-        // Get the list of recipes from the service
         List<UserRecipe> userRecipes = userRecipeService.getUserRecipes(userId, page, size);
 
-        // Check if there are any recipes
         if (userRecipes.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();  // Return 404 if no recipes found
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(userRecipes);  // Return 200 OK with the list of recipes
+        return ResponseEntity.ok(userRecipes);
     }
 
     // Get a specific recipe uploaded by a user, ensuring userId matches

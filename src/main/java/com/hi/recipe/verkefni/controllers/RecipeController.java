@@ -43,24 +43,31 @@ public class RecipeController {
     @GetMapping
     public ResponseEntity<List<Recipe>> getAllRecipes(
             @RequestParam(value = "query", required = false) String query,
-            @RequestParam(value = "tags", required = false) Set<RecipeTag> tags) {
+            @RequestParam(value = "tags", required = false) Set<RecipeTag> tags,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "20") int size,
+            @RequestParam(value = "sort", defaultValue = "RATING") String sort) {
+
+        SortType sortType = SortType.valueOf(sort.toUpperCase());
         if ((query == null || query.isEmpty()) && tags == null) {
-            return ResponseEntity.ok(recipeService.findAllPaginated());
-        } else if (tags == null || tags.isEmpty()) {
-            return ResponseEntity.ok(recipeService.findByTitleContainingIgnoreCase(query));
-        } else if (query == null || query.isEmpty()) {
-            return ResponseEntity.ok(recipeService.findByTagsIn(tags, 0, 10));
+
+            return ResponseEntity.ok(recipeService.findAllPaginated(page, size, sortType));
         }
-
-
-        return ResponseEntity.ok(recipeService.findByTitleAndTags(query, tags));
+        else if (tags == null || tags.isEmpty()) {
+            return ResponseEntity.ok(recipeService.findByTitleContainingIgnoreCase(query, page, size, sortType));
+        }
+        else if (query == null || query.isEmpty()) {
+            return ResponseEntity.ok(recipeService.findByTagsIn(tags, page, size, sortType));
+        }
+        return ResponseEntity.ok(recipeService.findByTitleAndTags(query, tags, page, size, sortType));
     }
+
 
     @GetMapping("/all")
     public ResponseEntity<List<Recipe>> getAllRecipes(
             @RequestParam(value = "sort", required = false, defaultValue = "RATING") String sort,
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size) {
+            @RequestParam(value = "size", defaultValue = "20") int size) {
 
         long startTime = System.currentTimeMillis();
         // Parse the sort parameter to SortType enum
@@ -68,25 +75,6 @@ public class RecipeController {
 
         // Fetch recipes with pagination and sorting
         List<Recipe> recipes = recipeService.findAllPaginated(page, size, sortType);
-
-        // Log the image URLs for each recipe
-        for (Recipe recipe : recipes) {
-            // Assuming Recipe has a method getImageUrls() that returns a List<String>
-            List<String> imageUrls = recipe.getImageUrls();
-
-            if (imageUrls == null || imageUrls.isEmpty()) {
-                System.out.println("Recipe ID: " + recipe.getId() + " has no image URLs.");
-            } else {
-                // Log each image URL in the list
-                for (String url : imageUrls) {
-                    if (url == null || url.isEmpty()) {
-                        System.out.println("Recipe ID: " + recipe.getId() + " has an empty image URL.");
-                    } else {
-                        System.out.println("Recipe ID: " + recipe.getId() + " has image URL: " + url);
-                    }
-                }
-            }
-        }
 
         long endTime = System.currentTimeMillis();
         long elapsedTime = endTime - startTime;
@@ -127,7 +115,7 @@ public class RecipeController {
             @RequestParam(value = "categories") Set<Category> categories,
             @RequestParam(value = "sort", required = false, defaultValue = "averageRating") String sort,
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size) {
+            @RequestParam(value = "size", defaultValue = "20") int size) {
 
         // Parse the sort parameter and convert it to SortType enum
         SortType sortType = SortType.valueOf(sort.toUpperCase());

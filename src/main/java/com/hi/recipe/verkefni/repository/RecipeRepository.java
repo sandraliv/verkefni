@@ -28,6 +28,10 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
     @NonNull
     List<Recipe> findAll();
 
+    Page<Recipe> findByTitleContainingIgnoreCase(String keyword, Pageable pageable);
+    // Paginated method to search by title and tags
+    Page<Recipe> findByTitleContainingIgnoreCaseAndTagsIn(String title, Set<RecipeTag> tags, Pageable pageable);
+
     @EntityGraph(attributePaths = {"tags", "categories", "ingredients"})
     Page<Recipe> findByTagsIn(Collection<RecipeTag> tags, Pageable pageable);
 
@@ -35,7 +39,7 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
     Page<Recipe> findByDate(Pageable pageable);
 
     @Query("SELECT r FROM Recipe r")
-    @EntityGraph(attributePaths = {"ingredients", "tags", "categories"})
+    @EntityGraph(attributePaths = { "tags", "categories"})
     Page<Recipe> findAllPaginated(Pageable pageable);
 
     @NonNull

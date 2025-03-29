@@ -28,10 +28,12 @@ public class Recipe {
 
 
 
-    @Column(name = "description")
+    @Column(name = "description", length = 500)
     private String description;
     @Column(name = "instructions", length = 500)
     private String instructions;
+
+
     private String formattedDate;
 
     @ElementCollection(fetch = FetchType.LAZY
