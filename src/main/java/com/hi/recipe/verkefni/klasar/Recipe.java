@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Entity
@@ -26,6 +27,8 @@ public class Recipe {
     @Column(name = "image_url")
     private List<String> imageUrls = new ArrayList<>();
 
+    @Column(name = "saved_to_calendar_count", nullable = false)
+    private int savedToCalendarCount = 0; // Default to 0
 
 
     @Column(name = "description", length = 500)
@@ -64,6 +67,13 @@ public class Recipe {
 
     @PreRemove
     public void preRemove() {
+        // Remove the recipe from all users' ratings (i.e., userRatings)
+        for (User user : recipeRatings.keySet()) {
+            // Remove the recipe from the user's ratings map (i.e., userRatings)
+            user.getUserRatings().remove(this);  // Remove this recipe from the user's ratings
+        }
+
+        recipeRatings.clear();
         categories.clear();
     }
 
@@ -230,10 +240,6 @@ public class Recipe {
         }
     }
 
-    public String getFormattedDate() {
-        return formattedDate;
-    }
-
     public Set<User> getUserFavorites() {
         if (userFavorites == null) {
             userFavorites = new HashSet<>();
@@ -255,6 +261,22 @@ public class Recipe {
 
     public void setIsFavoritedByUser(boolean isFavoritedByUser) {
         this.isFavoritedByUser = isFavoritedByUser;
+    }
+
+    public int getSavedToCalendarCount() {
+        return savedToCalendarCount;
+    }
+
+    public void setSavedToCalendarCount(int savedToCalendarCount) {
+        this.savedToCalendarCount = savedToCalendarCount;
+    }
+
+    public String getFormattedDate() {
+        if (dateAdded != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd,MMMM,yyyy");
+            return dateAdded.format(formatter);
+        }
+        return null;
     }
 }
 
