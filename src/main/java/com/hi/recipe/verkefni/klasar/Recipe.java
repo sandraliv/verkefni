@@ -92,7 +92,6 @@ public class Recipe {
     @Column(name = "score")
     private Map<User, Integer> recipeRatings = new HashMap<>();
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
