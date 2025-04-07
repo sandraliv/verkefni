@@ -310,14 +310,14 @@ public class RecipeController {
      */
 
     @PatchMapping("{id}")
-    public ResponseEntity<String> updateRecipe(@PathVariable int id, @RequestBody Recipe recipe) {
+    public ResponseEntity<String> updateRecipe(@PathVariable int id, @RequestBody UserRecipe recipe) {
         Optional<Recipe> or = recipeService.findById(id);
         if (or.isPresent()) {
             Recipe excistingRecipe = or.get();
             excistingRecipe.setTitle(recipe.getTitle());
             excistingRecipe.setDescription(recipe.getDescription());
-            excistingRecipe.setAverageRating(recipe.getAverageRating());
-            recipeService.save(recipe);
+            excistingRecipe.setInstructions(recipe.getInstructions());
+            recipeService.save(excistingRecipe);
             return ResponseEntity.ok("Recipe updated!");
         }
         return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body("Could not update recipe");
