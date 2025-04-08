@@ -65,8 +65,10 @@ public class UserRecipeController {
     }
 
     // Delete a recipe uploaded by the user
-    @DeleteMapping("/{user-recipeId}")
-    public void deleteRecipe(@PathVariable int recipeId, @RequestParam int userId) {
+    @DeleteMapping("/{recipeId}")
+    public ResponseEntity<String> deleteRecipe(@PathVariable int recipeId, @RequestParam int userId) {
         userRecipeService.deleteUserRecipe(recipeId, userId);
+        return ResponseEntity.status(200).body("Recipe has been deleted");
     }
+
 }
