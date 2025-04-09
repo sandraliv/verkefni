@@ -23,7 +23,7 @@ public class User {
     private String username;
     private String profilePictureUrl;
 
-    @ManyToMany(fetch = FetchType.EAGER)  // Change to EAGER loading
+    @ManyToMany(fetch = FetchType.LAZY)  // Change to EAGER loading
     @JsonIgnore
     @JoinTable(
             name = "user_favorites",

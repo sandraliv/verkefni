@@ -156,7 +156,6 @@ public class uiContactController {
                 criteria = SearchCriteria.ALL;
             }
         }
-        System.out.println(criteria);
         recipes = switch (criteria) {
             case NONE -> recipeService.findAllPaginated(page, size);
             case QUERY_ONLY -> recipeService.findByTitleContainingIgnoreCase(query);

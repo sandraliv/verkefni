@@ -136,8 +136,7 @@ public class CalendarController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             // Handle unexpected errors
-            System.out.println("Error removing recipe from calendar: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while removing the recipe.");
+           return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while removing the recipe.");
         }
     }
 }
