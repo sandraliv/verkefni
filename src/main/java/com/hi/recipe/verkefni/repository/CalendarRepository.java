@@ -30,4 +30,13 @@ public interface CalendarRepository extends JpaRepository<Calendar, Long> {
     @Query("SELECT c FROM Calendar c WHERE c.user = :user AND c.recipe.id = :recipeId AND c.userRecipe.id = :userRecipeId AND c.savedCalendarDate = :savedCalendarDate")
     Calendar findByUserAndRecipeIdAndUserRecipeIdAndSavedCalendarDate(User user, Integer recipeId, Integer userRecipeId, LocalDate savedCalendarDate);
 
+    // For public recipes
+    @Query("SELECT c FROM Calendar c WHERE c.user = :user AND c.recipe.id = :recipeId AND c.userRecipe IS NULL AND c.savedCalendarDate = :savedCalendarDate")
+    Calendar findByUserAndRecipeId(User user, Integer recipeId, LocalDate savedCalendarDate);
+
+    // For user-created recipes
+    @Query("SELECT c FROM Calendar c WHERE c.user = :user AND c.userRecipe.id = :userRecipeId AND c.recipe IS NULL AND c.savedCalendarDate = :savedCalendarDate")
+    Calendar findByUserAndUserRecipeId(User user, Integer userRecipeId, LocalDate savedCalendarDate);
+
+
 }

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 
@@ -103,15 +104,18 @@ public class CalendarController {
         try {
             // Validate that userId is provided and valid
             if (userId == null || userId <= 0) {
-                return ResponseEntity.badRequest().body("Invalid userId.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid userId");
             }
+
+            // Remove any surrounding quotes in the date string if present
+            date = date.replaceAll("\"", "");
 
             // Validate the date format
             LocalDate localDate;
             try {
                 localDate = LocalDate.parse(date); // Parsing the date string to LocalDate
             } catch (Exception e) {
-                return ResponseEntity.badRequest().body("Invalid date format. Please provide a date in the format YYYY-MM-DD.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid date format. Please provide a date in the format YYYY-MM-DD.");
             }
 
             // Log the incoming request parameters (optional, for debugging)
@@ -119,11 +123,11 @@ public class CalendarController {
 
             // Ensure either recipeId or userRecipeId is provided, but not both
             if (recipeId == null && userRecipeId == null) {
-                return ResponseEntity.badRequest().body("Either recipeId or userRecipeId must be provided.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Either recipeId or userRecipeId must be provided.");
             }
 
             if (recipeId != null && userRecipeId != null) {
-                return ResponseEntity.badRequest().body("You cannot provide both recipeId and userRecipeId. Provide only one.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You cannot provide both recipeId and userRecipeId. Provide only one.");
             }
 
             // Call the service method to remove the recipe from the calendar
@@ -134,12 +138,16 @@ public class CalendarController {
         } catch (IllegalArgumentException e) {
             // Handle cases where recipe or userRecipe doesn't exist or isn't found
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (DateTimeParseException e) {
+            // Handle specific exception for invalid date format
+            return ResponseEntity.badRequest().body("Invalid date format. Please provide a date in the format YYYY-MM-DD.");
         } catch (Exception e) {
             // Handle unexpected errors
             System.out.println("Error removing recipe from calendar: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while removing the recipe.");
         }
     }
+
 }
 
 

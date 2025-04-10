@@ -10,6 +10,7 @@ import com.hi.recipe.verkefni.repository.UserRecipeRepository;
 import com.hi.recipe.verkefni.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -62,29 +63,37 @@ public class CalendarServiceImpl implements CalendarService {
 
 
     @Override
+    @Transactional
     public void removeRecipeFromCalendar(Integer userId, Integer recipeId, Integer userRecipeId, LocalDate date) {
         // Retrieve the user by userId
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        // Find the calendar entry based on user, recipeId or userRecipeId, and date
-        Calendar calendarEntry = calendarRepository.findByUserAndRecipeIdAndUserRecipeIdAndSavedCalendarDate(
-                user, recipeId, userRecipeId, date);
+        Calendar calendarEntry;
+
+        // Use the correct query depending on which ID is provided
+        if (recipeId != null) {
+            calendarEntry = calendarRepository.findByUserAndRecipeId(user, recipeId, date);
+        } else if (userRecipeId != null) {
+            calendarEntry = calendarRepository.findByUserAndUserRecipeId(user, userRecipeId, date);
+        } else {
+            throw new IllegalArgumentException("Either recipeId or userRecipeId must be provided.");
+        }
 
         if (calendarEntry != null) {
-            // If the recipe is public, decrement the savedToCalendarCount
+            // Decrement the count for public recipes
             if (calendarEntry.getRecipe() != null) {
                 Recipe recipe = calendarEntry.getRecipe();
                 recipe.setSavedToCalendarCount(recipe.getSavedToCalendarCount() - 1);
-                recipeRepository.save(recipe); // Save the updated recipe
+                recipeRepository.save(recipe);
             }
 
-            // Remove the entry from the calendar
             calendarRepository.delete(calendarEntry);
         } else {
             throw new IllegalArgumentException("No calendar entry found for the provided recipe, user, and date.");
         }
     }
+
 
 
     @Override
