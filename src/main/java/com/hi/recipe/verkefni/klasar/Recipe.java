@@ -25,6 +25,7 @@ public class Recipe {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "recipe_images", joinColumns = @JoinColumn(name = "recipe_id"))
     @Column(name = "image_url")
+    @BatchSize(size = 20)
     private List<String> imageUrls = new ArrayList<>();
 
     @Column(name = "saved_to_calendar_count", nullable = false)
@@ -45,6 +46,7 @@ public class Recipe {
     @MapKeyColumn(name = "ingredient_name")
     @Column(name = "ingredient_quantity")
     @NotEmpty
+    @BatchSize(size = 20)
     private Map<String, String> ingredients = new HashMap<>();
 
     @ElementCollection(fetch = FetchType.LAZY)
@@ -84,14 +86,8 @@ public class Recipe {
     @Transient
     private boolean isFavoritedByUser;
 
-
-    @ElementCollection
-    @JsonIgnore
-    @CollectionTable(name = "recipe_ratings", joinColumns = @JoinColumn(name = "recipe_id"))
-    @MapKeyJoinColumn(name = "user_id")
-    @Column(name = "score")
+    @Transient
     private Map<User, Integer> recipeRatings = new HashMap<>();
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

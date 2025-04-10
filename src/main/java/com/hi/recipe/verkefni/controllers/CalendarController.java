@@ -143,8 +143,7 @@ public class CalendarController {
             return ResponseEntity.badRequest().body("Invalid date format. Please provide a date in the format YYYY-MM-DD.");
         } catch (Exception e) {
             // Handle unexpected errors
-            System.out.println("Error removing recipe from calendar: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while removing the recipe.");
+           return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while removing the recipe.");
         }
     }
 
